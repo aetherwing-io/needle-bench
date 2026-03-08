@@ -10,18 +10,16 @@ RUN cargo build --release
 
 FROM alpine:3.20
 
-RUN apk add --no-cache bash coreutils python3
+RUN apk add --no-cache bash coreutils python3 git && \
+    git config --global user.email "bench@needle-bench.cc" && \
+    git config --global user.name "needle-bench"
 
 COPY --from=builder /build/target/release/fileproc /usr/local/bin/fileproc
 
-WORKDIR /work
+WORKDIR /app
 
-COPY test.sh /test.sh
-RUN chmod +x /test.sh
-
-# Copy source for the agent to inspect and fix
-COPY Cargo.toml /work/Cargo.toml
-COPY src/ /work/src/
+COPY . .
+RUN chmod +x test.sh
 
 # Install Rust toolchain in final image so agent can rebuild
 RUN apk add --no-cache curl gcc musl-dev && \

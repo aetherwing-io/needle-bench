@@ -5,7 +5,7 @@
 set -e
 
 # Start the Flask app in the background
-python app.py &
+python app/app.py &
 APP_PID=$!
 sleep 2
 

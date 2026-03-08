@@ -8,7 +8,7 @@
 BENCHMARKS_DIR := benchmarks
 BENCH ?=
 
-.PHONY: validate run list clean help
+.PHONY: validate run list clean help bench verify
 
 help: ## Show this help
 	@echo "needle-bench — your worst debugging day, everyone's benchmark."
@@ -69,7 +69,7 @@ endif
 	docker build -t needle-bench-$(BENCH) $(BENCHMARKS_DIR)/$(BENCH)
 	@echo ""
 	@echo "Running test (before agent)..."
-	docker run --rm needle-bench-$(BENCH) /workspace/test.sh; \
+	docker run --rm needle-bench-$(BENCH) bash -c "cd /app && bash test.sh"; \
 	rc=$$?; \
 	if [ $$rc -eq 0 ]; then \
 		echo "WARNING: test.sh passes without fix — benchmark may be broken"; \
@@ -85,6 +85,28 @@ list: ## List all benchmarks
 		name=$$(basename "$$dir"); \
 		if [ "$$name" = "_template" ]; then continue; fi; \
 		echo "  $$name"; \
+	done
+
+bench: ## Run all benchmarks (expect FAIL — bug is present)
+	@for dir in $(BENCHMARKS_DIR)/*/; do \
+		name=$$(basename "$$dir"); \
+		[ "$$name" = "_template" ] && continue; \
+		echo "--- $$name ---"; \
+		docker build -q -t "needle-bench-$$name" "$$dir" && \
+		docker run --rm "needle-bench-$$name" bash -c "cd /app && bash test.sh" && \
+		echo "FAIL (unexpected — bug not present)" || echo "PASS (expected — bug present)"; \
+		echo ""; \
+	done
+
+verify: ## Verify all solutions fix their benchmarks
+	@for dir in $(BENCHMARKS_DIR)/*/; do \
+		name=$$(basename "$$dir"); \
+		[ "$$name" = "_template" ] && continue; \
+		echo "--- $$name ---"; \
+		docker build -q -t "needle-bench-$$name" "$$dir" && \
+		docker run --rm "needle-bench-$$name" bash -c "cd /app && git init && git add -A && git commit -m init && git apply .bench/solution.patch && bash test.sh" && \
+		echo "PASS (solution works)" || echo "FAIL (solution broken)"; \
+		echo ""; \
 	done
 
 clean: ## Remove build artifacts

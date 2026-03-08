@@ -7,7 +7,7 @@ sleep 1
 
 # Start the app in the background
 cd /app
-node server.js &
+node app/server.js &
 APP_PID=$!
 sleep 2
 
@@ -34,12 +34,16 @@ fi
 CONCURRENCY=100
 echo "Firing $CONCURRENCY concurrent increments..."
 
+CURL_PIDS=""
 for i in $(seq 1 $CONCURRENCY); do
     curl -s -X POST http://localhost:3000/counter/increment > /dev/null &
+    CURL_PIDS="$CURL_PIDS $!"
 done
 
 # Wait for all background curl processes to finish
-wait
+for pid in $CURL_PIDS; do
+    wait $pid 2>/dev/null || true
+done
 
 # Small delay to ensure all writes have landed
 sleep 1
