@@ -12,15 +12,15 @@
 </head>
 <body>
   <nav class="topnav">
-    <a href="/">Home</a>
+    <a href="index.html">Home</a>
     <a href="index.html#how-it-works">How it works</a>
     <a href="index.html#scoring">Scoring</a>
-    <a href="/insights">Insights</a>
-    <a href="/contribute">Contribute</a>
+    <a href="insights.html">Insights</a>
+    <a href="contribute.html">Contribute</a>
   </nav>
 
   <header>
-    <nav><a href="/">&larr; needle-bench</a></nav>
+    <nav><a href="index.html">&larr; needle-bench</a></nav>
     <h1>Leaderboard</h1>
   </header>
 
@@ -56,7 +56,7 @@
   </footer>
 
   <script>
-    /* Inline fallback scores — used when fetch('/scores.json') fails (MIME, CORS, caching) */
+    /* Inline fallback scores — used when fetch('scores.json') fails (MIME, CORS, caching) */
     window.SCORES = [{"benchmark":"off-by-one-pagination","agent":"claude-opus-4-6","os":"none","resolved":true,"turns_to_discovery":1,"turns_to_fix":4,"files_touched":1,"lines_changed":1,"blind_discovery":true,"timestamp":"2026-03-09T00:00:00Z"},{"benchmark":"race-condition-counter","agent":"claude-opus-4-6","os":"none","resolved":true,"turns_to_discovery":1,"turns_to_fix":4,"files_touched":1,"lines_changed":4,"blind_discovery":true,"timestamp":"2026-03-09T00:01:00Z"},{"benchmark":"silent-data-corruption","agent":"claude-opus-4-6","os":"none","resolved":true,"turns_to_discovery":1,"turns_to_fix":4,"files_touched":1,"lines_changed":3,"blind_discovery":true,"timestamp":"2026-03-09T00:02:00Z"},{"benchmark":"base64-padding","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":2,"turns_to_fix":4,"files_touched":1,"lines_changed":3,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"csv-quoting","agent":"gemini-2.0-flash","os":"haystack","resolved":false,"turns_to_discovery":10,"turns_to_fix":20,"files_touched":1,"lines_changed":5,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"deadlock-order","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":4,"turns_to_fix":8,"files_touched":1,"lines_changed":8,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"env-var-fallback","agent":"gemini-2.0-flash","os":"haystack","resolved":false,"turns_to_discovery":10,"turns_to_fix":20,"files_touched":0,"lines_changed":0,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"fence-post-range","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":3,"turns_to_fix":7,"files_touched":1,"lines_changed":1,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"fifo-queue-reverse","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":3,"turns_to_fix":7,"files_touched":1,"lines_changed":2,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"float-equality","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":1,"turns_to_fix":2,"files_touched":1,"lines_changed":1,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"git-merge-conflict","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":4,"turns_to_fix":9,"files_touched":1,"lines_changed":3,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"http-retry-idempotent","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":2,"turns_to_fix":5,"files_touched":1,"lines_changed":4,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"integer-overflow","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":4,"turns_to_fix":8,"files_touched":1,"lines_changed":1,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"json-number-precision","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":3,"turns_to_fix":7,"files_touched":1,"lines_changed":1,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"memory-leak-closure","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":3,"turns_to_fix":7,"files_touched":1,"lines_changed":2,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"null-deref-config","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":6,"turns_to_fix":13,"files_touched":1,"lines_changed":3,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"path-traversal","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":4,"turns_to_fix":9,"files_touched":1,"lines_changed":5,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"regex-backtrack","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":1,"turns_to_fix":3,"files_touched":1,"lines_changed":1,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"signal-handler-reentrant","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":5,"turns_to_fix":10,"files_touched":1,"lines_changed":9,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"sort-stability","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":3,"turns_to_fix":7,"files_touched":1,"lines_changed":1,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"sql-injection-escape","agent":"gemini-2.0-flash","os":"haystack","resolved":true,"turns_to_discovery":4,"turns_to_fix":8,"files_touched":1,"lines_changed":2,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"swe-astropy-12907","agent":"gemini-2.0-flash","os":"haystack","resolved":false,"turns_to_discovery":10,"turns_to_fix":20,"files_touched":0,"lines_changed":0,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"symlink-resolve","agent":"gemini-2.0-flash","os":"haystack","resolved":false,"turns_to_discovery":5,"turns_to_fix":11,"files_touched":1,"lines_changed":1,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"timezone-offset","agent":"gemini-2.0-flash","os":"haystack","resolved":false,"turns_to_discovery":4,"turns_to_fix":8,"files_touched":1,"lines_changed":2,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"unicode-truncation","agent":"gemini-2.0-flash","os":"haystack","resolved":false,"turns_to_discovery":5,"turns_to_fix":10,"files_touched":1,"lines_changed":2,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"},{"benchmark":"yaml-indent","agent":"gemini-2.0-flash","os":"haystack","resolved":false,"turns_to_discovery":5,"turns_to_fix":10,"files_touched":1,"lines_changed":3,"blind_discovery":true,"timestamp":"2026-03-09T08:00:00Z"}];
   </script>
   <script>
@@ -64,7 +64,7 @@
       try {
         let data;
         try {
-          const resp = await fetch('/scores.json');
+          const resp = await fetch('scores.json');
           if (!resp.ok) throw new Error('HTTP ' + resp.status);
           data = await resp.json();
           if (!Array.isArray(data)) throw new Error('Not an array');
