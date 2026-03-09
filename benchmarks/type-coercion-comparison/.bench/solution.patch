@@ -1,0 +1,11 @@
+--- a/app/utils.js
++++ b/app/utils.js
+@@ -18,8 +18,7 @@
+
+   if (searchParams.has('min_rating')) {
+-    // Read the minimum rating from query string
+-    query.minRating = searchParams.get('min_rating');
++    query.minRating = parseInt(searchParams.get('min_rating'), 10);
+   }
+
+   if (searchParams.has('in_stock')) {

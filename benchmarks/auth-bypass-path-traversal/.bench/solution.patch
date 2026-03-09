@@ -1,0 +1,32 @@
+--- a/app/middleware.go
++++ b/app/middleware.go
+@@ -1,6 +1,7 @@
+ package main
+
+ import (
++	"path"
+ 	"net/http"
+ 	"strings"
+ )
+@@ -9,13 +10,14 @@ import (
+ // Routes under /api/ require authentication.
+ func authMiddleware(next http.Handler) http.Handler {
+ 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+-		// BUG: Checks the raw r.URL.Path for "/api/" prefix.
+-		// The router cleans paths (normalizes //, .., etc.) before matching,
+-		// but this middleware sees the raw path. An attacker can use
+-		// "//api/admin" or "/x/../api/admin" — the raw path won't start
+-		// with "/api/" so the auth check is skipped, but the router
+-		// cleans it to "/api/admin" and serves the protected handler.
+-		if strings.HasPrefix(r.URL.Path, "/api/") {
++		// Clean the path before checking auth, using the same normalization
++		// as the router. This prevents bypass via //, .., etc.
++		cleanPath := path.Clean(r.URL.Path)
++		if !strings.HasPrefix(cleanPath, "/") {
++			cleanPath = "/" + cleanPath
++		}
++
++		if strings.HasPrefix(cleanPath, "/api/") || cleanPath == "/api" {
+ 			token := r.Header.Get("Authorization")
+ 			if token == "" {
+ 				jsonResponse(w, 401, map[string]string{"error": "unauthorized"})

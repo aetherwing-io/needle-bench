@@ -1,0 +1,12 @@
+--- a/app/cluster/node.go
++++ b/app/cluster/node.go
+@@ -106,7 +106,9 @@ func (n *Node) StartElection(peers []*Node, network *Network) int {
+ 	fmt.Printf("Node %d: received %d/%d votes for term %d\n", n.ID, finalVotes, totalNodes, currentTerm)
+
+-	// Check if we have enough votes for a quorum
+-	if finalVotes >= totalNodes/2 {
++	// Majority requires strictly more than half the cluster.
++	// For 5 nodes, need at least 3 votes (5/2 + 1 = 3).
++	majority := totalNodes/2 + 1
++	if finalVotes >= majority {
+ 		n.mu.Lock()

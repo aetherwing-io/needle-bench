@@ -1,0 +1,17 @@
+--- a/app/auth/compare.go
++++ b/app/auth/compare.go
+@@ -1,8 +1,10 @@
+ package auth
+
+-// compareHashes compares two hex-encoded hash strings for equality.
++import "crypto/subtle"
++
++// compareHashes compares two hex-encoded hash strings in constant time.
++// Uses crypto/subtle.ConstantTimeCompare to prevent timing side-channel attacks.
+ func compareHashes(stored, input string) bool {
+ 	if len(stored) != len(input) {
+ 		return false
+ 	}
+-	return stored == input
++	return subtle.ConstantTimeCompare([]byte(stored), []byte(input)) == 1
+ }

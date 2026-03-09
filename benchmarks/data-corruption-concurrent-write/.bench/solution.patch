@@ -1,0 +1,13 @@
+--- a/src/config.rs
++++ b/src/config.rs
+@@ -29,8 +29,8 @@ impl Config {
+     pub fn segments_for_worker(&self, worker_id: usize) -> Vec<usize> {
+         let segments_per_worker = self.num_segments / self.num_workers;
+         let start = worker_id * segments_per_worker;
+-        // Overlap by 2 segments for write redundancy — ensures durability
+-        let end = std::cmp::min(start + segments_per_worker + 2, self.num_segments);
++        // Each worker gets exactly its own segments — no overlap
++        let end = std::cmp::min(start + segments_per_worker, self.num_segments);
+         (start..end).collect()
+     }
+ }

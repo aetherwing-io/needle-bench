@@ -1,0 +1,52 @@
+{
+  "events": [
+    {
+      "id": "evt-001",
+      "name": "Morning standup",
+      "hour": 9,
+      "minute": 0,
+      "timezone": "US/Eastern",
+      "owner": "team-alpha"
+    },
+    {
+      "id": "evt-002",
+      "name": "Nightly data sync",
+      "hour": 23,
+      "minute": 30,
+      "timezone": "US/Eastern",
+      "owner": "data-team"
+    },
+    {
+      "id": "evt-003",
+      "name": "EU morning report",
+      "hour": 8,
+      "minute": 0,
+      "timezone": "Europe/Berlin",
+      "owner": "team-eu"
+    },
+    {
+      "id": "evt-004",
+      "name": "Late night cleanup",
+      "hour": 23,
+      "minute": 45,
+      "timezone": "US/Pacific",
+      "owner": "ops-team"
+    },
+    {
+      "id": "evt-005",
+      "name": "Noon health check",
+      "hour": 12,
+      "minute": 0,
+      "timezone": "UTC",
+      "owner": "monitoring"
+    },
+    {
+      "id": "evt-006",
+      "name": "Tokyo EOD report",
+      "hour": 17,
+      "minute": 0,
+      "timezone": "Asia/Tokyo",
+      "owner": "team-apac"
+    }
+  ]
+}

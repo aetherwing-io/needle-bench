@@ -1,0 +1,37 @@
+--- a/app/notifications.py
++++ b/app/notifications.py
+@@ -5,10 +5,9 @@
+ Handles sending emails and in-app notifications to users.
+ """
+
+-import users
+-from config import NOTIFICATION_SENDER
++from config import NOTIFICATION_SENDER, DEFAULT_ROLE
+
+
+-# Default role for notification routing
+-_default_role = users.DEFAULT_ROLE
++# Default role for notification routing (imported from config to avoid circular import)
++_default_role = DEFAULT_ROLE
+
+--- a/app/users.py
++++ b/app/users.py
+@@ -9,9 +9,8 @@
+ from config import MAX_LOGIN_ATTEMPTS
+ from validators import validate_email, validate_password, validate_username
+ from notifications import NotificationService
+
+
+-# Default role assigned to new users
+-DEFAULT_ROLE = "member"
++from config import DEFAULT_ROLE
+
+
+ class UserManager:
+--- a/app/config.py
++++ b/app/config.py
+@@ -7,3 +7,4 @@
+ PASSWORD_MIN_LENGTH = 8
+ NOTIFICATION_SENDER = "noreply@userservice.local"
+ LOG_LEVEL = "INFO"
++DEFAULT_ROLE = "member"

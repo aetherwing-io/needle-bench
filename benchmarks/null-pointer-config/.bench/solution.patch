@@ -1,0 +1,14 @@
+--- a/app/config.go
++++ b/app/config.go
+@@ -44,5 +44,12 @@
+ 	if cfg.Version == "" {
+ 		cfg.Version = "0.0.1"
+ 	}
++	if cfg.Features.EnableMetrics && cfg.Metrics == nil {
++		cfg.Metrics = &MetricsConfig{
++			Endpoint:    "/metrics",
++			IntervalSec: 30,
++		}
++	}
+
+ 	return &cfg, nil

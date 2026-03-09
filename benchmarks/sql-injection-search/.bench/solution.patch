@@ -1,0 +1,24 @@
+--- a/app/search.py
++++ b/app/search.py
+@@ -10,17 +10,18 @@ class SearchEngine:
+     def search(self, query, category=None):
+         """
+         Search for products matching the query string.
+         Optionally filter by category.
+-
+-        BUG: User input is concatenated directly into the SQL query string
+-        instead of using parameterized queries. This allows SQL injection.
+         """
+-        sql = f"SELECT id, name, description, price, category, in_stock FROM products WHERE name LIKE '%{query}%'"
++        sql = "SELECT id, name, description, price, category, in_stock FROM products WHERE name LIKE ?"
++        params = [f'%{query}%']
+
+         if category:
+-            sql += f" AND category = '{category}'"
++            sql += " AND category = ?"
++            params.append(category)
+
+         sql += " ORDER BY name"
+
+-        return self.db.execute_raw(sql)
++        return self.db.execute(sql, tuple(params))

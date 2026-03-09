@@ -1,0 +1,66 @@
+--- a/app/main.go
++++ b/app/main.go
+@@ -1,8 +1,9 @@
+ package main
+
+ import (
++	"context"
+ 	"encoding/json"
+ 	"fmt"
+ 	"log"
+ 	"net/http"
+ 	"os"
+@@ -49,10 +50,12 @@ func computeHandler(w http.ResponseWriter, r *http.Request) {
+
+ 	resultCh := make(chan ComputeResult, 1)
+
+-	// BUG: goroutine spawned without context cancellation awareness.
+-	// If the client disconnects, this goroutine keeps running forever.
++	ctx := r.Context()
++
+ 	go func() {
+ 		atomic.AddInt64(&activeGoroutines, 1)
+ 		defer atomic.AddInt64(&activeGoroutines, -1)
+
+-		result := performComputation(req)
++		result := performComputation(ctx, req)
+ 		resultCh <- result
+ 	}()
+
+@@ -60,7 +63,7 @@ func computeHandler(w http.ResponseWriter, r *http.Request) {
+ 	select {
+ 	case result := <-resultCh:
+ 		w.Header().Set("Content-Type", "application/json")
+ 		json.NewEncoder(w).Encode(result)
+-	case <-time.After(25 * time.Second):
+-		http.Error(w, "computation timed out", http.StatusGatewayTimeout)
+-		// goroutine still running — leaked
++	case <-ctx.Done():
++		// Client disconnected — goroutine will see ctx.Done() and exit
++		http.Error(w, "client disconnected", 499)
+ 	}
+ }
+
+-func performComputation(req ComputeRequest) ComputeResult {
++func performComputation(ctx context.Context, req ComputeRequest) ComputeResult {
+ 	start := time.Now()
+ 	sum := 0.0
+
+ 	for i := 0; i < req.Iterations; i++ {
++		select {
++		case <-ctx.Done():
++			return ComputeResult{
++				Value:    sum,
++				Duration: time.Since(start).String(),
++				Iters:    i,
++			}
++		default:
++		}
+ 		// Simulate heavy work
+ 		for j := 0; j < 10000; j++ {
+ 			sum += float64(i*j) / float64(j+1)
+ 		}
+-		// This is where we SHOULD check for cancellation
+-		// but there's no context being passed
+ 		time.Sleep(time.Duration(req.DelayMs) * time.Millisecond)
+ 	}

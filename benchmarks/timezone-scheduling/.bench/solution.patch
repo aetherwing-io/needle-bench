@@ -1,0 +1,19 @@
+--- a/app/scheduler.py
++++ b/app/scheduler.py
+@@ -53,9 +53,9 @@
+         """
+         tz = pytz.timezone(event.timezone)
+
+-        # Get today's date in UTC
+-        today_utc = window_start.date()
++        # Get today's date in the EVENT's local timezone, not UTC
++        local_now = window_start.astimezone(tz)
++        today_local = local_now.date()
+
+-        # Build the scheduled time: today's date + event's hour:minute
+-        # in the event's local timezone
++        # Build the scheduled time using the local date
+         naive_scheduled = datetime(
+-            today_utc.year, today_utc.month, today_utc.day,
++            today_local.year, today_local.month, today_local.day,
+             event.hour, event.minute, 0

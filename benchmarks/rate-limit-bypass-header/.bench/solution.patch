@@ -1,0 +1,28 @@
+--- a/app/ratelimiter.ts
++++ b/app/ratelimiter.ts
+@@ -25,17 +25,10 @@ export class RateLimiter {
+   /**
+    * Get the client IP address from the request.
+-   *
+-   * BUG: Trusts X-Forwarded-For header without validation.
+-   * An attacker can set a different X-Forwarded-For value on each request
+-   * to get a fresh rate limit window every time, effectively bypassing
+-   * the rate limiter entirely.
++   * Use the socket remote address — do not trust client-supplied headers
++   * unless behind a known/trusted proxy.
+    */
+   getClientIp(req: http.IncomingMessage): string {
+-    // Trust proxy headers — common in load balancer setups
+-    const forwarded = req.headers['x-forwarded-for'];
+-    if (forwarded) {
+-      // Take the first IP in the chain
+-      const ip = Array.isArray(forwarded) ? forwarded[0] : forwarded.split(',')[0].trim();
+-      return ip;
+-    }
+-
+-    // Fall back to socket address
++    // Always use the actual socket address for rate limiting.
++    // X-Forwarded-For can be spoofed by any client and should not be trusted
++    // for security-critical decisions like rate limiting.
+     return req.socket.remoteAddress || '127.0.0.1';
+   }

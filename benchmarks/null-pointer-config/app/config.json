@@ -1,0 +1,10 @@
+{
+  "name": "data-service",
+  "port": 8080,
+  "version": "1.2.0",
+  "features": {
+    "enable_metrics": true,
+    "enable_cache": false,
+    "enable_rate_limit": false
+  }
+}

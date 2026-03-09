@@ -1,0 +1,27 @@
+--- a/app/processor.js
++++ b/app/processor.js
+@@ -8,14 +8,6 @@ class DataProcessor {
+   process(data) {
+-    // BUG: Every call to process() registers a NEW listener on the event bus
+-    // but never removes it. Over time, memory grows unboundedly as closures
+-    // (and their captured scope) accumulate.
+-    this.eventBus.on('data:validated', (validatedData) => {
+-      // This listener captures `data` in its closure, preventing GC
+-      this._handleValidated(validatedData, data);
+-    });
+-
+-    this.eventBus.on('data:error', (err) => {
+-      console.error(`Processing error for batch ${this.processedCount}: ${err.message}`);
+-    });
+-
+     // Validate and emit
+     const validated = this._validate(data);
+     if (validated.errors.length > 0) {
+-      this.eventBus.emit('data:error', new Error(validated.errors.join(', ')));
++      console.error(`Processing error for batch ${this.processedCount}: ${validated.errors.join(', ')}`);
+       return { success: false, errors: validated.errors };
+     }
+
+     this.eventBus.emit('data:validated', validated.data);
++    this._handleValidated(validated.data, data);
+     this.processedCount++;

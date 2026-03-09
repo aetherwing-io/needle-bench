@@ -1,0 +1,8 @@
+[package]
+name = "codegen-engine"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "codegen-engine"
+path = "src/main.rs"

@@ -1,0 +1,40 @@
+--- a/app/models.go
++++ b/app/models.go
+@@ -20,14 +20,16 @@ type UserV1 struct {
+
+-// UserV2 represents the v2 API user response.
+-// BUG: Several fields from v1 are missing (avatar_url, bio, location).
+-// The v2 struct was created by copying v1 and adding new fields,
+-// but some fields were accidentally deleted during the refactor.
+-// Clients that upgraded from v1 to v2 will silently lose these fields.
++// UserV2 represents the v2 API user response — superset of v1.
+ type UserV2 struct {
+ 	ID          string    `json:"id"`
+ 	Name        string    `json:"name"`
+ 	Email       string    `json:"email"`
+ 	Role        string    `json:"role"`
+-	// avatar_url, bio, and location were here in v1 but dropped in v2
++	AvatarURL   string    `json:"avatar_url"`
++	Bio         string    `json:"bio"`
++	Location    string    `json:"location"`
+ 	Department  string    `json:"department"`
+ 	PhoneNumber string    `json:"phone_number"`
+ 	IsActive    bool      `json:"is_active"`
+@@ -68,8 +70,7 @@ func (u *InternalUser) ToV1() UserV1 {
+
+-// ToV2 converts internal user to v2 API response.
+-// BUG: Does not include avatar_url, bio, or location because
+-// UserV2 struct doesn't have those fields.
++// ToV2 converts internal user to v2 API response (superset of v1).
+ func (u *InternalUser) ToV2() UserV2 {
+ 	return UserV2{
+ 		ID:          u.ID,
+ 		Name:        u.Name,
+ 		Email:       u.Email,
+ 		Role:        u.Role,
++		AvatarURL:   u.AvatarURL,
++		Bio:         u.Bio,
++		Location:    u.Location,
+ 		Department:  u.Department,
+ 		PhoneNumber: u.PhoneNumber,
+ 		IsActive:    u.IsActive,

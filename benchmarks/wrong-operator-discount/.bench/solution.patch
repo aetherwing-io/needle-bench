@@ -1,0 +1,8 @@
+--- a/app/pricing.py
++++ b/app/pricing.py
+@@ -8,7 +8,7 @@
+     For a 20% discount on $100, the discount amount should be $20.
+     """
+-    discount = subtotal + discount_percent / 100
++    discount = subtotal * discount_percent / 100
+     return round(discount, 2)

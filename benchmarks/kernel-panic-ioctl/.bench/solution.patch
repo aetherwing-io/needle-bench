@@ -1,0 +1,34 @@
+--- a/src/ioctl_handler.c
++++ b/src/ioctl_handler.c
+@@ -49,6 +49,17 @@ static int handle_set_config(struct device *dev, struct ioctl_request *req) {
+         return -1;
+     }
+
++    /* Validate value pointer */
++    if (!req->value) {
++        fprintf(stderr, "ioctl: SET_CONFIG: NULL value pointer\n");
++        return -1;
++    }
++
++    /* Validate value_len against reasonable bounds */
++    if (req->value_len > MAX_VALUE_LEN) {
++        fprintf(stderr, "ioctl: SET_CONFIG: value_len %zu exceeds maximum\n", req->value_len);
++        return -1;
++    }
++
+     /* Look for existing entry to update */
+     struct config_entry *entry = find_config(dev, req->key);
+     if (!entry) {
+@@ -92,6 +103,12 @@ static int handle_get_config(struct device *dev, struct ioctl_request *req) {
+         return -1;
+     }
+
++    /* Validate output buffer pointer */
++    if (!req->value || req->value_len == 0) {
++        fprintf(stderr, "ioctl: GET_CONFIG: NULL or zero-length output buffer\n");
++        return -1;
++    }
++
+     size_t copy_len = strlen(entry->value);
+     if (copy_len >= req->value_len) {
+         copy_len = req->value_len - 1;

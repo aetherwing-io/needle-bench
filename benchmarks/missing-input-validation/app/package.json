@@ -1,0 +1,16 @@
+{
+  "name": "inventory-api",
+  "version": "1.0.0",
+  "description": "Inventory management API",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "typescript": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0"
+  }
+}
