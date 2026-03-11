@@ -12,6 +12,158 @@ import urllib.request
 ANTHROPIC_ENDPOINT = "https://api.anthropic.com/v1/messages"
 GOOGLE_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 
+# Estimated cost per 1M tokens (input, output) — USD.
+# These are approximate; update when pricing changes.
+MODEL_PRICING = {
+    # Anthropic
+    "claude-opus-4": (15.0, 75.0),
+    "claude-sonnet-4": (3.0, 15.0),
+    "claude-sonnet-4-5": (3.0, 15.0),
+    "claude-haiku-3-5": (0.8, 4.0),
+    "claude-haiku-3-5-20241022": (0.8, 4.0),
+    "claude-sonnet-3-5": (3.0, 15.0),
+    "claude-sonnet-3-5-20241022": (3.0, 15.0),
+    # Google
+    "gemini-2.0-flash": (0.075, 0.30),
+    "gemini-1.5-flash": (0.075, 0.30),
+    "gemini-1.5-pro": (1.25, 5.0),
+    # defaults
+    "_default_input": 3.0,
+    "_default_output": 15.0,
+}
+
+
+def _model_cost_usd(model: str, input_tokens: int, output_tokens: int) -> float:
+    """Estimate cost in USD for a given token usage."""
+    # Try exact match, then prefix match
+    pricing = None
+    for key, val in MODEL_PRICING.items():
+        if key.startswith("_"):
+            continue
+        if model == key or model.startswith(key):
+            pricing = val
+            break
+    if pricing is None:
+        pricing = (MODEL_PRICING["_default_input"], MODEL_PRICING["_default_output"])
+    cost_in = input_tokens * pricing[0] / 1_000_000
+    cost_out = output_tokens * pricing[1] / 1_000_000
+    return round(cost_in + cost_out, 6)
+
+
+class PostRecorder:
+    """Writes structured POST (power-on self-test) records per benchmark run.
+
+    Output: runs/<model>/<benchmark>/post.jsonl
+    Events: post.start, agent.bash, agent.edit, post.end
+    """
+
+    def __init__(self, runs_dir: str, bench_name: str, model: str):
+        run_dir = os.path.join(runs_dir, bench_name)
+        os.makedirs(run_dir, exist_ok=True)
+        self._path = os.path.join(run_dir, "post.jsonl")
+        self._f = open(self._path, "w")
+        self._bench = bench_name
+        self._model = model
+
+    def _emit(self, record: dict):
+        self._f.write(json.dumps(record) + "\n")
+        self._f.flush()
+
+    def start(self, initial_test_output: str, prompt: str):
+        self._emit({
+            "event": "post.start",
+            "benchmark": self._bench,
+            "model": self._model,
+            "initial_test_output": initial_test_output[:2000],
+            "prompt": prompt,
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        })
+
+    def bash(self, cmd: str, output: str, turn: int):
+        self._emit({
+            "event": "agent.bash",
+            "cmd": cmd[:500],
+            "output_preview": output[:500],
+            "turn": turn,
+        })
+
+    def edit(self, path: str, old_str: str, new_str: str, turn: int):
+        self._emit({
+            "event": "agent.edit",
+            "path": path,
+            "old_str_preview": old_str[:200],
+            "new_str_preview": new_str[:200],
+            "turn": turn,
+        })
+
+    def end(self, resolved: bool, final_test_output: str, turns: int):
+        self._emit({
+            "event": "post.end",
+            "resolved": resolved,
+            "final_test_output": final_test_output[:2000],
+            "turns": turns,
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        })
+
+    def close(self):
+        self._f.close()
+
+    @property
+    def path(self) -> str:
+        return self._path
+
+
+class MetricsRecorder:
+    """Tracks and records token consumption per benchmark run.
+
+    Output: runs/<model>/<benchmark>/metrics.jsonl
+    Events: token.usage (per turn), run.complete (summary)
+    """
+
+    def __init__(self, runs_dir: str, bench_name: str, model: str):
+        run_dir = os.path.join(runs_dir, bench_name)
+        os.makedirs(run_dir, exist_ok=True)
+        self._path = os.path.join(run_dir, "metrics.jsonl")
+        self._f = open(self._path, "w")
+        self._model = model
+        self._cum_in = 0
+        self._cum_out = 0
+
+    def _emit(self, record: dict):
+        self._f.write(json.dumps(record) + "\n")
+        self._f.flush()
+
+    def record_turn(self, turn: int, input_tokens: int, output_tokens: int):
+        self._cum_in += input_tokens
+        self._cum_out += output_tokens
+        self._emit({
+            "event": "token.usage",
+            "turn": turn,
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "cumulative_input": self._cum_in,
+            "cumulative_output": self._cum_out,
+        })
+
+    def complete(self):
+        total = self._cum_in + self._cum_out
+        cost = _model_cost_usd(self._model, self._cum_in, self._cum_out)
+        self._emit({
+            "event": "run.complete",
+            "total_input_tokens": self._cum_in,
+            "total_output_tokens": self._cum_out,
+            "total_tokens": total,
+            "estimated_cost_usd": cost,
+        })
+        return self._cum_in, self._cum_out, total, cost
+
+    def close(self):
+        self._f.close()
+
+    @property
+    def path(self) -> str:
+        return self._path
+
 SYSTEM_PROMPT = (
     "You are debugging a broken application. Run ./test.sh to see what's failing. "
     "Find the root cause and fix the bug. When test.sh passes, you're done."
@@ -170,6 +322,10 @@ def run_benchmark(model, bench_name, bench_dir, provider):
     os.makedirs(runs_dir, exist_ok=True)
     log_path = os.path.join(runs_dir, f"{bench_name}.jsonl")
 
+    # POST and metrics recorders write to runs/<model>/<benchmark>/
+    post = PostRecorder(runs_dir, bench_name, model)
+    metrics = MetricsRecorder(runs_dir, bench_name, model)
+
     # Build image
     subprocess.run(["docker", "build", "-t", f"needle-bench-{bench_name}", bench_dir],
                    capture_output=True, check=True)
@@ -194,8 +350,15 @@ def run_benchmark(model, bench_name, bench_dir, provider):
           "benchmark": bench_name, "model": model, "has_prompt": has_prompt, "solution_files": sol_files})
 
     instance_prompt = cfg["prompt"] if cfg["prompt"] else DEFAULT_INSTANCE
+
+    # POST start: capture initial test output before agent touches anything
+    _irc, _istdout, _istderr = docker_exec(container, "cd /app && bash test.sh")
+    initial_test_output = _istdout + ("\n" + _istderr if _istderr else "")
+    post.start(initial_test_output, instance_prompt)
+
     messages = [{"role": "user", "content": instance_prompt}]
     final_test_exit = 1
+    final_test_output = ""
 
     try:
         for turn in range(1, max_turns + 1):
@@ -210,6 +373,9 @@ def run_benchmark(model, bench_name, bench_dir, provider):
             tokens_out = resp.get("usage", {}).get("output_tokens", 0)
             total_tokens_in += tokens_in
             total_tokens_out += tokens_out
+
+            # AC2: record per-turn token usage
+            metrics.record_turn(turn, tokens_in, tokens_out)
 
             content_blocks = resp.get("content", [])
             stop_reason = resp.get("stop_reason", "end_turn")
@@ -241,13 +407,19 @@ def run_benchmark(model, bench_name, bench_dir, provider):
                         output += ("\n" if output else "") + stderr
                     tool_results.append({"type": "tool_result", "tool_use_id": tool_id,
                                          "content": output if output else f"(exit {rc})"})
+                    # AC1: record bash call
+                    post.bash(cmd, output, turn)
                 elif name == "edit":
                     path = inp.get("path", "")
-                    rc, stdout, stderr = do_edit(container, path, inp.get("old_str", ""), inp.get("new_str", ""))
+                    old_str = inp.get("old_str", "")
+                    new_str = inp.get("new_str", "")
+                    rc, stdout, stderr = do_edit(container, path, old_str, new_str)
                     if rc == 0:
                         files_edited.append(path)
                     result_text = stdout if rc == 0 else f"ERROR: {stderr}"
                     tool_results.append({"type": "tool_result", "tool_use_id": tool_id, "content": result_text})
+                    # AC1: record edit call
+                    post.edit(path, old_str, new_str, turn)
 
                     # Run test.sh after every edit
                     if rc == 0:
@@ -256,6 +428,7 @@ def run_benchmark(model, bench_name, bench_dir, provider):
                         test_output = tstdout
                         if tstderr:
                             test_output += ("\n" if test_output else "") + tstderr
+                        final_test_output = test_output
                         tool_results.append({"type": "tool_result", "tool_use_id": tool_id + "_test",
                                              "content": f"[test.sh exit={trc}]\n{test_output}"})
 
@@ -280,8 +453,9 @@ def run_benchmark(model, bench_name, bench_dir, provider):
     finally:
         # Final test run
         if final_test_exit != 0:
-            trc, _, _ = docker_exec(container, "cd /app && bash test.sh")
+            trc, fout, ferr = docker_exec(container, "cd /app && bash test.sh")
             final_test_exit = trc
+            final_test_output = fout + ("\n" + ferr if ferr else "")
 
         # Count correct lines vs solution.patch
         correct_lines = 0
@@ -300,6 +474,17 @@ def run_benchmark(model, bench_name, bench_dir, provider):
         emit({"event": "run.end", "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
               "test_exit": final_test_exit, "total_turns": len(turn_events), "correct_lines": correct_lines})
         log_f.close()
+
+        # AC1: write POST end record
+        resolved_flag = (final_test_exit == 0)
+        post.end(resolved_flag, final_test_output, len(turn_events))
+        post.close()
+
+        # AC2: write metrics summary + print token summary
+        cum_in, cum_out, total_tok, cost = metrics.complete()
+        metrics.close()
+        tok_fmt = f"{total_tok:,}"
+        print(f"tokens: {tok_fmt} total (${cost:.4f})", file=sys.stderr)
 
         # Cleanup container
         subprocess.run(["docker", "rm", "-f", container], capture_output=True)
@@ -385,6 +570,11 @@ def run_benchmark(model, bench_name, bench_dir, provider):
 
     score_path = os.path.join(runs_dir, f"{bench_name}.score.json")
     with open(score_path, "w") as f:
+        json.dump(score, f, indent=2)
+
+    # Also write score into the per-run subdir so all artifacts are co-located
+    run_score_path = os.path.join(runs_dir, bench_name, "score.json")
+    with open(run_score_path, "w") as f:
         json.dump(score, f, indent=2)
 
     print(json.dumps(score, indent=2))
