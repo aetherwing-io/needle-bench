@@ -105,7 +105,11 @@
           var turnsToFix = e.turns_to_fix || 0;
           var turnsToDiscovery = e.turns_to_discovery || 0;
 
-          if (!resolved && (turnsToFix <= 1 || turnsToDiscovery === 0)) {
+          // Boot verdict from battery data takes priority over heuristic
+          var bootVerdict = e.boot_verdict || null;
+          if (bootVerdict && bootVerdict !== 'BOOTS') {
+            badges += '<span class="badge-boot-error">' + bootVerdict.replace('_', ' ') + '</span>';
+          } else if (!resolved && (turnsToFix <= 1 || turnsToDiscovery === 0)) {
             badges += '<span class="badge-boot-error">BOOT ERR</span>';
           } else if (!resolved && turnsToFix > 1) {
             badges += '<span class="badge-dnf">DNF</span>';
