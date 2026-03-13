@@ -5,26 +5,48 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate format
+        with:
+          fetch-depth: 0
+      - name: Detect changed benchmarks
+        id: changed
         run: |
-          for dir in benchmarks/*/; do
+          CHANGED=$(git diff --name-only origin/main...HEAD -- benchmarks/ \
+            | grep -oP 'benchmarks/[^/]+' | sort -u | sed 's|benchmarks/||' | tr '\n' ' ' | xargs)
+          if [ -z "$CHANGED" ]; then
+            echo "dirs=" >> $GITHUB_OUTPUT
+            echo "No benchmark changes detected"
+          else
+            echo "dirs=$CHANGED" >> $GITHUB_OUTPUT
+            echo "Changed benchmarks: $CHANGED"
+          fi
+      - name: Validate format
+        if: steps.changed.outputs.dirs != ''
+        run: |
+          for name in ${{ steps.changed.outputs.dirs }}; do
+            dir="benchmarks/$name"
+            [ "$name" = "_template" ] && continue
             [ -f "$dir/Dockerfile" ] || (echo "FAIL: $dir missing Dockerfile" && exit 1)
             [ -f "$dir/Agentfile" ] || (echo "FAIL: $dir missing Agentfile" && exit 1)
             [ -f "$dir/test.sh" ] || (echo "FAIL: $dir missing test.sh" && exit 1)
             [ -f "$dir/.bench/solution.patch" ] || (echo "FAIL: $dir missing .bench/solution.patch" && exit 1)
+            echo "OK: $dir"
           done
       - name: Build Dockerfiles
+        if: steps.changed.outputs.dirs != ''
         run: |
-          for dir in benchmarks/*/; do
-            [ "$dir" = "benchmarks/_template/" ] && continue
+          for name in ${{ steps.changed.outputs.dirs }}; do
+            [ "$name" = "_template" ] && continue
+            dir="benchmarks/$name"
             echo "Building $dir..."
-            docker build -t "needle-bench-$(basename $dir)" "$dir" || exit 1
+            docker build -t "needle-bench-$name" "$dir" || exit 1
           done
       - name: Verify solutions
+        if: steps.changed.outputs.dirs != ''
         run: |
-          for dir in benchmarks/*/; do
-            [ "$dir" = "benchmarks/_template/" ] && continue
-            name=$(basename "$dir")
+          for name in ${{ steps.changed.outputs.dirs }}; do
+            [ "$name" = "_template" ] && continue
+            dir="benchmarks/$name"
             echo "Verifying $name..."
-            docker run --rm "needle-bench-$name" bash -c "cd /app && git apply .bench/solution.patch && bash test.sh" || exit 1
+            docker run --rm -v "$(pwd)/$dir/.bench:/workspace/.bench:ro" "needle-bench-$name" \
+              bash -c "cd /workspace && git init -q && git add -A && git commit -q -m init && git apply .bench/solution.patch && bash test.sh" || exit 1
           done

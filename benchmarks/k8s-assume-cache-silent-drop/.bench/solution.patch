@@ -1,0 +1,35 @@
+diff --git a/main.go b/main.go
+index 62c0ebe..ffd6f90 100644
+--- a/main.go
++++ b/main.go
+@@ -20,6 +20,7 @@ type AssumeCache struct {
+ 	mu      sync.Mutex
+ 	store   map[string]*Object // ground truth from informer
+ 	assumed map[string]*Object // optimistically assumed state
++	onConflict func(key string, assumedVer, informerVer int)
+ }
+ 
+ func NewAssumeCache() *AssumeCache {
+@@ -72,7 +73,10 @@ func (c *AssumeCache) informerUpdate(obj *Object) {
+ 	// Assume() is never notified that their optimistic state is gone.
+ 	if assumed, exists := c.assumed[obj.Key]; exists {
+ 		if obj.Version > assumed.Version {
+-			// Silent drop — no notification to the assumer
++			// FIX: notify the assumer before dropping
++			if c.onConflict != nil {
++				c.onConflict(obj.Key, assumed.Version, obj.Version)
++			}
+ 			delete(c.assumed, obj.Key)
+ 		}
+ 	}
+@@ -92,6 +96,10 @@ var conflictNotified bool
+ 
+ func main() {
+ 	cache := NewAssumeCache()
++	cache.onConflict = func(key string, assumedVer, informerVer int) {
++		fmt.Printf("conflict: %s assumed=%d informer=%d\n", key, assumedVer, informerVer)
++		conflictNotified = true
++	}
+ 
+ 	// Step 1: Object exists in store at version 3
+ 	cache.informerUpdate(&Object{
