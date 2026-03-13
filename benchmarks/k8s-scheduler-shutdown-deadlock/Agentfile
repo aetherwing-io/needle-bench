@@ -1,0 +1,6 @@
+FROM auto
+BOOT haystack boot
+PROMPT "Find and fix the shutdown deadlock in this Go scheduler. The program should exit cleanly within 2 seconds. Run test.sh to verify."
+TOOL sh_run
+LIMIT budget_usd 3
+LIMIT max_turns 25
