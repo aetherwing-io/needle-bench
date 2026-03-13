@@ -1,0 +1,56 @@
+--- a/main.go
++++ b/main.go
+@@ -19,9 +19,14 @@ type Object struct {
+ 	Data    string
+ }
+
++// ConflictCallback is called when an informer update overwrites assumed state.
++// This is the missing half of optimistic concurrency — conflict notification.
++type ConflictCallback func(assumed, update *Object)
++
+ type AssumeCache struct {
+-	mu      sync.Mutex
+-	store   map[string]*Object // ground truth from informer
+-	assumed map[string]*Object // optimistically assumed state
++	mu         sync.Mutex
++	store      map[string]*Object // ground truth from informer
++	assumed    map[string]*Object // optimistically assumed state
++	onConflict ConflictCallback   // called when assumed state is overwritten
+ }
+
+@@ -30,6 +35,13 @@ func NewAssumeCache() *AssumeCache {
+ 		store:   make(map[string]*Object),
+ 		assumed: make(map[string]*Object),
+ 	}
+ }
+
++// OnConflict registers a callback for when assumed state is silently dropped.
++func (c *AssumeCache) OnConflict(cb ConflictCallback) {
++	c.mu.Lock()
++	defer c.mu.Unlock()
++	c.onConflict = cb
++}
++
+ // Assume optimistically stores a version of the object.
+@@ -72,7 +84,11 @@ func (c *AssumeCache) informerUpdate(obj *Object) {
+ 	if assumed, exists := c.assumed[obj.Key]; exists {
+ 		if obj.Version > assumed.Version {
+-			// Silent drop — no notification to the assumer
++			// FIX: Notify the assumer that their optimistic state was
++			// overwritten by a newer informer version.
++			if c.onConflict != nil {
++				c.onConflict(assumed, obj)
++			}
+ 			delete(c.assumed, obj.Key)
+ 		}
+ 	}
+@@ -103,6 +119,11 @@ func main() {
+ 	cache := NewAssumeCache()
+
++	// Register conflict callback — this is the fix
++	cache.OnConflict(func(assumed, update *Object) {
++		conflictNotified = true
++	})
++
+ 	// Step 1: Object exists in store at version 3
+ 	cache.informerUpdate(&Object{
