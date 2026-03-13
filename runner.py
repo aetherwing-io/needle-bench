@@ -177,10 +177,11 @@ class MetricsRecorder:
     def path(self) -> str:
         return self._path
 
-SYSTEM_PROMPT = (
+DEFAULT_SYSTEM_PROMPT = (
     "You are debugging a broken application. Run ./test.sh to see what's failing. "
     "Find the root cause and fix the bug. When test.sh passes, you're done."
 )
+SYSTEM_PROMPT = DEFAULT_SYSTEM_PROMPT
 DEFAULT_INSTANCE = "Run ./test.sh to see the current failure. Read the code, find the bug, fix it."
 
 TOOLS = [
@@ -192,7 +193,7 @@ TOOLS = [
 
 
 def parse_agentfile(path):
-    cfg = {"tools": [], "limits": {}, "prompt": None, "from_image": None}
+    cfg = {"tools": [], "limits": {}, "prompt": None, "from_image": None, "boot": None}
     with open(path) as f:
         for line in f:
             line = line.strip()
@@ -209,6 +210,8 @@ def parse_agentfile(path):
                 cfg["limits"][k] = int(v)
             elif directive == "PROMPT":
                 cfg["prompt"] = rest
+            elif directive == "BOOT":
+                cfg["boot"] = rest
     return cfg
 
 
@@ -224,7 +227,12 @@ def solution_files(bench_dir):
 
 
 def docker_exec(container, cmd):
-    r = subprocess.run(["docker", "exec", container, "bash", "-c", cmd],
+    # Inject scoped secrets via env — resolved from host env, never in image
+    env_flags = []
+    gh_token = os.environ.get("GH_NEEDLE_BENCH_PROOF", "")
+    if gh_token:
+        env_flags = ["-e", f"GH_NEEDLE_BENCH_PROOF={gh_token}"]
+    r = subprocess.run(["docker", "exec"] + env_flags + [container, "bash", "-c", cmd],
                        capture_output=True, text=True, timeout=120)
     return r.returncode, r.stdout[-4000:] if len(r.stdout) > 4000 else r.stdout, r.stderr[-2000:] if len(r.stderr) > 2000 else r.stderr
 
@@ -246,9 +254,9 @@ def do_edit(container, path, old_str, new_str):
     return r.returncode, r.stdout.strip(), r.stderr.strip()
 
 
-def call_anthropic(model, messages, api_key):
+def call_anthropic(model, messages, api_key, system_prompt=None):
     body = json.dumps({
-        "model": model, "max_tokens": 4096, "system": SYSTEM_PROMPT,
+        "model": model, "max_tokens": 4096, "system": system_prompt or SYSTEM_PROMPT,
         "tools": TOOLS, "messages": messages,
     }).encode()
     req = urllib.request.Request(ANTHROPIC_ENDPOINT, data=body, headers={
@@ -260,7 +268,8 @@ def call_anthropic(model, messages, api_key):
         return json.loads(resp.read())
 
 
-def call_google(model, messages, api_key):
+def call_google(model, messages, api_key, system_prompt=None):
+    _sys_prompt = system_prompt or SYSTEM_PROMPT
     contents = []
     for m in messages:
         role = "user" if m["role"] == "user" else "model"
@@ -283,7 +292,7 @@ def call_google(model, messages, api_key):
     ]}]
     body = json.dumps({
         "contents": contents, "tools": google_tools,
-        "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+        "systemInstruction": {"parts": [{"text": _sys_prompt}]},
         "generationConfig": {"maxOutputTokens": 4096},
     }).encode()
     url = GOOGLE_ENDPOINT.format(model=model) + f"?key={api_key}"
@@ -367,7 +376,7 @@ def _anthropic_messages_to_openai(messages):
     return oai_messages
 
 
-def call_openrouter(model, messages, api_key):
+def call_openrouter(model, messages, api_key, system_prompt=None):
     """Call any model via OpenRouter's OpenAI-compatible API with tool support."""
     or_model = OPENROUTER_MODELS.get(model, model)
 
@@ -385,6 +394,8 @@ def call_openrouter(model, messages, api_key):
     ]
 
     oai_messages = _anthropic_messages_to_openai(messages)
+    _sys = system_prompt or SYSTEM_PROMPT
+    oai_messages = [{"role": "system", "content": _sys}] + oai_messages
 
     payload = json.dumps({
         "model": or_model,
@@ -439,13 +450,13 @@ def call_openrouter(model, messages, api_key):
     }
 
 
-def call_model(model, messages, provider):
+def call_model(model, messages, provider, system_prompt=None):
     if provider == "anthropic":
-        return call_anthropic(model, messages, os.environ["ANTHROPIC_API_KEY"])
+        return call_anthropic(model, messages, os.environ["ANTHROPIC_API_KEY"], system_prompt=system_prompt)
     elif provider == "google":
-        return call_google(model, messages, os.environ["GOOGLE_API_KEY"])
+        return call_google(model, messages, os.environ["GOOGLE_API_KEY"], system_prompt=system_prompt)
     elif provider == "openrouter":
-        return call_openrouter(model, messages, os.environ["OPENROUTER_API_KEY"])
+        return call_openrouter(model, messages, os.environ["OPENROUTER_API_KEY"], system_prompt=system_prompt)
     else:
         raise ValueError(f"Unknown provider: {provider}")
 
@@ -503,8 +514,18 @@ def run_benchmark(model, bench_name, bench_dir, provider):
 
     instance_prompt = cfg["prompt"] if cfg["prompt"] else DEFAULT_INSTANCE
 
+    # Build system prompt: use Agentfile PROMPT if present, else default
+    system_prompt = cfg["prompt"] if cfg["prompt"] else DEFAULT_SYSTEM_PROMPT
+
+    # If Agentfile has BOOT directive, run it in the container and prepend output
+    if cfg["boot"]:
+        _brc, _bout, _berr = docker_exec(container, cfg["boot"])
+        boot_output = _bout.strip()
+        if boot_output:
+            system_prompt = boot_output + "\n\n" + system_prompt
+
     # POST start: capture initial test output before agent touches anything
-    _irc, _istdout, _istderr = docker_exec(container, "cd /app && bash test.sh")
+    _irc, _istdout, _istderr = docker_exec(container, "cd /workspace && bash test.sh")
     initial_test_output = _istdout + ("\n" + _istderr if _istderr else "")
     post.start(initial_test_output, instance_prompt)
 
@@ -520,7 +541,7 @@ def run_benchmark(model, bench_name, bench_dir, provider):
             if total_tokens_in + total_tokens_out >= max_tokens:
                 break
 
-            resp = call_model(model, messages, provider)
+            resp = call_model(model, messages, provider, system_prompt=system_prompt)
             tokens_in = resp.get("usage", {}).get("input_tokens", 0)
             tokens_out = resp.get("usage", {}).get("output_tokens", 0)
             total_tokens_in += tokens_in
@@ -575,7 +596,7 @@ def run_benchmark(model, bench_name, bench_dir, provider):
 
                     # Run test.sh after every edit
                     if rc == 0:
-                        trc, tstdout, tstderr = docker_exec(container, "cd /app && bash test.sh")
+                        trc, tstdout, tstderr = docker_exec(container, "cd /workspace && bash test.sh")
                         test_exit = trc
                         test_output = tstdout
                         if tstderr:
@@ -605,7 +626,7 @@ def run_benchmark(model, bench_name, bench_dir, provider):
     finally:
         # Final test run
         if final_test_exit != 0:
-            trc, fout, ferr = docker_exec(container, "cd /app && bash test.sh")
+            trc, fout, ferr = docker_exec(container, "cd /workspace && bash test.sh")
             final_test_exit = trc
             final_test_output = fout + ("\n" + ferr if ferr else "")
 
@@ -616,7 +637,7 @@ def run_benchmark(model, bench_name, bench_dir, provider):
             with open(patch_path) as f:
                 patch_adds = [l[1:].strip() for l in f if l.startswith("+") and not l.startswith("+++")]
             # Get agent's diff
-            drc, diff_out, _ = docker_exec(container, "cd /app && git diff 2>/dev/null || diff -ruN /app.orig /app 2>/dev/null")
+            drc, diff_out, _ = docker_exec(container, "cd /workspace && git diff 2>/dev/null || diff -ruN /workspace.orig /workspace 2>/dev/null")
             agent_adds = [l[1:].strip() for l in diff_out.splitlines() if l.startswith("+") and not l.startswith("+++")]
             for line in patch_adds:
                 if line and line in agent_adds:
@@ -650,7 +671,7 @@ def run_benchmark(model, bench_name, bench_dir, provider):
     turns_to_discovery = max_turns
     for te in turn_events:
         for f in te.get("files_edited", []) + te.get("files_read", []):
-            basename = f.lstrip("/").replace("app/", "", 1) if f.startswith("/app/") else f
+            basename = f.lstrip("/").replace("workspace/", "", 1) if f.startswith("/workspace/") else (f.lstrip("/").replace("app/", "", 1) if f.startswith("/app/") else f)
             if any(basename == sf or f.endswith(sf) for sf in sol_files):
                 turns_to_discovery = te["turn"]
                 break
@@ -671,7 +692,7 @@ def run_benchmark(model, bench_name, bench_dir, provider):
         read = te.get("files_read", [])
         is_productive = False
         for f in edited + read:
-            basename = f.lstrip("/").replace("app/", "", 1) if f.startswith("/app/") else f
+            basename = f.lstrip("/").replace("workspace/", "", 1) if f.startswith("/workspace/") else (f.lstrip("/").replace("app/", "", 1) if f.startswith("/app/") else f)
             if any(basename == sf or f.endswith(sf) for sf in sol_files):
                 is_productive = True
                 break
@@ -686,7 +707,7 @@ def run_benchmark(model, bench_name, bench_dir, provider):
             all_edited.add(f)
     false_pos = 0
     for f in all_edited:
-        basename = f.lstrip("/").replace("app/", "", 1) if f.startswith("/app/") else f
+        basename = f.lstrip("/").replace("workspace/", "", 1) if f.startswith("/workspace/") else (f.lstrip("/").replace("app/", "", 1) if f.startswith("/app/") else f)
         if not any(basename == sf or f.endswith(sf) for sf in sol_files):
             if "test" not in f.lower():
                 false_pos += 1

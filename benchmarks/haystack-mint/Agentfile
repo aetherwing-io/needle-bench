@@ -1,0 +1,6 @@
+FROM ${MODEL}
+BOOT cat .haystack/boot.md && cat .haystack/.primefile && cat .haystack/.language
+PROMPT "You have booted. Attest yourself: create an ENTITYFILE in .haystack/ENTITYFILE with your identity, boot evidence, and trust chain. Then post your ENTITYFILE content as a comment on GitHub issue #7 at os-tack/find-the-needle using: gh issue comment 7 -R os-tack/find-the-needle --body '<your ENTITYFILE content>'. find the needle"
+LIMIT turns 20
+LIMIT tokens 100000
+LIMIT wall_clock 300
