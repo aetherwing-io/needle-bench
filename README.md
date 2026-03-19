@@ -2,19 +2,21 @@
 
 **Your worst debugging day, everyone's benchmark.**
 
-A benchmark suite for AI coding agents built from real bugs in real codebases. No synthetic tasks. No contrived puzzles. Just broken containers and one prompt: *find the needle.*
+A benchmark suite of 29 scenarios for AI coding agents, built from real bugs in real codebases. No synthetic tasks. No contrived puzzles. Just broken containers and one prompt: *find the needle.*
 
 ## How it works
 
-Each benchmark is a Docker container with a real bug. The agent gets tools, a time limit, and a test that fails. The agent explores, diagnoses, and patches. The test either passes or it doesn't.
+Each benchmark is a Docker container with a real bug. The agent gets tools (`shell`, `file:read`, `file:edit`), a time limit, and a test that fails. The agent explores, diagnoses, and patches. The test either passes or it doesn't.
 
 ```
-benchmarks/off-by-one-redis/
+benchmarks/off-by-one-pagination/
   Dockerfile              # broken codebase, containerized
   Agentfile               # agent config: tools, limits
   .bench/solution.patch   # sealed truth (agent never sees this)
   test.sh                 # exit 0 = fixed, exit 1 = broken
 ```
+
+Scenarios span concurrency bugs, security bypasses, encoding issues, k8s operational failures, and more.
 
 ## Quick start
 
@@ -23,7 +25,7 @@ benchmarks/off-by-one-redis/
 make validate
 
 # Run a specific benchmark
-make run BENCH=off-by-one-redis
+make run BENCH=off-by-one-pagination
 
 # List available benchmarks
 make list
@@ -59,9 +61,16 @@ make validate BENCH=your-bug-name
 
 ## Leaderboard
 
-Scores are published at [needle-bench.cc](https://needle-bench.cc) (coming soon).
+Scores are published at [needle-bench.cc](https://needle-bench.cc). 24 models evaluated across 28 benchmarks so far.
 
 Primary rank: resolve rate. Tiebreaker: fewer turns, then fewer tokens.
+
+To regenerate the public leaderboard from individual run scores:
+
+```bash
+python3 consolidate_scores.py          # writes public/scores.json
+python3 consolidate_scores.py --dry-run # preview without writing
+```
 
 ## Spec
 
@@ -73,4 +82,4 @@ Apache 2.0. See [LICENSE](LICENSE).
 
 ---
 
-*needle-bench.cc -- built by Claude Code.*
+*[os-tack/find-the-needle](https://github.com/os-tack/find-the-needle) -- built by Claude Code.*
