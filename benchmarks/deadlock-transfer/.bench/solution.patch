@@ -1,22 +1,23 @@
 --- a/app/TransferService.java
 +++ b/app/TransferService.java
-@@ -13,9 +13,14 @@ public class TransferService {
-         return new TransferResult(false, "Amount must be positive");
-     }
-
+@@ -22,10 +22,16 @@
+         }
+ 
 -        // Lock the source account first, then the destination
 -        synchronized (from.getLock()) {
 -            // Small delay to increase deadlock probability
+-            try { Thread.sleep(1); } catch (InterruptedException e) {
 +        // Lock accounts in a consistent order based on ID to prevent deadlock.
 +        // Always lock the account with the smaller ID first.
 +        Account first = from.getId().compareTo(to.getId()) < 0 ? from : to;
 +        Account second = from.getId().compareTo(to.getId()) < 0 ? to : from;
 +
 +        synchronized (first.getLock()) {
-+            // Small delay — no longer causes deadlock since lock order is consistent
-             try { Thread.sleep(1); } catch (InterruptedException e) {
++            try { Thread.sleep(1); } catch (InterruptedException e) {
                  Thread.currentThread().interrupt();
              }
+ 
 -            synchronized (to.getLock()) {
 +            synchronized (second.getLock()) {
                  if (from.getBalance() < amount) {
+                     failedTransfers++;

@@ -1,14 +1,15 @@
---- a/wal.go
-+++ b/wal.go
-@@ -76,6 +76,8 @@ func (w *WAL) Append(key, value string) error {
- 	record := encodeEntry(key, value)
-
+--- a/app/wal.go
++++ b/app/wal.go
+@@ -82,11 +82,19 @@ func (w *WAL) Append(key, value string) error {
  	n, err := w.buf.Write(record)
-+	if err != nil {
-+		return fmt.Errorf("WAL append: %w", err)
-+	}
-+	w.currentOffset += int64(n)
-+
+ 	if err != nil {
+ 		return fmt.Errorf("WAL append: %w", err)
+ 	}
+ 	w.currentOffset += int64(n)
+ 
+-	// Entry is in the buffer — it will be fsynced by the background
+-	// goroutine on the next cycle. Returning nil here means the
+-	// caller can treat this as acknowledged.
 +	// Flush buffer to the OS and fsync BEFORE returning success.
 +	// This ensures the entry is durable on disk before the caller
 +	// sends an acknowledgment to the client.
@@ -20,15 +21,5 @@
 +	}
 +	w.lastSyncOffset = w.currentOffset
 +
-+	return nil
-+}
--	if err != nil {
--		return fmt.Errorf("WAL append: %w", err)
--	}
--	w.currentOffset += int64(n)
--
--	// Entry is in the buffer — it will be fsynced by the background
--	// goroutine on the next cycle. Returning nil here means the
--	// caller can treat this as acknowledged.
--	return nil
--}
+ 	return nil
+ }

@@ -1,7 +1,7 @@
 --- a/app/models.go
 +++ b/app/models.go
-@@ -20,14 +20,16 @@ type UserV1 struct {
-
+@@ -19,14 +19,16 @@
+ 
 -// UserV2 represents the v2 API user response.
 -// BUG: Several fields from v1 are missing (avatar_url, bio, location).
 -// The v2 struct was created by copying v1 and adding new fields,
@@ -20,8 +20,8 @@
  	Department  string    `json:"department"`
  	PhoneNumber string    `json:"phone_number"`
  	IsActive    bool      `json:"is_active"`
-@@ -68,8 +70,7 @@ func (u *InternalUser) ToV1() UserV1 {
-
+@@ -68,14 +70,14 @@
+ 
 -// ToV2 converts internal user to v2 API response.
 -// BUG: Does not include avatar_url, bio, or location because
 -// UserV2 struct doesn't have those fields.

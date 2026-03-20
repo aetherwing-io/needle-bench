@@ -1,7 +1,6 @@
 --- a/src/main.rs
 +++ b/src/main.rs
-@@ -11,10 +11,8 @@ const BUFFER_SIZE: usize = 65536; // 64KB
- 
+@@ -11,9 +11,7 @@ const BUFFER_SIZE: usize = 65536; // 64KB
  fn process_file(input_path: &str, output_path: &str) -> io::Result<()> {
      let mut file = fs::File::open(input_path)?;
 -    let mut buffer = [0u8; BUFFER_SIZE];

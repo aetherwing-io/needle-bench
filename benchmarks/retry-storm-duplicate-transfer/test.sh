@@ -12,18 +12,40 @@ python3 app/models.py
 supervisord -c app/supervisord.conf &
 sleep 2
 
-# Configure chaos: delay responses by 2 seconds (gateway timeout is 1s)
+# Wait for all services to be healthy
+for svc_port in 8080 8081 8082; do
+    for i in 1 2 3 4 5; do
+        if curl -sf http://localhost:$svc_port/health > /dev/null 2>&1; then
+            break
+        fi
+        sleep 1
+    done
+done
+
+# Configure chaos: delay responses by 3 seconds (gateway timeout is 1s).
+# This ensures the gateway always times out and retries, while the processor
+# is still working on the first request (debit committed, idempotency not yet recorded).
 curl -s -X POST http://localhost:8082/config \
     -H "Content-Type: application/json" \
-    -d '{"drop_response_ms": 2000}'
+    -d '{"drop_response_ms": 3000}'
 
-# Send transfer A->B for 500 (gateway will retry on timeout)
+# Send the transfer request in background — it will retry 3 times on timeout
 curl -s http://localhost:8080/transfer \
     -H "Content-Type: application/json" \
-    -d '{"from":"A","to":"B","amount":500,"idempotency_key":"txn-001"}' || true
+    -d '{"from":"A","to":"B","amount":500,"idempotency_key":"txn-001"}' &
 
-# Wait for all retries to complete through the proxy
-sleep 3
+# Also send a duplicate directly to the processor (via chaos proxy) to
+# guarantee concurrent execution during the debit-to-idempotency window.
+# The 50ms sleep in the processor between debit and idempotency check
+# creates a race window we exploit by sending requests in rapid succession.
+sleep 0.3
+curl -s -X POST http://localhost:8081/execute \
+    -H "Content-Type: application/json" \
+    -d '{"from":"A","to":"B","amount":500,"idempotency_key":"txn-001"}' &
+
+# Wait for all curl processes and proxy delays to complete
+wait
+sleep 5
 
 # Check balances
 BALANCE_A=$(curl -s http://localhost:8080/balance/A | python3 -c "import sys,json; print(json.load(sys.stdin)['balance'])")
@@ -33,9 +55,18 @@ BALANCE_B=$(curl -s http://localhost:8080/balance/B | python3 -c "import sys,jso
 kill $(cat /tmp/supervisord.pid) 2>/dev/null || true
 
 echo "A=$BALANCE_A B=$BALANCE_B"
+TOTAL=$((BALANCE_A + BALANCE_B))
+echo "Total=$TOTAL (should be 2000)"
+
+# Check that money is conserved: A+B should always equal 2000
+# and specifically A=500, B=1500 for a single 500 transfer
+if [ "$TOTAL" -ne 2000 ]; then
+    echo "FAIL: money not conserved (total=$TOTAL, expected 2000) — duplicate transfer executed"
+    exit 1
+fi
 
 if [ "$BALANCE_A" != "500" ] || [ "$BALANCE_B" != "1500" ]; then
-    echo "FAIL: duplicate transfer (A=$BALANCE_A, B=$BALANCE_B)"
+    echo "FAIL: duplicate transfer (A=$BALANCE_A, B=$BALANCE_B, expected A=500 B=1500)"
     exit 1
 fi
 echo "PASS"

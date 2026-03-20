@@ -1,19 +1,17 @@
 --- a/app/main.go
 +++ b/app/main.go
-@@ -1,8 +1,9 @@
+@@ -1,6 +1,7 @@
  package main
-
+ 
  import (
 +	"context"
  	"encoding/json"
  	"fmt"
  	"log"
- 	"net/http"
- 	"os"
-@@ -49,10 +50,12 @@ func computeHandler(w http.ResponseWriter, r *http.Request) {
-
+@@ -58,12 +59,14 @@
+ 
  	resultCh := make(chan ComputeResult, 1)
-
+ 
 -	// BUG: goroutine spawned without context cancellation awareness.
 -	// If the client disconnects, this goroutine keeps running forever.
 +	ctx := r.Context()
@@ -21,13 +19,18 @@
  	go func() {
  		atomic.AddInt64(&activeGoroutines, 1)
  		defer atomic.AddInt64(&activeGoroutines, -1)
-
+ 
 -		result := performComputation(req)
+-		resultCh <- result
 +		result := performComputation(ctx, req)
- 		resultCh <- result
++		select {
++		case resultCh <- result:
++		case <-ctx.Done():
++		}
  	}()
-
-@@ -60,7 +63,7 @@ func computeHandler(w http.ResponseWriter, r *http.Request) {
+ 
+-	// Wait for result — but if client disconnects, we just return.
+-	// The goroutine above keeps running and leaks.
  	select {
  	case result := <-resultCh:
  		w.Header().Set("Content-Type", "application/json")
@@ -36,17 +39,19 @@
 -		http.Error(w, "computation timed out", http.StatusGatewayTimeout)
 -		// goroutine still running — leaked
 +	case <-ctx.Done():
-+		// Client disconnected — goroutine will see ctx.Done() and exit
 +		http.Error(w, "client disconnected", 499)
  	}
  }
-
+ 
 -func performComputation(req ComputeRequest) ComputeResult {
 +func performComputation(ctx context.Context, req ComputeRequest) ComputeResult {
  	start := time.Now()
  	sum := 0.0
-
+ 
  	for i := 0; i < req.Iterations; i++ {
+-		// Simulate heavy work
+-		for j := 0; j < 10000; j++ {
+-			sum += float64(i*j) / float64(j+1)
 +		select {
 +		case <-ctx.Done():
 +			return ComputeResult{
@@ -55,12 +60,12 @@
 +				Iters:    i,
 +			}
 +		default:
-+		}
- 		// Simulate heavy work
- 		for j := 0; j < 10000; j++ {
- 			sum += float64(i*j) / float64(j+1)
  		}
 -		// This is where we SHOULD check for cancellation
 -		// but there's no context being passed
++		for j := 0; j < 10000; j++ {
++			sum += float64(i*j) / float64(j+1)
++		}
  		time.Sleep(time.Duration(req.DelayMs) * time.Millisecond)
  	}
+ 

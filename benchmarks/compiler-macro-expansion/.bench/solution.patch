@@ -1,12 +1,13 @@
 --- a/src/codegen.rs
 +++ b/src/codegen.rs
-@@ -72,8 +72,8 @@ fn generate_getter(field: &Field) -> String {
+@@ -71,8 +71,8 @@ fn generate_getter(field: &Field) -> String {
+         }
          FieldType::Ref(type_name) => {
 -            // Ref types: return the nested struct via accessor
 +            // Ref types: return a reference to the nested struct
              format!(
 -                "    pub fn {}(&self) -> {} {{\n        &self.{}\n    }}\n\n",
--                name, type_name, name
 +                "    pub fn {}(&self) -> &{} {{\n        &self.{}\n    }}\n\n",
-+                name, type_name, name
+                 name, type_name, name
              )
+         }

@@ -1,6 +1,7 @@
 --- a/app/ratelimiter.ts
 +++ b/app/ratelimiter.ts
-@@ -25,17 +25,10 @@ export class RateLimiter {
+@@ -21,21 +21,12 @@ export class RateLimiter {
+ 
    /**
     * Get the client IP address from the request.
 -   *

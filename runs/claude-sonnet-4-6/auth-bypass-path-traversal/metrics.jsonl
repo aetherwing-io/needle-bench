@@ -5,3 +5,5 @@
 {"event": "token.usage", "turn": 5, "input_tokens": 4575, "output_tokens": 311, "cumulative_input": 13233, "cumulative_output": 955}
 {"event": "token.usage", "turn": 6, "input_tokens": 4900, "output_tokens": 65, "cumulative_input": 18133, "cumulative_output": 1020}
 {"event": "token.usage", "turn": 7, "input_tokens": 5002, "output_tokens": 59, "cumulative_input": 23135, "cumulative_output": 1079}
+{"event": "token.usage", "turn": 8, "input_tokens": 5458, "output_tokens": 402, "cumulative_input": 28593, "cumulative_output": 1481}
+{"event": "token.usage", "turn": 9, "input_tokens": 5875, "output_tokens": 62, "cumulative_input": 34468, "cumulative_output": 1543}

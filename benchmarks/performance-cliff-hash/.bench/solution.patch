@@ -1,6 +1,7 @@
 --- a/src/Product.java
 +++ b/src/Product.java
-@@ -28,7 +28,7 @@ public class Product {
+@@ -27,9 +27,8 @@
+ 
      /**
 -     * Custom hashCode for use in our ProductCache.
 -     * Groups products by their category for cache-friendly bucket placement.
@@ -13,7 +14,8 @@
      }
 --- a/src/ProductCache.java
 +++ b/src/ProductCache.java
-@@ -91,15 +91,8 @@ public class ProductCache {
+@@ -92,18 +92,9 @@
+ 
 -    /**
 -     * Get the bucket index for a SKU lookup.
 -     * Must match the same bucket as put() for the same SKU.
@@ -31,6 +33,6 @@
 -        // Reconstruct the product to compute its hashCode
 -        Product dummy = ProductGenerator.generate(index);
 -        return getBucketIndex(dummy);
-+        // Now that hashCode() uses SKU, we can hash the SKU directly
++        // Now that hashCode() uses SKU, hash the SKU string directly.
 +        return Math.abs(sku.hashCode()) % capacity;
      }

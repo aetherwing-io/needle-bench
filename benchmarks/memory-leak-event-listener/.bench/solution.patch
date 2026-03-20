@@ -1,6 +1,6 @@
 --- a/app/processor.js
 +++ b/app/processor.js
-@@ -8,14 +8,6 @@ class DataProcessor {
+@@ -7,22 +7,11 @@ class DataProcessor {
    process(data) {
 -    // BUG: Every call to process() registers a NEW listener on the event bus
 -    // but never removes it. Over time, memory grows unboundedly as closures
@@ -21,7 +21,7 @@
 +      console.error(`Processing error for batch ${this.processedCount}: ${validated.errors.join(', ')}`);
        return { success: false, errors: validated.errors };
      }
-
+ 
      this.eventBus.emit('data:validated', validated.data);
 +    this._handleValidated(validated.data, data);
      this.processedCount++;

@@ -1,21 +1,22 @@
 --- a/app/inventory.ts
 +++ b/app/inventory.ts
-@@ -37,6 +37,10 @@
-
+@@ -35,6 +35,10 @@ export class Inventory {
+     }
+ 
      const previousQuantity = product.quantity;
 +    if (product.quantity + adjustment < 0) {
 +      throw new Error(`Adjustment would result in negative inventory (${product.quantity} + ${adjustment} = ${product.quantity + adjustment})`);
 +    }
 +
      product.quantity += adjustment;
-
+ 
      return {
 --- a/app/routes.ts
 +++ b/app/routes.ts
-@@ -55,7 +55,14 @@
+@@ -54,7 +54,12 @@ export async function handleInventory(
        return;
      }
-
+ 
 -    const result = inventory.adjustQuantity(sku, quantity);
 -    res.end(JSON.stringify(result));
 +    try {

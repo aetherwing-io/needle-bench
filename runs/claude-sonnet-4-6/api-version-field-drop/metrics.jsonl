@@ -3,3 +3,4 @@
 {"event": "token.usage", "turn": 3, "input_tokens": 2663, "output_tokens": 151, "cumulative_input": 4635, "cumulative_output": 462}
 {"event": "token.usage", "turn": 4, "input_tokens": 5307, "output_tokens": 474, "cumulative_input": 9942, "cumulative_output": 936}
 {"event": "token.usage", "turn": 5, "input_tokens": 5795, "output_tokens": 83, "cumulative_input": 15737, "cumulative_output": 1019}
+{"event": "token.usage", "turn": 6, "input_tokens": 6052, "output_tokens": 614, "cumulative_input": 21789, "cumulative_output": 1633}

@@ -1,26 +1,25 @@
 --- a/app/server.py
 +++ b/app/server.py
-@@ -77,8 +77,9 @@ class CatalogHandler(BaseHTTPRequestHandler):
-
+@@ -87,8 +87,8 @@ class CatalogHandler(BaseHTTPRequestHandler):
+ 
          updated = store.update_product(product_id, data)
-
+ 
 -        # BUG: We update the store but never invalidate the cache.
 -        # The cache still has the old product data and will serve it
 -        # until the TTL expires (up to 5 minutes of stale reads).
 +        # Invalidate cached product and product list
 +        cache.delete(f'products:{product_id}')
 +        cache.delete('products:list')
-
+ 
          self._json_response(200, updated)
-
-@@ -86,9 +87,8 @@ class CatalogHandler(BaseHTTPRequestHandler):
+@@ -96,8 +96,7 @@ class CatalogHandler(BaseHTTPRequestHandler):
      def _create_product(self, data):
          product = store.create_product(data)
-
+ 
 -        # BUG: We create a new product but don't invalidate the list cache.
 -        # GET /products will return the stale list (missing the new product)
 -        # until the cache TTL expires.
 +        # Invalidate the product list cache so new product is visible
 +        cache.delete('products:list')
-
+ 
          self._json_response(201, product)

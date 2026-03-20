@@ -1,7 +1,7 @@
 #!/bin/sh
 # Test for data corruption in concurrent file writer.
 # Writes a file using multiple concurrent threads and verifies
-# each segment contains the expected deterministic fill pattern.
+# each segment is owned by exactly one worker (no overlapping assignments).
 
 set -e
 
@@ -10,20 +10,45 @@ OUTPUT=/tmp/concurrent_test.dat
 
 echo "=== Concurrent Write Integrity Test ==="
 
-# Run the concurrent write 5 times — race conditions are probabilistic
-for run in 1 2 3 4 5; do
-    rm -f "$OUTPUT"
-    concurrent-writer write "$OUTPUT"
+# Run the concurrent write and capture stderr (worker assignment info)
+rm -f "$OUTPUT"
+concurrent-writer write "$OUTPUT" 2>/tmp/concurrent_write_log.txt
 
-    if ! concurrent-writer verify "$OUTPUT"; then
-        echo "FAIL: Corruption detected on run $run"
-        FAIL=1
-        break
+# Test 1: Basic data integrity (fill pattern check)
+if ! concurrent-writer verify "$OUTPUT"; then
+    echo "FAIL: Corruption detected in fill pattern"
+    FAIL=1
+fi
+
+# Test 2: Check for overlapping segment assignments.
+# Each segment should be assigned to exactly one worker. If any segment
+# appears in multiple workers' assignment lists, we have a data race
+# (even if the fill pattern happens to be the same, concurrent writes
+# to the same file offset are undefined behavior).
+echo "--- Checking segment assignment overlap ---"
+
+# Parse worker segment assignments from the log
+# Format: "Worker N completed: segments [a, b, c, ...]"
+OVERLAP_FOUND=0
+ALL_SEGMENTS=""
+for seg_num in $(sed -n 's/.*segments \[\(.*\)\]/\1/p' /tmp/concurrent_write_log.txt | tr ',' '\n' | tr -d ' []'); do
+    if echo "$ALL_SEGMENTS" | grep -qw "$seg_num"; then
+        echo "FAIL: Segment $seg_num is assigned to multiple workers (overlapping write)"
+        OVERLAP_FOUND=1
     fi
-    echo "Run $run: OK"
+    ALL_SEGMENTS="$ALL_SEGMENTS $seg_num"
 done
 
-rm -f "$OUTPUT"
+if [ "$OVERLAP_FOUND" -eq 1 ]; then
+    echo "FAIL: Overlapping segment assignments detected — concurrent writes to same offsets"
+    echo "Worker assignments:"
+    cat /tmp/concurrent_write_log.txt
+    FAIL=1
+else
+    echo "OK: No overlapping segment assignments"
+fi
+
+rm -f "$OUTPUT" /tmp/concurrent_write_log.txt
 
 if [ $FAIL -eq 0 ]; then
     echo "PASS: All concurrent write runs produced correct output"

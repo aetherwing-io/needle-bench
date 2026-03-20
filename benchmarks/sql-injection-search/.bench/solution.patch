@@ -1,7 +1,6 @@
 --- a/app/search.py
 +++ b/app/search.py
-@@ -10,17 +10,18 @@ class SearchEngine:
-     def search(self, query, category=None):
+@@ -11,18 +11,17 @@
          """
          Search for products matching the query string.
          Optionally filter by category.
@@ -12,13 +11,16 @@
 -        sql = f"SELECT id, name, description, price, category, in_stock FROM products WHERE name LIKE '%{query}%'"
 +        sql = "SELECT id, name, description, price, category, in_stock FROM products WHERE name LIKE ?"
 +        params = [f'%{query}%']
-
+ 
          if category:
 -            sql += f" AND category = '{category}'"
 +            sql += " AND category = ?"
 +            params.append(category)
-
+ 
          sql += " ORDER BY name"
-
+ 
 -        return self.db.execute_raw(sql)
 +        return self.db.execute(sql, tuple(params))
+ 
+     def search_by_price_range(self, min_price, max_price):
+         """Search products within a price range (safely parameterized)."""

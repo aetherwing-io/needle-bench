@@ -1,15 +1,12 @@
-{"event": "run.start", "timestamp": "2026-03-20T03:00:21Z", "benchmark": "haystack-boot", "model": "claude-sonnet-4-6", "has_prompt": false, "solution_files": []}
-{"event": "turn", "turn": 1, "files_edited": [], "files_read": ["/", "/workspace/./test.sh", "/", "/workspace/\"*.sh\"", "/workspace/\"*.py\"", "/workspace/\"*.js\"", "/workspace/\"*.ts\"", "/workspace/\"*.go\"", "/workspace/\"*.rb\"", "/workspace/\"*.java\""], "tokens_in": 805, "tokens_out": 193, "test_exit": null}
-{"event": "turn", "turn": 2, "files_edited": [], "files_read": ["/workspace", "/workspace/./test.sh", "/workspace/"], "tokens_in": 1115, "tokens_out": 99, "test_exit": null}
-{"event": "turn", "turn": 3, "files_edited": [], "files_read": ["/workspace/test.sh"], "tokens_in": 1281, "tokens_out": 56, "test_exit": null}
-{"event": "turn", "turn": 4, "files_edited": [], "files_read": ["/workspace/.haystack/"], "tokens_in": 1761, "tokens_out": 63, "test_exit": null}
-{"event": "turn", "turn": 5, "files_edited": [], "files_read": ["/workspace/.haystack/audit.jsonl", "/workspace/.haystack/boot.md", "/workspace/.haystack/.primefile", "/workspace/.haystack/.language", "/workspace/.haystack/HUMANFILE", "/workspace/.haystack/identity_counter"], "tokens_in": 2099, "tokens_out": 192, "test_exit": null}
-{"event": "turn", "turn": 6, "files_edited": [], "files_read": ["/workspace/.haystack/needles/", "/workspace/.haystack/needles/*"], "tokens_in": 2779, "tokens_out": 103, "test_exit": null}
-{"event": "turn", "turn": 7, "files_edited": [], "files_read": ["/workspace/.haystack/audit.jsonl"], "tokens_in": 2950, "tokens_out": 136, "test_exit": null}
-{"event": "turn", "turn": 8, "files_edited": [], "files_read": ["/workspace/.haystack/audit.jsonl"], "tokens_in": 3100, "tokens_out": 62, "test_exit": null}
-{"event": "turn", "turn": 9, "files_edited": [], "files_read": ["/workspace.orig/.haystack/"], "tokens_in": 3186, "tokens_out": 119, "test_exit": null}
-{"event": "turn", "turn": 10, "files_edited": [], "files_read": ["/workspace/.haystack/audit.jsonl", "/workspace/{\"event\":\"boot\",\"verb\":\":boot\",\"tier\":1,\"layer\":\"kernel\",\"kernel\":\"@haystack.prime\",\"version\":\"bench\",\"timestamp\":\"2026-03-13T00:00:00Z\",\"status\":\"ok\"}", "/workspace/{\"event\":\"tack.resolved\",\"verb\":\":verify\",\"tier\":1,\"resolution\":\"haystack", "/workspace/confidence\",\"level\":1.00,\"timestamp\":\"2026-03-13T00:00:03Z\",\"status\":\"ok\"}"], "tokens_in": 3580, "tokens_out": 375, "test_exit": null}
-{"event": "turn", "turn": 11, "files_edited": [], "files_read": ["/workspace/.haystack/ENTITYFILE1", "/workspace/@haystack.prime+1", "/workspace/@haystack.prime+1"], "tokens_in": 3970, "tokens_out": 118, "test_exit": null}
-{"event": "turn", "turn": 12, "files_edited": [], "files_read": ["/workspace", "/workspace/./test.sh"], "tokens_in": 4103, "tokens_out": 62, "test_exit": null}
-{"event": "turn", "turn": 13, "files_edited": [], "files_read": [], "tokens_in": 4181, "tokens_out": 278, "test_exit": null}
-{"event": "run.end", "timestamp": "2026-03-20T03:01:11Z", "test_exit": 0, "total_turns": 13, "correct_lines": 0}
+{"event": "run.start", "timestamp": "2026-03-20T03:05:03Z", "benchmark": "haystack-boot", "model": "claude-sonnet-4-6", "has_prompt": false, "solution_files": []}
+{"event": "turn", "turn": 1, "files_edited": [], "files_read": ["/workspace/./test.sh"], "tokens_in": 805, "tokens_out": 59, "test_exit": null}
+{"event": "turn", "turn": 2, "files_edited": [], "files_read": [], "tokens_in": 880, "tokens_out": 53, "test_exit": null}
+{"event": "turn", "turn": 3, "files_edited": [], "files_read": ["/test.sh", "/workspace/.haystack/"], "tokens_in": 1094, "tokens_out": 94, "test_exit": null}
+{"event": "turn", "turn": 4, "files_edited": [], "files_read": ["/root/test.sh", "/workspace/test.sh"], "tokens_in": 1528, "tokens_out": 93, "test_exit": null}
+{"event": "turn", "turn": 5, "files_edited": [], "files_read": ["/workspace/.haystack/audit.jsonl", "/workspace/.haystack/boot.md", "/workspace/.haystack/HUMANFILE", "/workspace/.haystack/.primefile", "/workspace/.haystack/.language"], "tokens_in": 2112, "tokens_out": 92, "test_exit": null}
+{"event": "turn", "turn": 6, "files_edited": [], "files_read": ["/workspace/.haystack/needles/", "/workspace/.haystack/identity_counter", "/workspace/.haystack/.primefile"], "tokens_in": 2615, "tokens_out": 75, "test_exit": null}
+{"event": "turn", "turn": 7, "files_edited": [], "files_read": ["/workspace/.haystack/audit.jsonl", "/workspace/{\"event\":\"tack.resolved\",\"tier\":1,\"verb\":\":boot\",\"resolution\":\"haystack", "/workspace/confidence\",\"level\":1.0,\"msg\":\"boot"], "tokens_in": 2794, "tokens_out": 355, "test_exit": null}
+{"event": "turn", "turn": 8, "files_edited": [], "files_read": ["/workspace/.haystack/ENTITYFILE-bench", "/workspace/@haystack.prime"], "tokens_in": 3164, "tokens_out": 126, "test_exit": null}
+{"event": "turn", "turn": 9, "files_edited": [], "files_read": ["/workspace", "/workspace/./test.sh"], "tokens_in": 3305, "tokens_out": 58, "test_exit": null}
+{"event": "turn", "turn": 10, "files_edited": [], "files_read": [], "tokens_in": 3379, "tokens_out": 246, "test_exit": null}
+{"event": "run.end", "timestamp": "2026-03-20T03:05:36Z", "test_exit": 0, "total_turns": 10, "correct_lines": 0}

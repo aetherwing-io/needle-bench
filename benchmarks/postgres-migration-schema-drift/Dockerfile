@@ -20,10 +20,11 @@ WORKDIR /workspace
 
 # Copy Go source and build
 COPY app/go.mod app/go.sum /workspace/app/
-RUN cd /workspace/app && go mod download
+COPY app/vendor/ /workspace/app/vendor/
+# Deps vendored — no network fetch needed
 
 COPY app/ /workspace/app/
-RUN cd /workspace/app && go build -o /workspace/orders-api .
+RUN cd /workspace/app && go build -mod=vendor -o /workspace/orders-api .
 
 # Copy migrations
 COPY migrations/ /workspace/migrations/
