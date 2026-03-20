@@ -1,0 +1,11 @@
+# needle-bench — control arm (no ostk tools)
+# Same model, same benchmark, same budget. Only bash.
+# Delta between Agentfile.bench and Agentfile.control = value of ostk.
+
+FROM ${MODEL:-claude-sonnet-4-6}
+
+TOOL bash
+
+LIMIT turns ${TURNS:-30}
+LIMIT tokens ${TOKENS:-150000}
+LIMIT wall_clock ${WALL:-600}

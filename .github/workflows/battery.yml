@@ -70,21 +70,31 @@ jobs:
           if tier_input != "all":
               bench_list = [b for b in bench_list if benchmarks_map.get(b) == tier_input]
 
-          # Build matrix: one entry per (model, benchmark)
+          # Build matrix: two entries per (model, benchmark) — test arm + control arm
           matrix = []
           for model in models:
               for bench in bench_list:
                   tier = benchmarks_map.get(bench, "medium")
                   tier_limits = tiers.get(tier, tiers.get("medium", {}))
                   wall_clock = tier_limits.get("wall_clock", 600)
-                  # Timeout in minutes: wall_clock + 5 min buffer, minimum 10
                   timeout = max(10, (wall_clock // 60) + 6)
+                  # Test arm: ostk tools (shell, file:read, file:edit)
                   matrix.append({
                       "model": model,
                       "benchmark": bench,
                       "tier": tier,
                       "timeout": timeout,
                       "wall_clock": wall_clock,
+                      "arm": "test",
+                  })
+                  # Control arm: bare bash only (no ostk tools)
+                  matrix.append({
+                      "model": model,
+                      "benchmark": bench,
+                      "tier": tier,
+                      "timeout": timeout,
+                      "wall_clock": wall_clock,
+                      "arm": "control",
                   })
 
           print(f"Generated {len(matrix)} matrix entries ({len(models)} models x {len(bench_list)} benchmarks)", file=sys.stderr)
@@ -137,13 +147,23 @@ jobs:
           echo "ostk not yet available as pre-built binary — using runner.py fallback"
         continue-on-error: true
 
-      - name: Run ${{ matrix.combo.benchmark }} with ${{ matrix.combo.model }}
+      - name: Run ${{ matrix.combo.benchmark }} with ${{ matrix.combo.model }} (${{ matrix.combo.arm }})
         run: |
           MODEL="${{ matrix.combo.model }}"
           BENCH="${{ matrix.combo.benchmark }}"
           TIER="${{ matrix.combo.tier }}"
+          ARM="${{ matrix.combo.arm }}"
 
-          echo "::group::$BENCH ($MODEL) — tier=$TIER"
+          # Control arm: model name gets -control suffix, uses Agentfile.control
+          if [ "$ARM" = "control" ]; then
+            AGENT_NAME="${MODEL}-control"
+            AGENTFILE_FLAG="--agentfile Agentfile.control"
+          else
+            AGENT_NAME="${MODEL}"
+            AGENTFILE_FLAG=""
+          fi
+
+          echo "::group::$BENCH ($AGENT_NAME) — tier=$TIER arm=$ARM"
 
           if command -v ostk &>/dev/null; then
             ostk bench "$BENCH" --model "$MODEL" --docker \
@@ -153,30 +173,49 @@ jobs:
               --model "$MODEL" \
               --provider openrouter \
               --benchmark "$BENCH" \
+              ${AGENTFILE_FLAG} \
               2>&1 | tee bench-output.log
+
+            # For control arm, rename the output to include -control suffix
+            if [ "$ARM" = "control" ] && [ -d "runs/${MODEL}" ]; then
+              mkdir -p "runs/${AGENT_NAME}"
+              for f in runs/${MODEL}/${BENCH}*; do
+                [ -f "$f" ] && cp "$f" "runs/${AGENT_NAME}/$(basename "$f")"
+              done
+              [ -d "runs/${MODEL}/${BENCH}" ] && cp -r "runs/${MODEL}/${BENCH}" "runs/${AGENT_NAME}/${BENCH}"
+              # Patch agent name in score files
+              for sf in runs/${AGENT_NAME}/${BENCH}*.score.json runs/${AGENT_NAME}/${BENCH}/score.json; do
+                [ -f "$sf" ] && python3 -c "
+import json, sys
+d = json.load(open('$sf'))
+d['agent'] = '${AGENT_NAME}'
+d['control_type'] = 'no-ostk'
+json.dump(d, open('$sf', 'w'), indent=2)
+"
+              done
+            fi
           fi
 
           echo "::endgroup::"
 
           # Verify score file was produced
-          SCORE_FILE="runs/${MODEL}/${BENCH}.score.json"
+          SCORE_FILE="runs/${AGENT_NAME}/${BENCH}.score.json"
           if [ -f "$SCORE_FILE" ]; then
             echo "Score:"
             cat "$SCORE_FILE"
           else
-            echo "::warning::No score file produced for $BENCH ($MODEL)"
-            mkdir -p "runs/${MODEL}"
-            echo '{"benchmark":"'"$BENCH"'","agent":"'"$MODEL"'","resolved":false,"error":"runner produced no score file","timestamp":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"}' > "$SCORE_FILE"
+            echo "::warning::No score file produced for $BENCH ($AGENT_NAME)"
+            mkdir -p "runs/${AGENT_NAME}"
+            echo '{"benchmark":"'"$BENCH"'","agent":"'"$AGENT_NAME"'","resolved":false,"control_type":"'"$([ "$ARM" = "control" ] && echo "no-ostk" || echo "")"'","error":"runner produced no score file","timestamp":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"}' > "$SCORE_FILE"
           fi
 
       - name: Upload score artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: score--${{ matrix.combo.model }}--${{ matrix.combo.benchmark }}
+          name: score--${{ matrix.combo.model }}--${{ matrix.combo.benchmark }}--${{ matrix.combo.arm }}
           path: |
-            runs/${{ matrix.combo.model }}/${{ matrix.combo.benchmark }}.score.json
-            runs/${{ matrix.combo.model }}/${{ matrix.combo.benchmark }}/
+            runs/*/
           retention-days: 90
 
   # ---------- Phase 3: Consolidate scores, build site, deploy ----------
