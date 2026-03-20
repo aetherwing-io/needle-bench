@@ -209,15 +209,17 @@ import Base from '../layouts/Base.astro';
   // ── Main ─────────────────────────────────────────────────────────────
   (async () => {
     // Fetch all data in parallel
-    const [scoresResp, bootResp, diffResp] = await Promise.all([
+    const [scoresResp, bootResp, diffResp, descResp] = await Promise.all([
       fetch('/scores.json').catch(() => null),
       fetch('/haystack-boot-leaderboard.json').catch(() => null),
       fetch('/difficulty.json').catch(() => null),
+      fetch('/benchmark-descriptions.json').catch(() => null),
     ]);
     const scores: ScoreEntry[] = scoresResp?.ok ? await scoresResp.json() : [];
     const bootData: BootEntry[] = bootResp?.ok ? await bootResp.json() : [];
     const diffRaw = diffResp?.ok ? await diffResp.json() : { benchmarks: {} };
     const diffMap: Record<string, string> = diffRaw.benchmarks || {};
+    const benchDescs: Record<string, string> = descResp?.ok ? await descResp.json() : {};
 
     // ── Build benchmark columns (only those in difficulty.json) ──────
     const tierOrder: Record<string, number> = { easy: 0, medium: 1, hard: 2 };
@@ -408,13 +410,16 @@ import Base from '../layouts/Base.astro';
         // Heatmap cells
         for (const bench of allBenches) {
           const e = m.benches[bench];
+          const desc = benchDescs[bench] || '';
+          const descLine = desc ? '\n' + desc : '';
           if (!e) {
-            r += '<td class="bench-col"><span class="hm hm-empty" title="' + esc(bench) + ': no data"></span></td>';
+            r += '<td class="bench-col"><span class="hm hm-empty" title="' + esc(bench) + descLine + '"></span></td>';
           } else {
             const ok = e.resolved;
             const cls = ok ? 'hm-pass' : 'hm-fail';
-            const sym = ok ? '\u2713' : '\u2717';
-            const tip = esc(bench) + ': ' + sym + ' ' + Math.round((e.token_cost||0)/1000) + 'k tok \u00B7 ' + (e.turns_to_fix||0) + 't \u00B7 ' + Math.round(e.wall_clock) + 's';
+            const sym = ok ? '\u2713 resolved' : '\u2717 not resolved';
+            const metrics = Math.round((e.token_cost||0)/1000) + 'k tok \u00B7 ' + (e.turns_to_fix||0) + 't \u00B7 ' + Math.round(e.wall_clock) + 's';
+            const tip = esc(bench) + '\n' + sym + ' \u00B7 ' + metrics + descLine;
             r += '<td class="bench-col"><span class="hm ' + cls + '" title="' + tip + '"></span></td>';
           }
         }
