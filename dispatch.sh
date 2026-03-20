@@ -72,11 +72,7 @@ for mp in "${MODELS[@]}"; do
             continue
         fi
         echo "RUN  $model/$bench"
-        if command -v ostk &>/dev/null; then
-            ostk bench "$bench" --model "$model" --docker &
-        else
-            python3 "$SCRIPT_DIR/runner.py" --model "$model" --benchmark "$bench" --provider "$provider" &
-        fi
+        python3 "$SCRIPT_DIR/runner.py" --model "$model" --benchmark "$bench" --provider "$provider" &
         running=$((running + 1))
         if [[ $running -ge $MAX_PARALLEL ]]; then
             wait -n 2>/dev/null || true
