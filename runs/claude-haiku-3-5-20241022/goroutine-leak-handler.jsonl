@@ -1,6 +1,0 @@
-{"event": "run.start", "timestamp": "2026-03-15T18:54:46Z", "benchmark": "goroutine-leak-handler", "model": "claude-haiku-3-5-20241022", "has_prompt": false, "solution_files": ["app/main.go"]}
-{"event": "turn", "turn": 1, "files_edited": [], "files_read": ["/workspace/./test.sh"], "tokens_in": 705, "tokens_out": 69, "test_exit": null}
-{"event": "turn", "turn": 2, "files_edited": [], "files_read": [], "tokens_in": 904, "tokens_out": 79, "test_exit": null}
-{"event": "turn", "turn": 3, "files_edited": [], "files_read": ["/workspace/test.sh"], "tokens_in": 1140, "tokens_out": 54, "test_exit": null}
-{"event": "turn", "turn": 4, "files_edited": [], "files_read": ["/app/app", "/workspace/\"*.go\""], "tokens_in": 1904, "tokens_out": 78, "test_exit": null}
-{"event": "turn", "turn": 5, "files_edited": [], "files_read": ["/app/app/main.go"], "tokens_in": 2029, "tokens_out": 59, "test_exit": null}
