@@ -1,2 +1,5 @@
-{"event": "run.start", "timestamp": "2026-03-21T12:55:41Z", "benchmark": "wal-fsync-ghost-ack", "model": "llama-4-maverick", "has_prompt": false, "solution_files": ["wal.go"]}
-{"event": "run.end", "timestamp": "2026-03-21T12:55:45Z", "test_exit": 1, "total_turns": 0, "correct_lines": 0}
+{"event": "run.start", "timestamp": "2026-03-21T13:32:24Z", "benchmark": "wal-fsync-ghost-ack", "model": "llama-4-maverick", "has_prompt": false, "solution_files": ["wal.go"]}
+{"event": "turn", "turn": 1, "files_edited": [], "files_read": ["/workspace/./test.sh"], "tokens_in": 449, "tokens_out": 8, "test_exit": null}
+{"event": "turn", "turn": 2, "files_edited": [], "files_read": ["/home/user/kvwal/kvwal.go", "/workspace/./test.sh"], "tokens_in": 877, "tokens_out": 1262, "test_exit": null}
+{"event": "turn", "turn": 3, "files_edited": [], "files_read": [], "tokens_in": 2560, "tokens_out": 176, "test_exit": null}
+{"event": "run.end", "timestamp": "2026-03-21T13:32:52Z", "test_exit": 1, "total_turns": 3, "correct_lines": 0}

@@ -1,0 +1,3 @@
+{"event": "token.usage", "turn": 1, "input_tokens": 532, "output_tokens": 23, "cumulative_input": 532, "cumulative_output": 23}
+{"event": "token.usage", "turn": 2, "input_tokens": 1082, "output_tokens": 105, "cumulative_input": 1614, "cumulative_output": 128}
+{"event": "token.usage", "turn": 3, "input_tokens": 1218, "output_tokens": 25, "cumulative_input": 2832, "cumulative_output": 153}
