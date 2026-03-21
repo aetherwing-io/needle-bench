@@ -590,8 +590,9 @@ def _resolve_difficulty_limits(bench_name):
 
 
 def run_benchmark(model, bench_name, bench_dir, provider):
-    # Bug 1 fix: always use canonical short name so scores don't fragment
-    model = _canonical_agent_name(model)
+    # Use canonical name for file paths/scoring, original for API calls
+    api_model = model  # preserve full name (e.g. deepseek/deepseek-chat) for OpenRouter
+    model = _canonical_agent_name(model)  # short name for score files
 
     # Try the unified Agentfile.bench first, fall back to per-benchmark Agentfile
     proj_root = os.path.dirname(os.path.abspath(__file__))
@@ -686,7 +687,7 @@ def run_benchmark(model, bench_name, bench_dir, provider):
             if total_tokens_in + total_tokens_out >= max_tokens:
                 break
 
-            resp = call_model(model, messages, provider, system_prompt=system_prompt, tools=tools)
+            resp = call_model(api_model, messages, provider, system_prompt=system_prompt, tools=tools)
             tokens_in = resp.get("usage", {}).get("input_tokens", 0)
             tokens_out = resp.get("usage", {}).get("output_tokens", 0)
             total_tokens_in += tokens_in
