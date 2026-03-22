@@ -26,23 +26,10 @@ const currentPath = Astro.url.pathname;
   <script defer data-domain="needle-bench.cc" src="https://plausible.io/js/script.outbound-links.js"></script>
 </head>
 <body>
-  <nav class="topnav">
-    <a href="/" class="brand">needle-bench <span class="brand-sub">by ostk</span></a>
-    <a href="/" class:list={[{ active: currentPath === '/' }]}>Home</a>
-    <a href="/leaderboard/" class:list={[{ active: currentPath.startsWith('/leaderboard') }]}>Leaderboard</a>
-    <a href="https://ostk.ai/insights">Insights</a>
-    <a href="/contribute/" class:list={[{ active: currentPath.startsWith('/contribute') }]}>Contribute</a>
-    <span class="nav-sep">|</span> <a href="https://ostk.ai">ostk.ai</a>
-    <a href="https://github.com/os-tack/find-the-needle">GitHub</a>
-  </nav>
-
   <slot />
 
   <footer>
-    Built with <a href="https://github.com/os-tack/find-the-needle">needle-bench</a>. Open source.<br>
-    <a href="https://github.com/os-tack/find-the-needle">GitHub</a> &middot;
-    <a href="https://github.com/os-tack/find-the-needle/blob/main/LICENSE">MIT License</a> &middot;
-    All benchmarks are real bugs, anonymized.
+    <a href="https://github.com/os-tack/find-the-needle">needle-bench</a> &middot; MIT &middot; <a href="https://ostk.ai">ostk.ai</a>
   </footer>
 </body>
 </html>
