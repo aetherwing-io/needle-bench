@@ -2,10 +2,16 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Leaderboard — needle-bench" description="Unified test matrix: boot battery + code-solve benchmarks across all models.">
+<Base title="needle-bench — find the needle" description="27 models. 1574 runs. One prompt: find the needle.">
   <div class="page-header">
-    <a href="/" class="back">&larr; needle-bench</a>
-    <h1>Leaderboard</h1>
+    <div class="page-header-left">
+      <h1>needle-bench</h1>
+    </div>
+    <nav class="page-header-right">
+      <a href="https://github.com/os-tack/find-the-needle">GitHub</a>
+      <a href="/contribute/">Contribute</a>
+      <a href="/about/">About</a>
+    </nav>
   </div>
 
   <main>
@@ -23,13 +29,16 @@ import Base from '../layouts/Base.astro';
             <th class="sticky-col col-post" data-key="post" data-type="boolean">POST</th>
             <th class="sticky-col col-entity" data-key="entityfile" data-type="boolean">Entity</th>
             <th class="sticky-col col-resolved" data-key="resolvedCount" data-type="number">Solved</th>
+            <th class="sticky-col col-bare" data-key="bareResolved" data-type="number">Bare</th>
+            <th class="sticky-col col-os" data-key="silentResolved" data-type="number">OS</th>
+            <th class="sticky-col col-delta" data-key="expDelta" data-type="number">&Delta;</th>
             <th class="sticky-col col-tokens" data-key="totalTokens" data-type="number">Tok</th>
             <th class="sticky-col col-turns" data-key="totalTurns" data-type="number">Trn</th>
             <th class="sticky-col col-time" data-key="totalTime" data-type="number">Time</th>
           </tr>
         </thead>
         <tbody id="lb-body">
-          <tr><td colspan="8" class="empty">Loading...</td></tr>
+          <tr><td colspan="11" class="empty">Loading...</td></tr>
         </tbody>
       </table>
     </div>
@@ -74,6 +83,9 @@ import Base from '../layouts/Base.astro';
   .col-post   { min-width: 36px; width: 36px; text-align: center; }
   .col-entity { min-width: 36px; width: 36px; text-align: center; }
   .col-resolved { min-width: 80px; width: 80px; text-align: center; }
+  .col-bare   { min-width: 50px; width: 50px; text-align: center; }
+  .col-os     { min-width: 50px; width: 50px; text-align: center; }
+  .col-delta  { min-width: 60px; width: 60px; text-align: center; }
   .col-tokens { min-width: 55px; width: 55px; text-align: right; }
   .col-turns  { min-width: 55px; width: 55px; text-align: right; }
   .col-time   { min-width: 55px; width: 55px; text-align: right; border-right: 2px solid rgba(212,160,84,0.4); }
@@ -116,6 +128,26 @@ import Base from '../layouts/Base.astro';
   .hm-empty::after { content: ''; }
   .hm-untested::after { content: ''; }
 
+  /* Split heatmap cells (bare/silent experiment) */
+  .hm-split {
+    display: flex;
+    width: 20px; height: 16px;
+    margin: 0 auto; border-radius: 3px;
+    overflow: hidden; cursor: default;
+  }
+  .hm-split > span { flex: 1; }
+  .hm-split > span:first-child { border-right: 1px solid rgba(255,255,255,0.15); }
+  .arm-pass { background: rgba(63,185,80,0.5); }
+  .arm-fail { background: rgba(248,81,73,0.4); }
+  .arm-untested { background: transparent; }
+
+  /* Delta colors */
+  .delta-high   { color: #3fb950; font-weight: 700; }
+  .delta-mid    { color: #d29922; font-weight: 600; }
+  .delta-low    { color: #8b949e; }
+  .delta-zero   { color: #484f58; }
+  .delta-neg    { color: #f85149; font-weight: 600; }
+
   /* Control rows */
   tr.control-row td { opacity: 0.6; }
   tr.control-row:hover td { opacity: 0.85; }
@@ -135,7 +167,7 @@ import Base from '../layouts/Base.astro';
   #leaderboard tr:nth-child(even) td.sticky-col { background-color: color-mix(in srgb, var(--bg) 97%, white); }
   #leaderboard tr:hover td { background: rgba(255,255,255,0.06); }
   #leaderboard tr:hover td.sticky-col { background: rgba(255,255,255,0.06); }
-  td.col-post, td.col-entity, td.col-resolved { text-align: center; }
+  td.col-post, td.col-entity, td.col-resolved, td.col-bare, td.col-os, td.col-delta { text-align: center; }
   td.col-tokens, td.col-turns, td.col-time { text-align: right; }
   td.col-time { border-right: 2px solid rgba(212,160,84,0.4); }
 
@@ -205,6 +237,14 @@ import Base from '../layouts/Base.astro';
     benchmark: string; agent: string; resolved: boolean; turns_to_fix: number;
     token_cost: number; wall_clock: number; turns_to_discovery: number;
     blind_discovery: boolean; timestamp?: string; commit?: string;
+    estimated_cost_usd?: number;
+  }
+  interface ArmScore {
+    resolved: boolean; turns_to_fix: number; token_cost: number;
+    estimated_cost_usd: number; wall_clock: number; signal_to_noise: number;
+  }
+  interface ExperimentEntry {
+    model: string; benchmark: string; bare: ArmScore | null; silent: ArmScore | null;
   }
   interface ModelRow {
     display: string; key: string; boot: BootEntry | null;
@@ -212,27 +252,56 @@ import Base from '../layouts/Base.astro';
     tokens: number; turns: number; time: number;
     tier: number; post: boolean; entity: boolean; commit: string;
     isControl: boolean; controlType: string;
+    // Experiment fields
+    experiment: Record<string, ExperimentEntry>;
+    bareResolved: number; bareTested: number;
+    silentResolved: number; silentTested: number;
+    expDelta: number; // percentage point delta (silent - bare) over shared benchmarks
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────
   function esc(s: string) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   function fmtN(n: number) { return n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(0)+'k' : String(n); }
   function fmtT(s: number) { return s >= 3600 ? (s/3600).toFixed(1)+'h' : s >= 60 ? (s/60).toFixed(1)+'m' : Math.round(s)+'s'; }
+  function fmtUsd(n: number) { return '$' + n.toFixed(3); }
+
+  function deltaClass(pp: number): string {
+    if (pp >= 15) return 'delta-high';
+    if (pp >= 5) return 'delta-mid';
+    if (pp >= 1) return 'delta-low';
+    if (pp === 0) return 'delta-zero';
+    return 'delta-neg';
+  }
+
+  function fmtDelta(pp: number): string {
+    const sign = pp > 0 ? '+' : '';
+    return sign + Math.round(pp) + 'pp';
+  }
 
   // ── Main ─────────────────────────────────────────────────────────────
   (async () => {
     // Fetch all data in parallel
-    const [scoresResp, bootResp, diffResp, descResp] = await Promise.all([
+    const [scoresResp, bootResp, diffResp, descResp, expResp] = await Promise.all([
       fetch('/scores.json').catch(() => null),
       fetch('/haystack-boot-leaderboard.json').catch(() => null),
       fetch('/difficulty.json').catch(() => null),
       fetch('/benchmark-descriptions.json').catch(() => null),
+      fetch('/experiment-scores.json').catch(() => null),
     ]);
     const scores: ScoreEntry[] = scoresResp?.ok ? await scoresResp.json() : [];
     const bootData: BootEntry[] = bootResp?.ok ? await bootResp.json() : [];
     const diffRaw = diffResp?.ok ? await diffResp.json() : { benchmarks: {} };
     const diffMap: Record<string, string> = diffRaw.benchmarks || {};
     const benchDescs: Record<string, string> = descResp?.ok ? await descResp.json() : {};
+    const expData: ExperimentEntry[] = expResp?.ok ? await expResp.json() : [];
+
+    // ── Build experiment lookup: normalizedModel → benchmark → ExperimentEntry
+    const expLookup = new Map<string, Map<string, ExperimentEntry>>();
+    for (const e of expData) {
+      const key = normalizeModel(e.model);
+      if (!expLookup.has(key)) expLookup.set(key, new Map());
+      expLookup.get(key)!.set(e.benchmark, e);
+    }
 
     // ── Build benchmark columns (only those in difficulty.json) ──────
     const tierOrder: Record<string, number> = { easy: 0, medium: 1, hard: 2 };
@@ -259,6 +328,8 @@ import Base from '../layouts/Base.astro';
           resolved: 0, tokens: 0, turns: 0, time: 0,
           tier: 4, post: false, entity: false, commit: '',
           isControl: raw.startsWith('control-'), controlType: '',
+          experiment: {}, bareResolved: 0, bareTested: 0,
+          silentResolved: 0, silentTested: 0, expDelta: 0,
         });
       }
       const m = modelMap.get(key)!;
@@ -307,6 +378,34 @@ import Base from '../layouts/Base.astro';
       m.tokens = (m.boot?.tokens || 0) + tok;
       m.turns = (m.boot?.turns || 0) + trn;
       m.time = (m.boot?.wall_clock || 0) + tm;
+
+      // Attach experiment data
+      const expMap = expLookup.get(m.key);
+      if (expMap) {
+        m.experiment = Object.fromEntries(expMap);
+        let bareR = 0, bareT = 0, silentR = 0, silentT = 0;
+        let sharedBareR = 0, sharedSilentR = 0, sharedCount = 0;
+        for (const [_bench, exp] of expMap) {
+          if (exp.bare) { bareT++; if (exp.bare.resolved) bareR++; }
+          if (exp.silent) { silentT++; if (exp.silent.resolved) silentR++; }
+          // Delta only over benchmarks where BOTH arms were tested
+          if (exp.bare && exp.silent) {
+            sharedCount++;
+            if (exp.bare.resolved) sharedBareR++;
+            if (exp.silent.resolved) sharedSilentR++;
+          }
+        }
+        m.bareResolved = bareR;
+        m.bareTested = bareT;
+        m.silentResolved = silentR;
+        m.silentTested = silentT;
+        // Percentage point delta: (silentRate - bareRate) * 100
+        if (sharedCount > 0) {
+          const bareRate = sharedBareR / sharedCount;
+          const silentRate = sharedSilentR / sharedCount;
+          m.expDelta = (silentRate - bareRate) * 100;
+        }
+      }
     }
 
     // Separate control rows from real models
@@ -350,6 +449,10 @@ import Base from '../layouts/Base.astro';
           case 'post': av = a.post ? 0 : 1; bv = b.post ? 0 : 1; break;
           case 'entityfile': av = a.entity ? 0 : 1; bv = b.entity ? 0 : 1; break;
           case 'resolvedCount': av = a.resolved; bv = b.resolved; return sortAsc ? av - bv : bv - av;
+          case 'bareResolved': av = a.bareResolved; bv = b.bareResolved; return sortAsc ? av - bv : bv - av;
+          case 'silentResolved': av = a.silentResolved; bv = b.silentResolved; return sortAsc ? av - bv : bv - av;
+          case 'expDelta': av = a.bareTested ? a.expDelta : -Infinity; bv = b.bareTested ? b.expDelta : -Infinity;
+            return sortAsc ? av - bv : bv - av;
           case 'totalTokens': av = a.tokens; bv = b.tokens; break;
           case 'totalTurns': av = a.turns; bv = b.turns; break;
           case 'totalTime': av = a.time; bv = b.time; break;
@@ -367,7 +470,7 @@ import Base from '../layouts/Base.astro';
 
     // ── Build tier header row ────────────────────────────────────────
     const tierRow = document.getElementById('lb-tier-row')!;
-    const stickyCls = ['col-model','col-boot','col-post','col-entity','col-resolved','col-tokens','col-turns','col-time'];
+    const stickyCls = ['col-model','col-boot','col-post','col-entity','col-resolved','col-bare','col-os','col-delta','col-tokens','col-turns','col-time'];
     for (const cls of stickyCls) {
       const th = document.createElement('th');
       th.className = 'sticky-col tier-sticky-placeholder ' + cls;
@@ -406,6 +509,8 @@ import Base from '../layouts/Base.astro';
       const ctrlCls = isControl ? ' control-row' : '';
       const sepCls = isFirstReal ? ' control-separator' : '';
       let r = '<tr class="' + (rc + ctrlCls + sepCls).trim() + '">';
+
+      const hasExp = m.bareTested > 0 || m.silentTested > 0;
 
       // Model
       if (isControl) {
@@ -453,6 +558,24 @@ import Base from '../layouts/Base.astro';
         r += '<td class="sticky-col col-resolved ' + sc + coverageCls + '">' + solvedText + coverageNote + '</td>';
       }
 
+      // BARE / OS / Delta columns
+      if (isControl || !hasExp) {
+        r += '<td class="sticky-col col-bare" style="color:#484f58">\u2014</td>';
+        r += '<td class="sticky-col col-os" style="color:#484f58">\u2014</td>';
+        r += '<td class="sticky-col col-delta" style="color:#484f58">\u2014</td>';
+      } else {
+        r += '<td class="sticky-col col-bare">' + m.bareResolved + '/' + m.bareTested + '</td>';
+        r += '<td class="sticky-col col-os">' + m.silentResolved + '/' + m.silentTested + '</td>';
+        // Delta — compute only if both arms have data
+        const hasBoth = m.bareTested > 0 && m.silentTested > 0;
+        if (hasBoth) {
+          const dc = deltaClass(m.expDelta);
+          r += '<td class="sticky-col col-delta ' + dc + '">' + fmtDelta(m.expDelta) + '</td>';
+        } else {
+          r += '<td class="sticky-col col-delta" style="color:#484f58">\u2014</td>';
+        }
+      }
+
       // Tok / Trn / Time
       if (isControl) {
         r += '<td class="sticky-col col-tokens">\u2014</td>';
@@ -469,15 +592,44 @@ import Base from '../layouts/Base.astro';
         const e = m.benches[bench];
         const desc = benchDescs[bench] || '';
         const descLine = desc ? '\n' + desc : '';
-        if (!e) {
+        const exp = hasExp ? m.experiment[bench] : null;
+
+        if (exp && (exp.bare || exp.silent)) {
+          // Split cell: bare left, silent right
+          const bareCls = exp.bare ? (exp.bare.resolved ? 'arm-pass' : 'arm-fail') : 'arm-untested';
+          const silentCls = exp.silent ? (exp.silent.resolved ? 'arm-pass' : 'arm-fail') : 'arm-untested';
+
+          // Build tooltip with both arms
+          let tip = esc(bench);
+          if (exp.bare) {
+            const sym = exp.bare.resolved ? '\u2713' : '\u2717';
+            tip += '\nBare: ' + sym + '  ' + fmtN(exp.bare.token_cost) + ' tok \u00B7 ' + exp.bare.turns_to_fix + 't \u00B7 ' + fmtUsd(exp.bare.estimated_cost_usd);
+          } else {
+            tip += '\nBare: untested';
+          }
+          if (exp.silent) {
+            const sym = exp.silent.resolved ? '\u2713' : '\u2717';
+            tip += '\nOS:   ' + sym + '  ' + fmtN(exp.silent.token_cost) + ' tok \u00B7 ' + exp.silent.turns_to_fix + 't \u00B7 ' + fmtUsd(exp.silent.estimated_cost_usd);
+          } else {
+            tip += '\nOS:   untested';
+          }
+          tip += descLine;
+
+          r += '<td class="bench-col"><span class="hm-split" title="' + esc(tip) + '">';
+          r += '<span class="' + bareCls + '"></span>';
+          r += '<span class="' + silentCls + '"></span>';
+          r += '</span></td>';
+        } else if (!e) {
           // Untested: model has no score entry at all for this benchmark
           const tip = esc(bench) + ': untested' + descLine;
           r += '<td class="bench-col"><span class="hm hm-untested" title="' + tip + '"></span></td>';
         } else {
+          // Standard single-cell rendering (no experiment data)
           const ok = e.resolved;
           const cls = ok ? 'hm-pass' : 'hm-fail';
           const sym = ok ? '\u2713 resolved' : '\u2717 not resolved';
-          const metrics = Math.round((e.token_cost||0)/1000) + 'k tok \u00B7 ' + (e.turns_to_fix||0) + 't \u00B7 ' + Math.round(e.wall_clock) + 's';
+          const costStr = e.estimated_cost_usd ? ' \u00B7 ' + fmtUsd(e.estimated_cost_usd) : '';
+          const metrics = Math.round((e.token_cost||0)/1000) + 'k tok \u00B7 ' + (e.turns_to_fix||0) + 't \u00B7 ' + Math.round(e.wall_clock) + 's' + costStr;
           const tip = esc(bench) + '\n' + sym + ' \u00B7 ' + metrics + descLine;
           r += '<td class="bench-col"><span class="hm ' + cls + '" title="' + tip + '"></span></td>';
         }
@@ -490,7 +642,7 @@ import Base from '../layouts/Base.astro';
       doSort();
       const tbody = document.getElementById('lb-body')!;
       if (!models.length && !controlModels.length) {
-        tbody.innerHTML = '<tr><td colspan="' + (8 + totalBenches) + '" class="empty">No data.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="' + (11 + totalBenches) + '" class="empty">No data.</td></tr>';
         return;
       }
       const rows: string[] = [];

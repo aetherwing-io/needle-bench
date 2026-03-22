@@ -487,10 +487,14 @@ def call_openrouter(model, messages, api_key, system_prompt=None, tools=None):
     _sys = system_prompt or SYSTEM_PROMPT
     oai_messages = [{"role": "system", "content": _sys}] + oai_messages
 
+    # GPT models need tool_choice=required to actually invoke tools.
+    # Other models work with "auto" or may reject "required".
+    tc = "required" if "gpt" in or_model.lower() else "auto"
     payload = json.dumps({
         "model": or_model,
         "messages": oai_messages,
         "tools": oai_tools,
+        "tool_choice": tc,
         "max_tokens": 4096,
     }).encode()
     req = urllib.request.Request(

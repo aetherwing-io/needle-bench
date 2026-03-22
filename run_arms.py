@@ -118,11 +118,13 @@ def run_arm(model, bench_name, bench_dir, provider, arm_name):
     )
 
     # Start container — name includes arm to avoid collisions
+    # Container auto-dies after max_wall + 60s buffer (prevents zombies)
     ts = str(int(time.time()))
     container = f"nb-{canon_model.replace('/', '-')}-{arm_name}-{bench_name}-{ts}"
+    container_timeout = max_wall + 60
     subprocess.run(
         ["docker", "run", "-d", "--name", container,
-         f"needle-bench-{bench_name}", "sleep", "3600"],
+         f"needle-bench-{bench_name}", "sleep", str(container_timeout)],
         capture_output=True, check=True,
     )
 

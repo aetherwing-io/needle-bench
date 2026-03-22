@@ -88,19 +88,43 @@ a:hover { color: var(--accent-hover); }
 
 /* Page header */
 .page-header {
-  padding: 2rem 2rem 1.5rem;
+  padding: 1rem 2rem;
   border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .page-header .back {
   font-family: var(--mono);
   font-size: 0.85rem;
-  display: block;
-  margin-bottom: 0.5rem;
 }
 
 .page-header h1 {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.page-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.page-header-right {
+  display: flex;
+  gap: 1.5rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+}
+
+.page-header-right a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.page-header-right a:hover {
+  color: var(--text);
 }
 
 /* Main */

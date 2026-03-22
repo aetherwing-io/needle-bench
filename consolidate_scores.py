@@ -16,6 +16,18 @@ from pathlib import Path
 
 RUNS_DIR = Path(__file__).parent / "runs"
 DEFAULT_OUTPUT = Path(__file__).parent / "public" / "scores.json"
+EXPERIMENT_OUTPUT = Path(__file__).parent / "public" / "experiment-scores.json"
+
+ARM_SUFFIXES = ("-bare", "-silent")
+ARM_PATTERN = re.compile(r"^(.+)-(bare|silent)$")
+
+# Old four-arm experiment variants — not real models, exclude from leaderboard
+STALE_VARIANTS = {
+    "claude-sonnet-4-6-blind",
+    "claude-sonnet-4-6-cold",
+    "claude-sonnet-4-6-kernel",
+    "claude-sonnet-4-6-tooled",
+}
 
 EXPECTED_FIELDS = {
     "benchmark", "agent", "timestamp", "resolved",
@@ -96,8 +108,18 @@ def extract_benchmark(file_path: Path) -> str:
         return file_path.stem.replace(".score", "")
 
 
-def find_score_files() -> list[Path]:
-    """Find all score JSON files in the runs directory."""
+def _is_arm_dir(path: Path) -> bool:
+    """Return True if the path is inside an experiment arm directory (*-bare or *-silent)."""
+    rel = path.relative_to(RUNS_DIR)
+    top_dir = rel.parts[0] if rel.parts else ""
+    return any(top_dir.endswith(s) for s in ARM_SUFFIXES)
+
+
+def find_score_files(include_arms: bool = True) -> list[Path]:
+    """Find all score JSON files in the runs directory.
+
+    If include_arms is False, skip files inside *-bare and *-silent directories.
+    """
     files = []
     for root, _dirs, filenames in os.walk(RUNS_DIR):
         root_path = Path(root)
@@ -107,6 +129,8 @@ def find_score_files() -> list[Path]:
             if fname.endswith(".score.json") or (
                 fname == "score.json" and root_path.parent != RUNS_DIR
             ):
+                if not include_arms and _is_arm_dir(fpath):
+                    continue
                 files.append(fpath)
     return files
 
@@ -197,9 +221,9 @@ def consolidate(dry_run: bool = False, output: Path = DEFAULT_OUTPUT) -> None:
         print(f"ERROR: runs directory not found at {RUNS_DIR}", file=sys.stderr)
         sys.exit(1)
 
-    # Step 1: find all score files
-    all_files = find_score_files()
-    print(f"Found {len(all_files)} score files in {RUNS_DIR}")
+    # Step 1: find all score files (excluding experiment arm directories)
+    all_files = find_score_files(include_arms=False)
+    print(f"Found {len(all_files)} score files in {RUNS_DIR} (excluding arm dirs)")
 
     # Step 2: deduplicate file locations
     deduped_files = deduplicate_locations(all_files)
@@ -218,7 +242,10 @@ def consolidate(dry_run: bool = False, output: Path = DEFAULT_OUTPUT) -> None:
     if skipped:
         print(f"Skipped {skipped} malformed files")
 
-    # Step 4: keep best per (model, benchmark)
+    # Step 4: filter out stale experiment variants
+    entries = [e for e in entries if e.get("agent", "") not in STALE_VARIANTS]
+
+    # Step 5: keep best per (model, benchmark)
     best: dict[tuple[str, str], dict] = {}
     for entry in entries:
         key = score_key(entry)
@@ -264,6 +291,132 @@ def consolidate(dry_run: bool = False, output: Path = DEFAULT_OUTPUT) -> None:
             print(f"Before: {before_count} entries → After: {len(consolidated)} entries")
 
 
+def _arm_score_summary(entry: dict) -> dict:
+    """Extract the fields we surface per arm in experiment-scores.json."""
+    return {
+        "resolved": bool(entry.get("resolved", False)),
+        "turns_to_fix": entry.get("turns_to_fix", 0) or 0,
+        "token_cost": entry.get("token_cost", 0) or 0,
+        "estimated_cost_usd": entry.get("estimated_cost_usd", 0) or 0,
+        "wall_clock": entry.get("wall_clock", 0) or 0,
+        "signal_to_noise": entry.get("signal_to_noise", 0) or 0,
+    }
+
+
+def _is_better_arm(candidate: dict, current: dict) -> bool:
+    """Return True if candidate is a better run for its arm.
+
+    Preference: resolved > not resolved, then fewer turns_to_fix.
+    """
+    c_res = bool(candidate.get("resolved", False))
+    e_res = bool(current.get("resolved", False))
+    if c_res and not e_res:
+        return True
+    if not c_res and e_res:
+        return False
+    # Same resolved — prefer fewer turns
+    return (candidate.get("turns_to_fix", 999) or 999) < (current.get("turns_to_fix", 999) or 999)
+
+
+def consolidate_experiment(dry_run: bool = False, output: Path = EXPERIMENT_OUTPUT) -> None:
+    """Build experiment-scores.json from bare/silent arm directories."""
+    if not RUNS_DIR.exists():
+        print(f"ERROR: runs directory not found at {RUNS_DIR}", file=sys.stderr)
+        sys.exit(1)
+
+    # Discover arm directories
+    arm_dirs: list[tuple[str, str, Path]] = []  # (canonical_model, arm, dir_path)
+    for entry in sorted(RUNS_DIR.iterdir()):
+        if not entry.is_dir():
+            continue
+        m = ARM_PATTERN.match(entry.name)
+        if m:
+            canonical = m.group(1)
+            arm = m.group(2)
+            arm_dirs.append((canonical, arm, entry))
+
+    if not arm_dirs:
+        print("No experiment arm directories found.")
+        if not dry_run:
+            output.parent.mkdir(parents=True, exist_ok=True)
+            with open(output, "w") as f:
+                json.dump([], f, indent=2)
+                f.write("\n")
+            print(f"Wrote empty array to {output}")
+        return
+
+    print(f"\n=== Experiment consolidation ===")
+    print(f"Found {len(arm_dirs)} arm directories")
+
+    # Load all arm score files, keyed by (canonical_model, benchmark, arm)
+    # best run per (model, benchmark, arm)
+    best_arm: dict[tuple[str, str, str], dict] = {}
+    arm_file_count = 0
+
+    for canonical, arm, dir_path in arm_dirs:
+        score_files = []
+        for root, _dirs, filenames in os.walk(dir_path):
+            root_path = Path(root)
+            for fname in filenames:
+                fpath = root_path / fname
+                if fname.endswith(".score.json") or (
+                    fname == "score.json" and root_path != dir_path
+                ):
+                    score_files.append(fpath)
+
+        # Deduplicate locations within this arm dir
+        location_groups: dict[str, list[Path]] = {}
+        for fpath in score_files:
+            bench = extract_benchmark(fpath)
+            location_groups.setdefault(bench, []).append(fpath)
+
+        for bench, paths in location_groups.items():
+            if len(paths) > 1:
+                best_path = max(paths, key=lambda p: p.stat().st_mtime)
+            else:
+                best_path = paths[0]
+
+            entry = load_score(best_path)
+            if entry is None:
+                continue
+            arm_file_count += 1
+
+            key = (canonical, entry["benchmark"], arm)
+            if key not in best_arm or _is_better_arm(entry, best_arm[key]):
+                best_arm[key] = entry
+
+    # Group by (canonical_model, benchmark) and pair bare/silent
+    pairs: dict[tuple[str, str], dict] = {}
+    for (canonical, benchmark, arm), entry in best_arm.items():
+        pk = (canonical, benchmark)
+        if pk not in pairs:
+            pairs[pk] = {"model": canonical, "benchmark": benchmark, "bare": None, "silent": None}
+        pairs[pk][arm] = _arm_score_summary(entry)
+
+    # Sort and build output
+    experiment_scores = sorted(pairs.values(), key=lambda e: (e["model"], e["benchmark"]))
+
+    # Summary
+    models = sorted(set(e["model"] for e in experiment_scores))
+    benchmarks = sorted(set(e["benchmark"] for e in experiment_scores))
+    both_count = sum(1 for e in experiment_scores if e["bare"] is not None and e["silent"] is not None)
+
+    print(f"Loaded {arm_file_count} arm score files")
+    print(f"Experiment pairs: {len(experiment_scores)}")
+    print(f"Models ({len(models)}): {', '.join(models)}")
+    print(f"Benchmarks ({len(benchmarks)}): {len(benchmarks)} unique")
+    print(f"Both arms tested: {both_count}")
+
+    if dry_run:
+        print(f"\n[dry-run] Would write {len(experiment_scores)} entries to {output}")
+    else:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        with open(output, "w") as f:
+            json.dump(experiment_scores, f, indent=2)
+            f.write("\n")
+        print(f"\nWrote {len(experiment_scores)} entries to {output}")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Consolidate needle-bench run scores into the public leaderboard."
@@ -280,7 +433,12 @@ def main():
         help=f"Output path (default: {DEFAULT_OUTPUT})",
     )
     args = parser.parse_args()
+
+    # Standard consolidation (excludes arm data)
     consolidate(dry_run=args.dry_run, output=args.output)
+
+    # Experiment arm consolidation
+    consolidate_experiment(dry_run=args.dry_run)
 
 
 if __name__ == "__main__":
