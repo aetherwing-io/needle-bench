@@ -4,9 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       models:
-        description: "Comma-separated model list"
+        description: "Comma-separated model list (OpenRouter names)"
         required: false
-        default: "claude-sonnet-4-6,claude-opus-4-6,claude-haiku-4-5"
+        default: >-
+          claude-sonnet-4-6,claude-opus-4-6,claude-sonnet-4-5,claude-haiku-4-5,
+          deepseek-v3-2,deepseek-chat,deepseek-r1,
+          mistral-large,devstral-medium,codestral-2508,
+          gemini-2-0-flash-001,gemini-2-5-flash,gemini-2-5-pro,gemini-3-flash-preview,gemini-3-1-pro-preview,
+          gpt-4o,gpt-4-1,
+          grok-4-fast,grok-4-1-fast,
+          llama-4-maverick,llama-3-3-70b-instruct,
+          qwen-plus,qwen3-coder-plus,qwen3-coder-flash,qwen3-5-flash-02-23,qwen3-5-plus-02-15
       benchmarks:
         description: "Comma-separated benchmark list or 'all'"
         required: false
@@ -44,7 +52,7 @@ jobs:
       - name: Build matrix JSON
         id: matrix
         env:
-          MODELS_INPUT: ${{ github.event.inputs.models || 'claude-sonnet-4-6,claude-opus-4-6,claude-haiku-4-5' }}
+          MODELS_INPUT: ${{ github.event.inputs.models || 'claude-sonnet-4-6,claude-opus-4-6,claude-sonnet-4-5,claude-haiku-4-5,deepseek-v3-2,deepseek-chat,deepseek-r1,mistral-large,devstral-medium,codestral-2508,gemini-2-0-flash-001,gemini-2-5-flash,gemini-2-5-pro,gemini-3-flash-preview,gemini-3-1-pro-preview,gpt-4o,gpt-4-1,grok-4-fast,grok-4-1-fast,llama-4-maverick,llama-3-3-70b-instruct,qwen-plus,qwen3-coder-plus,qwen3-coder-flash,qwen3-5-flash-02-23,qwen3-5-plus-02-15' }}
           BENCHMARKS_INPUT: ${{ github.event.inputs.benchmarks || 'all' }}
           TIER_INPUT: ${{ github.event.inputs.tier || 'all' }}
         run: |
@@ -78,23 +86,23 @@ jobs:
                   tier_limits = tiers.get(tier, tiers.get("medium", {}))
                   wall_clock = tier_limits.get("wall_clock", 600)
                   timeout = max(10, (wall_clock // 60) + 6)
-                  # Test arm: ostk tools (shell, file:read, file:edit)
+                  # Silent arm: OS context silently injected into system prompt
                   matrix.append({
                       "model": model,
                       "benchmark": bench,
                       "tier": tier,
                       "timeout": timeout,
                       "wall_clock": wall_clock,
-                      "arm": "test",
+                      "arm": "silent",
                   })
-                  # Control arm: bare bash only (no ostk tools)
+                  # Bare arm: no OS context, generic system prompt
                   matrix.append({
                       "model": model,
                       "benchmark": bench,
                       "tier": tier,
                       "timeout": timeout,
                       "wall_clock": wall_clock,
-                      "arm": "control",
+                      "arm": "bare",
                   })
 
           print(f"Generated {len(matrix)} matrix entries ({len(models)} models x {len(bench_list)} benchmarks)", file=sys.stderr)
@@ -153,50 +161,16 @@ jobs:
           BENCH="${{ matrix.combo.benchmark }}"
           TIER="${{ matrix.combo.tier }}"
           ARM="${{ matrix.combo.arm }}"
-
-          # Control arm: model name gets -control suffix, uses Agentfile.control
-          if [ "$ARM" = "control" ]; then
-            AGENT_NAME="${MODEL}-control"
-            AGENTFILE_FLAG="--agentfile Agentfile.control"
-          else
-            AGENT_NAME="${MODEL}"
-            AGENTFILE_FLAG=""
-          fi
+          AGENT_NAME="${MODEL}-${ARM}"
 
           echo "::group::$BENCH ($AGENT_NAME) — tier=$TIER arm=$ARM"
 
-          if command -v ostk &>/dev/null; then
-            ostk bench "$BENCH" --model "$MODEL" --docker \
-              2>&1 | tee bench-output.log
-          else
-            python3 runner.py \
-              --model "$MODEL" \
-              --provider openrouter \
-              --benchmark "$BENCH" \
-              ${AGENTFILE_FLAG} \
-              2>&1 | tee bench-output.log
-
-            # For control arm, rename the output to include -control suffix
-            if [ "$ARM" = "control" ] && [ -d "runs/${MODEL}" ]; then
-              mkdir -p "runs/${AGENT_NAME}"
-              for f in runs/${MODEL}/${BENCH}*; do
-                [ -f "$f" ] && cp "$f" "runs/${AGENT_NAME}/$(basename "$f")"
-              done
-              [ -d "runs/${MODEL}/${BENCH}" ] && cp -r "runs/${MODEL}/${BENCH}" "runs/${AGENT_NAME}/${BENCH}"
-              # Patch agent name in score files
-              for sf in runs/${AGENT_NAME}/${BENCH}*.score.json runs/${AGENT_NAME}/${BENCH}/score.json; do
-                if [ -f "$sf" ]; then
-                  python3 << PYEOF
-          import json
-          d = json.load(open("$sf"))
-          d["agent"] = "${AGENT_NAME}"
-          d["control_type"] = "no-ostk"
-          json.dump(d, open("$sf", "w"), indent=2)
-          PYEOF
-                fi
-              done
-            fi
-          fi
+          python3 run_arms.py \
+            --model "$MODEL" \
+            --provider openrouter \
+            --benchmark "$BENCH" \
+            --arm "$ARM" \
+            2>&1 | tee bench-output.log
 
           echo "::endgroup::"
 
@@ -208,7 +182,7 @@ jobs:
           else
             echo "::warning::No score file produced for $BENCH ($AGENT_NAME)"
             mkdir -p "runs/${AGENT_NAME}"
-            echo '{"benchmark":"'"$BENCH"'","agent":"'"$AGENT_NAME"'","resolved":false,"control_type":"'"$([ "$ARM" = "control" ] && echo "no-ostk" || echo "")"'","error":"runner produced no score file","timestamp":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"}' > "$SCORE_FILE"
+            echo '{"benchmark":"'"$BENCH"'","agent":"'"$AGENT_NAME"'","arm":"'"$ARM"'","resolved":false,"error":"runner produced no score file","timestamp":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"}' > "$SCORE_FILE"
           fi
 
       - name: Upload score artifact
@@ -268,13 +242,9 @@ jobs:
           echo "---"
           cat public/scores.json | python3 -m json.tool | head -50
 
-      - name: Score haystack-boot (if present)
+      - name: Run POST battery
         run: |
-          if find runs -path '*/haystack-boot/post.jsonl' | grep -q .; then
-            python3 score_boot.py
-          else
-            echo "No haystack-boot runs found — skipping"
-          fi
+          python3 run_post.py --all || echo "POST battery had errors (non-fatal)"
 
       - name: Commit updated scores
         run: |
@@ -282,7 +252,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Stage everything first, then pull --rebase (avoids unstaged changes error)
-          git add public/scores.json runs/haystack-boot-leaderboard.json 2>/dev/null || true
+          git add public/scores.json public/experiment-scores.json public/haystack-boot-leaderboard.json 2>/dev/null || true
           git add runs/ 2>/dev/null || true
 
           VERSION="${{ github.event.inputs.version }}"
