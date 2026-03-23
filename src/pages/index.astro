@@ -164,11 +164,11 @@ import Base from '../layouts/Base.astro';
     padding: 0.35rem 0.4rem; border-bottom: 1px solid var(--border);
     font-family: var(--mono); font-size: 0.7rem; white-space: nowrap;
   }
-  #leaderboard td.sticky-col { background: var(--bg); }
+  #leaderboard td.sticky-col { background: var(--surface); position: sticky; z-index: 2; }
   #leaderboard tr:nth-child(even) td { background-color: rgba(255,255,255,0.02); }
-  #leaderboard tr:nth-child(even) td.sticky-col { background-color: color-mix(in srgb, var(--bg) 97%, white); }
+  #leaderboard tr:nth-child(even) td.sticky-col { background-color: color-mix(in srgb, var(--surface) 97%, white); position: sticky; z-index: 2; }
   #leaderboard tr:hover td { background: rgba(255,255,255,0.06); }
-  #leaderboard tr:hover td.sticky-col { background: rgba(255,255,255,0.06); }
+  #leaderboard tr:hover td.sticky-col { background: color-mix(in srgb, var(--surface) 94%, white); position: sticky; z-index: 2; }
   td.col-post, td.col-entity, td.col-resolved, td.col-bare, td.col-os, td.col-delta { text-align: center; }
   td.col-cost { text-align: right; font-size: 0.75rem; }
   td.col-tokens, td.col-turns, td.col-time { text-align: right; }
@@ -733,8 +733,9 @@ import Base from '../layouts/Base.astro';
       dragging = true; startX = e.pageX; scrollStart = container.scrollLeft;
       container.classList.add('dragging'); e.preventDefault();
     });
-    window.addEventListener('mousemove', (e: MouseEvent) => {
+    container.addEventListener('mousemove', (e: MouseEvent) => {
       if (!dragging) return;
+      e.preventDefault();
       container.scrollLeft = scrollStart - (e.pageX - startX);
     });
     window.addEventListener('mouseup', () => { if (dragging) { dragging = false; container.classList.remove('dragging'); } });
