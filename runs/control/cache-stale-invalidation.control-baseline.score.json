@@ -1,7 +1,7 @@
 {
   "benchmark": "cache-stale-invalidation",
   "agent": "control-baseline",
-  "timestamp": "2026-03-20T16:54:16Z",
+  "timestamp": "2026-03-23T07:14:50Z",
   "resolved": false,
   "turns_to_fix": 0,
   "token_cost": 0,

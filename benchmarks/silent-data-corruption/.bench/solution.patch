@@ -1,6 +1,6 @@
 --- a/src/main.rs
 +++ b/src/main.rs
-@@ -11,9 +11,7 @@ const BUFFER_SIZE: usize = 65536; // 64KB
+@@ -11,9 +11,7 @@
  fn process_file(input_path: &str, output_path: &str) -> io::Result<()> {
      let mut file = fs::File::open(input_path)?;
 -    let mut buffer = [0u8; BUFFER_SIZE];
@@ -9,7 +9,20 @@
 -    let bytes_read = file.read(&mut buffer)?;
 +    let mut buffer = Vec::new();
 +    file.read_to_end(&mut buffer)?;
- 
+
 -    let data = &buffer[..bytes_read];
 +    let data = &buffer;
      let transformed = transform::process(data);
+--- a/test.sh
++++ b/test.sh
+@@ -6,6 +6,10 @@
+ set -e
+
+ FAIL=0
++
++# Rebuild from patched source
++cd /app && cargo build --release 2>&1
++cp /app/target/release/fileproc /usr/local/bin/fileproc
+
+ # Generate a test file larger than 64KB (the internal buffer size)
+ python3 -c "

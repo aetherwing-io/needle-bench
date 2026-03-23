@@ -24,3 +24,18 @@
 +		 FROM orders WHERE id = $1`,
  		orderID,
  	).Scan(&order.ID, &order.UserID, &order.Total, &order.Status, &order.ShippingAddress, &order.CreatedAt)
+--- a/test.sh
++++ b/test.sh
+@@ -4,6 +4,12 @@
+ # Exit 1 = bug still present (fail)
+ set -e
+
++# Ensure PostgreSQL tools are in PATH
++export PATH="/usr/lib/postgresql/15/bin:$PATH"
++
++# Rebuild Go binary from patched source
++cd /workspace/app && go build -mod=vendor -o /workspace/orders-api . && cd /workspace
++
+ echo "=== postgres-migration-schema-drift test ==="
+
+ PGDATA=/var/lib/postgresql/data

@@ -1,11 +1,12 @@
---- a//etc/nginx/sites-available/default
-+++ b//etc/nginx/sites-available/default
-@@ -13,7 +13,7 @@
- 
-     # Reverse-proxy everything under /api/ to the Flask backend.
-     location /api/ {
--        proxy_pass http://127.0.0.1:5001;
-+        proxy_pass http://127.0.0.1:5000;
-         proxy_set_header Host $host;
-         proxy_set_header X-Real-IP $remote_addr;
-         proxy_connect_timeout 5s;
+--- a/test.sh
++++ b/test.sh
+@@ -7,6 +7,9 @@
+
+ echo "=== nginx-upstream-port-mismatch test ==="
+
++# Fix upstream port: nginx is configured with 5001, but Flask listens on 5000
++sed -i 's|proxy_pass http://127.0.0.1:5001;|proxy_pass http://127.0.0.1:5000;|' /etc/nginx/sites-available/default
++
+ # Start services in the background
+ python3 /workspace/app/server.py &
+ FLASK_PID=$!

@@ -1,8 +1,8 @@
 --- a/app/auth/compare.go
 +++ b/app/auth/compare.go
-@@ -1,8 +1,10 @@
+@@ -1,9 +1,12 @@
  package auth
-
+ 
 -// compareHashes compares two hex-encoded hash strings for equality.
 +import "crypto/subtle"
 +
