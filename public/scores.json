@@ -2180,27 +2180,27 @@
   {
     "benchmark": "api-version-field-drop",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:14:36Z",
+    "timestamp": "2026-03-20T16:54:03Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 3.6,
+    "wall_clock": 3.5,
     "control_type": "no-agent"
   },
   {
     "benchmark": "auth-bypass-path-traversal",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:14:44Z",
+    "timestamp": "2026-03-20T16:54:10Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 3.6,
+    "wall_clock": 3.4,
     "control_type": "no-agent"
   },
   {
     "benchmark": "cache-stale-invalidation",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:14:50Z",
+    "timestamp": "2026-03-20T16:54:16Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2210,57 +2210,57 @@
   {
     "benchmark": "compiler-macro-expansion",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:14:53Z",
+    "timestamp": "2026-03-20T16:54:32Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 0.5,
+    "wall_clock": 0.4,
     "control_type": "no-agent"
   },
   {
     "benchmark": "data-corruption-concurrent-write",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:14:54Z",
+    "timestamp": "2026-03-20T16:54:47Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 0.4,
+    "wall_clock": 0.3,
     "control_type": "no-agent"
   },
   {
     "benchmark": "deadlock-transfer",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:15:06Z",
+    "timestamp": "2026-03-20T16:54:58Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 10.4,
+    "wall_clock": 10.3,
     "control_type": "no-agent"
   },
   {
     "benchmark": "encoding-mojibake",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:15:08Z",
+    "timestamp": "2026-03-20T16:55:01Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 0.4,
+    "wall_clock": 0.3,
     "control_type": "no-agent"
   },
   {
     "benchmark": "goroutine-leak-handler",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:15:21Z",
+    "timestamp": "2026-03-20T16:55:14Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 11.7,
+    "wall_clock": 11.5,
     "control_type": "no-agent"
   },
   {
     "benchmark": "import-cycle-startup",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:15:35Z",
+    "timestamp": "2026-03-20T16:55:27Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2270,37 +2270,37 @@
   {
     "benchmark": "k8s-assume-cache-silent-drop",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:15:37Z",
+    "timestamp": "2026-03-20T16:55:29Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 1.3,
+    "wall_clock": 1.2,
     "control_type": "no-agent"
   },
   {
     "benchmark": "k8s-scheduler-shutdown-deadlock",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:15:44Z",
+    "timestamp": "2026-03-20T16:55:36Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 5.1,
+    "wall_clock": 5.0,
     "control_type": "no-agent"
   },
   {
     "benchmark": "kernel-panic-ioctl",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:15:48Z",
+    "timestamp": "2026-03-20T16:55:41Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 0.1,
+    "wall_clock": 0.2,
     "control_type": "no-agent"
   },
   {
     "benchmark": "memory-leak-event-listener",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:15:53Z",
+    "timestamp": "2026-03-20T16:55:46Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2310,17 +2310,17 @@
   {
     "benchmark": "missing-input-validation",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:16:00Z",
+    "timestamp": "2026-03-20T16:55:53Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 2.8,
+    "wall_clock": 2.7,
     "control_type": "no-agent"
   },
   {
     "benchmark": "nginx-upstream-port-mismatch",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:16:05Z",
+    "timestamp": "2026-03-20T16:55:57Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2330,7 +2330,7 @@
   {
     "benchmark": "null-pointer-config",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:16:08Z",
+    "timestamp": "2026-03-20T16:56:00Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2340,7 +2340,7 @@
   {
     "benchmark": "off-by-one-array-slice",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:16:12Z",
+    "timestamp": "2026-03-20T16:56:04Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2350,7 +2350,7 @@
   {
     "benchmark": "off-by-one-pagination",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:16:15Z",
+    "timestamp": "2026-03-20T16:56:07Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2360,17 +2360,17 @@
   {
     "benchmark": "performance-cliff-hash",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:16:18Z",
+    "timestamp": "2026-03-20T16:56:10Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 0.2,
+    "wall_clock": 0.1,
     "control_type": "no-agent"
   },
   {
     "benchmark": "postgres-migration-schema-drift",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:16:19Z",
+    "timestamp": "2026-03-20T16:56:11Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2380,7 +2380,7 @@
   {
     "benchmark": "race-condition-counter",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:16:26Z",
+    "timestamp": "2026-03-20T16:56:16Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2390,7 +2390,7 @@
   {
     "benchmark": "rate-limit-bypass-header",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:16:39Z",
+    "timestamp": "2026-03-20T16:56:29Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2410,7 +2410,7 @@
   {
     "benchmark": "silent-data-corruption",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:16:58Z",
+    "timestamp": "2026-03-20T16:56:43Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2420,7 +2420,7 @@
   {
     "benchmark": "split-brain-leader-election",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:16:59Z",
+    "timestamp": "2026-03-20T16:56:46Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2430,17 +2430,17 @@
   {
     "benchmark": "sql-injection-search",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:17:08Z",
+    "timestamp": "2026-03-20T16:56:50Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 3.0,
+    "wall_clock": 3.1,
     "control_type": "no-agent"
   },
   {
     "benchmark": "ssrf-allowlist-port-confusion",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:17:14Z",
+    "timestamp": "2026-03-20T16:56:56Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2450,7 +2450,7 @@
   {
     "benchmark": "timezone-scheduling",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:17:17Z",
+    "timestamp": "2026-03-20T16:56:59Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2460,7 +2460,7 @@
   {
     "benchmark": "timing-attack-comparison",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:17:20Z",
+    "timestamp": "2026-03-20T16:57:07Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2470,7 +2470,7 @@
   {
     "benchmark": "type-coercion-comparison",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:17:26Z",
+    "timestamp": "2026-03-20T16:57:10Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2480,17 +2480,17 @@
   {
     "benchmark": "wal-fsync-ghost-ack",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:17:31Z",
+    "timestamp": "2026-03-20T16:57:15Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 2.5,
+    "wall_clock": 2.4,
     "control_type": "no-agent"
   },
   {
     "benchmark": "wrong-operator-discount",
     "agent": "control-baseline",
-    "timestamp": "2026-03-23T07:17:35Z",
+    "timestamp": "2026-03-20T16:57:19Z",
     "resolved": false,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2500,7 +2500,7 @@
   {
     "benchmark": "api-version-field-drop",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:14:40Z",
+    "timestamp": "2026-03-20T16:54:06Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2510,17 +2510,17 @@
   {
     "benchmark": "auth-bypass-path-traversal",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:14:48Z",
+    "timestamp": "2026-03-20T16:54:14Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 3.6,
+    "wall_clock": 3.5,
     "control_type": "solution-applied"
   },
   {
     "benchmark": "cache-stale-invalidation",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:14:51Z",
+    "timestamp": "2026-03-20T16:54:17Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2530,7 +2530,7 @@
   {
     "benchmark": "compiler-macro-expansion",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:14:53Z",
+    "timestamp": "2026-03-20T16:54:33Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2540,7 +2540,7 @@
   {
     "benchmark": "data-corruption-concurrent-write",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:14:55Z",
+    "timestamp": "2026-03-20T16:54:47Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2550,7 +2550,7 @@
   {
     "benchmark": "deadlock-transfer",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:15:07Z",
+    "timestamp": "2026-03-20T16:54:59Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2560,7 +2560,7 @@
   {
     "benchmark": "encoding-mojibake",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:15:09Z",
+    "timestamp": "2026-03-20T16:55:01Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2570,7 +2570,7 @@
   {
     "benchmark": "goroutine-leak-handler",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:15:33Z",
+    "timestamp": "2026-03-20T16:55:26Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2580,7 +2580,7 @@
   {
     "benchmark": "import-cycle-startup",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:15:35Z",
+    "timestamp": "2026-03-20T16:55:27Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2590,27 +2590,27 @@
   {
     "benchmark": "k8s-assume-cache-silent-drop",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:15:38Z",
+    "timestamp": "2026-03-20T16:55:30Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 1.3,
+    "wall_clock": 1.2,
     "control_type": "solution-applied"
   },
   {
     "benchmark": "k8s-scheduler-shutdown-deadlock",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:15:47Z",
+    "timestamp": "2026-03-20T16:55:39Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 3.2,
+    "wall_clock": 3.0,
     "control_type": "solution-applied"
   },
   {
     "benchmark": "kernel-panic-ioctl",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:15:49Z",
+    "timestamp": "2026-03-20T16:55:41Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2620,7 +2620,7 @@
   {
     "benchmark": "memory-leak-event-listener",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:15:57Z",
+    "timestamp": "2026-03-20T16:55:50Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2630,11 +2630,11 @@
   {
     "benchmark": "missing-input-validation",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:16:03Z",
+    "timestamp": "2026-03-20T16:55:56Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 2.8,
+    "wall_clock": 2.7,
     "control_type": "solution-applied"
   },
   {
@@ -2650,17 +2650,17 @@
   {
     "benchmark": "null-pointer-config",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:16:11Z",
+    "timestamp": "2026-03-20T16:56:03Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
-    "wall_clock": 2.2,
+    "wall_clock": 2.3,
     "control_type": "solution-applied"
   },
   {
     "benchmark": "off-by-one-array-slice",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:16:12Z",
+    "timestamp": "2026-03-20T16:56:04Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2670,7 +2670,7 @@
   {
     "benchmark": "off-by-one-pagination",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:16:17Z",
+    "timestamp": "2026-03-20T16:56:09Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2700,7 +2700,7 @@
   {
     "benchmark": "race-condition-counter",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:16:31Z",
+    "timestamp": "2026-03-20T16:56:20Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2710,7 +2710,7 @@
   {
     "benchmark": "rate-limit-bypass-header",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:16:47Z",
+    "timestamp": "2026-03-20T16:56:36Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2750,7 +2750,7 @@
   {
     "benchmark": "sql-injection-search",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:17:11Z",
+    "timestamp": "2026-03-20T16:56:53Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2760,7 +2760,7 @@
   {
     "benchmark": "ssrf-allowlist-port-confusion",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:17:16Z",
+    "timestamp": "2026-03-20T16:56:58Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2770,7 +2770,7 @@
   {
     "benchmark": "timezone-scheduling",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:17:17Z",
+    "timestamp": "2026-03-20T16:57:00Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2790,7 +2790,7 @@
   {
     "benchmark": "type-coercion-comparison",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:17:28Z",
+    "timestamp": "2026-03-20T16:57:12Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -2810,7 +2810,7 @@
   {
     "benchmark": "wrong-operator-discount",
     "agent": "control-solution",
-    "timestamp": "2026-03-23T07:17:35Z",
+    "timestamp": "2026-03-20T16:57:19Z",
     "resolved": true,
     "turns_to_fix": 0,
     "token_cost": 0,
@@ -3102,6 +3102,28 @@
     "blind_discovery": true,
     "read_tool_ratio": 1.0,
     "tool_calls_per_turn": 1.0
+  },
+  {
+    "benchmark": "off-by-one-pagination",
+    "agent": "deepseek-chat",
+    "commit": "9a7a62b",
+    "timestamp": "2026-03-21T19:37:13Z",
+    "difficulty_tier": "easy",
+    "resolved": false,
+    "turns_to_discovery": 20,
+    "turns_to_fix": 20,
+    "signal_to_noise": 0.0,
+    "false_positives": 0,
+    "token_cost": 737,
+    "estimated_cost_usd": 0.0003272,
+    "dollars_per_correct_line": null,
+    "tokens_per_correct_line": null,
+    "recovery_events": 0,
+    "recovery_rate": 1.0,
+    "wall_clock": 6.7,
+    "blind_discovery": false,
+    "read_tool_ratio": null,
+    "tool_calls_per_turn": 0.0
   },
   {
     "benchmark": "race-condition-counter",
