@@ -70,7 +70,7 @@ jobs:
           python3 -c "
           import json
           exp = json.load(open('public/experiment-scores.json'))
-          scores = []
+          scores = json.load(open('public/scores.json'))
           for e in exp:
               s = e.get('silent')
               if not s: continue
