@@ -35,7 +35,7 @@ curl -s -X POST http://localhost:8082/config \
 # certain that at least two will enter the window before the first records
 # the idempotency key.
 for i in 1 2 3 4 5; do
-    curl -s -X POST http://localhost:8081/execute \
+    curl -s -X POST http://localhost:8082/execute \
         -H "Content-Type: application/json" \
         -d '{"from":"A","to":"B","amount":500,"idempotency_key":"txn-001"}' > /dev/null &
 done
