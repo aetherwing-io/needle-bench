@@ -2360,6 +2360,146 @@
     }
   },
   {
+    "model": "claude-sonnet-4-6",
+    "benchmark": "retry-storm-duplicate-transfer",
+    "bare": {
+      "resolved": false,
+      "turns_to_fix": 60,
+      "token_cost": 5796,
+      "estimated_cost_usd": 0.027408,
+      "wall_clock": 265.9,
+      "signal_to_noise": 0
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 1,
+      "token_cost": 960,
+      "estimated_cost_usd": 0.005808,
+      "wall_clock": 3.0,
+      "signal_to_noise": 1.0
+    }
+  },
+  {
+    "model": "claude-sonnet-4-6",
+    "benchmark": "silent-data-corruption",
+    "bare": {
+      "resolved": false,
+      "turns_to_fix": 40,
+      "token_cost": 10157,
+      "estimated_cost_usd": 0.039806999999999995,
+      "wall_clock": 293.8,
+      "signal_to_noise": 0
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 1,
+      "token_cost": 1002,
+      "estimated_cost_usd": 0.004854,
+      "wall_clock": 2.2,
+      "signal_to_noise": 1.0
+    }
+  },
+  {
+    "model": "claude-sonnet-4-6",
+    "benchmark": "split-brain-leader-election",
+    "bare": {
+      "resolved": false,
+      "turns_to_fix": 60,
+      "token_cost": 5489,
+      "estimated_cost_usd": 0.023631,
+      "wall_clock": 253.6,
+      "signal_to_noise": 0
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 10,
+      "token_cost": 53362,
+      "estimated_cost_usd": 0.18261,
+      "wall_clock": 45.5,
+      "signal_to_noise": 0.7
+    }
+  },
+  {
+    "model": "claude-sonnet-4-6",
+    "benchmark": "sql-injection-search",
+    "bare": {
+      "resolved": false,
+      "turns_to_fix": 40,
+      "token_cost": 5102,
+      "estimated_cost_usd": 0.021809999999999996,
+      "wall_clock": 134.6,
+      "signal_to_noise": 0
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 1,
+      "token_cost": 943,
+      "estimated_cost_usd": 0.006261,
+      "wall_clock": 3.9,
+      "signal_to_noise": 1.0
+    }
+  },
+  {
+    "model": "claude-sonnet-4-6",
+    "benchmark": "ssrf-allowlist-port-confusion",
+    "bare": {
+      "resolved": true,
+      "turns_to_fix": 5,
+      "token_cost": 7356,
+      "estimated_cost_usd": 0.029856,
+      "wall_clock": 135.6,
+      "signal_to_noise": 0.2
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 1,
+      "token_cost": 1227,
+      "estimated_cost_usd": 0.005109,
+      "wall_clock": 2.3,
+      "signal_to_noise": 1.0
+    }
+  },
+  {
+    "model": "claude-sonnet-4-6",
+    "benchmark": "timezone-scheduling",
+    "bare": {
+      "resolved": false,
+      "turns_to_fix": 20,
+      "token_cost": 3697,
+      "estimated_cost_usd": 0.016179,
+      "wall_clock": 130.0,
+      "signal_to_noise": 0
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 2,
+      "token_cost": 4752,
+      "estimated_cost_usd": 0.023904,
+      "wall_clock": 13.1,
+      "signal_to_noise": 0.5
+    }
+  },
+  {
+    "model": "claude-sonnet-4-6",
+    "benchmark": "timing-attack-comparison",
+    "bare": {
+      "resolved": false,
+      "turns_to_fix": 60,
+      "token_cost": 4172,
+      "estimated_cost_usd": 0.018564,
+      "wall_clock": 140.6,
+      "signal_to_noise": 0
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 3,
+      "token_cost": 8765,
+      "estimated_cost_usd": 0.032174999999999995,
+      "wall_clock": 11.0,
+      "signal_to_noise": 0.667
+    }
+  },
+  {
     "model": "codestral-2508",
     "benchmark": "api-version-field-drop",
     "bare": {
@@ -4217,6 +4357,66 @@
       "estimated_cost_usd": 0.0357812,
       "wall_clock": 118.1,
       "signal_to_noise": 0.308
+    }
+  },
+  {
+    "model": "deepseek-r1",
+    "benchmark": "type-coercion-comparison",
+    "bare": {
+      "resolved": true,
+      "turns_to_fix": 17,
+      "token_cost": 58709,
+      "estimated_cost_usd": 0.048731899999999995,
+      "wall_clock": 169.4,
+      "signal_to_noise": 0.118
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 2,
+      "token_cost": 1284,
+      "estimated_cost_usd": 0.0012282,
+      "wall_clock": 9.1,
+      "signal_to_noise": 0
+    }
+  },
+  {
+    "model": "deepseek-r1",
+    "benchmark": "wal-fsync-ghost-ack",
+    "bare": {
+      "resolved": true,
+      "turns_to_fix": 11,
+      "token_cost": 17973,
+      "estimated_cost_usd": 0.014226299999999997,
+      "wall_clock": 48.9,
+      "signal_to_noise": 0
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 2,
+      "token_cost": 2095,
+      "estimated_cost_usd": 0.0018697,
+      "wall_clock": 10.6,
+      "signal_to_noise": 0
+    }
+  },
+  {
+    "model": "deepseek-r1",
+    "benchmark": "wrong-operator-discount",
+    "bare": {
+      "resolved": true,
+      "turns_to_fix": 8,
+      "token_cost": 8244,
+      "estimated_cost_usd": 0.0069066,
+      "wall_clock": 33.7,
+      "signal_to_noise": 0
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 3,
+      "token_cost": 2199,
+      "estimated_cost_usd": 0.0019605,
+      "wall_clock": 13.4,
+      "signal_to_noise": 0
     }
   },
   {
@@ -9560,6 +9760,46 @@
     }
   },
   {
+    "model": "gpt-4o",
+    "benchmark": "kernel-panic-ioctl",
+    "bare": {
+      "resolved": false,
+      "turns_to_fix": 60,
+      "token_cost": 218533,
+      "estimated_cost_usd": 0.3309175000000001,
+      "wall_clock": 1004.1,
+      "signal_to_noise": 0
+    },
+    "silent": {
+      "resolved": false,
+      "turns_to_fix": 60,
+      "token_cost": 327152,
+      "estimated_cost_usd": 0.49002,
+      "wall_clock": 74.5,
+      "signal_to_noise": 0.583
+    }
+  },
+  {
+    "model": "gpt-4o",
+    "benchmark": "memory-leak-event-listener",
+    "bare": {
+      "resolved": false,
+      "turns_to_fix": 40,
+      "token_cost": 70127,
+      "estimated_cost_usd": 0.11089,
+      "wall_clock": 525.2,
+      "signal_to_noise": 0
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 17,
+      "token_cost": 23838,
+      "estimated_cost_usd": 0.04434,
+      "wall_clock": 21.7,
+      "signal_to_noise": 0.235
+    }
+  },
+  {
     "model": "grok-4-1-fast",
     "benchmark": "api-version-field-drop",
     "bare": {
@@ -12657,6 +12897,106 @@
       "estimated_cost_usd": 0.0241848,
       "wall_clock": 25.8,
       "signal_to_noise": 0.25
+    }
+  },
+  {
+    "model": "mistral-large",
+    "benchmark": "timezone-scheduling",
+    "bare": {
+      "resolved": false,
+      "turns_to_fix": 20,
+      "token_cost": 573,
+      "estimated_cost_usd": 0.0029628,
+      "wall_clock": 7.7,
+      "signal_to_noise": 0
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 5,
+      "token_cost": 11671,
+      "estimated_cost_usd": 0.032077999999999995,
+      "wall_clock": 37.4,
+      "signal_to_noise": 0.6
+    }
+  },
+  {
+    "model": "mistral-large",
+    "benchmark": "timing-attack-comparison",
+    "bare": {
+      "resolved": false,
+      "turns_to_fix": 60,
+      "token_cost": 5708,
+      "estimated_cost_usd": 0.013814399999999998,
+      "wall_clock": 139.5,
+      "signal_to_noise": 0
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 7,
+      "token_cost": 9665,
+      "estimated_cost_usd": 0.0190276,
+      "wall_clock": 19.2,
+      "signal_to_noise": 0.714
+    }
+  },
+  {
+    "model": "mistral-large",
+    "benchmark": "type-coercion-comparison",
+    "bare": {
+      "resolved": false,
+      "turns_to_fix": 20,
+      "token_cost": 13056,
+      "estimated_cost_usd": 0.0250024,
+      "wall_clock": 37.9,
+      "signal_to_noise": 0
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 7,
+      "token_cost": 16563,
+      "estimated_cost_usd": 0.036079599999999996,
+      "wall_clock": 40.7,
+      "signal_to_noise": 0.286
+    }
+  },
+  {
+    "model": "mistral-large",
+    "benchmark": "wal-fsync-ghost-ack",
+    "bare": {
+      "resolved": false,
+      "turns_to_fix": 0,
+      "token_cost": 0,
+      "estimated_cost_usd": 0,
+      "wall_clock": 173.0,
+      "signal_to_noise": 0
+    },
+    "silent": {
+      "resolved": false,
+      "turns_to_fix": 60,
+      "token_cost": 409754,
+      "estimated_cost_usd": 0.4441439999999999,
+      "wall_clock": 220.9,
+      "signal_to_noise": 0.372
+    }
+  },
+  {
+    "model": "mistral-large",
+    "benchmark": "wrong-operator-discount",
+    "bare": {
+      "resolved": false,
+      "turns_to_fix": 20,
+      "token_cost": 23855,
+      "estimated_cost_usd": 0.038886800000000006,
+      "wall_clock": 159.3,
+      "signal_to_noise": 0.05
+    },
+    "silent": {
+      "resolved": true,
+      "turns_to_fix": 4,
+      "token_cost": 4486,
+      "estimated_cost_usd": 0.011503999999999999,
+      "wall_clock": 12.9,
+      "signal_to_noise": 0.5
     }
   },
   {
