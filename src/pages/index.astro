@@ -1,8 +1,27 @@
 ---
 import Base from '../layouts/Base.astro';
+
+const datasetSchema = {
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "needle-bench AI Coding Agent Benchmark",
+  "description": "Open benchmark for AI coding agents. 26 models × 32 real-bug benchmarks × 2 experimental arms = 1,664 runs. Deterministic scoring.",
+  "url": "https://needle-bench.cc",
+  "license": "https://opensource.org/licenses/MIT",
+  "creator": {
+    "@type": "Organization",
+    "name": "os-tack",
+    "url": "https://github.com/os-tack"
+  },
+  "distribution": {
+    "@type": "DataDownload",
+    "encodingFormat": "application/json",
+    "contentUrl": "https://needle-bench.cc/scores.json"
+  }
+};
 ---
 
-<Base title="needle-bench — find the needle" description="26 models. 1,768 runs. One prompt: find the needle.">
+<Base title="needle-bench — find the needle" description="26 models. 1,664 runs. One prompt: find the needle. Open benchmark for AI coding agents on real bugs." jsonLd={datasetSchema}>
   <div class="page-header">
     <div class="page-header-left">
       <h1>needle-bench</h1>
@@ -17,7 +36,7 @@ import Base from '../layouts/Base.astro';
   <main>
     <div class="lb-toolbar">
       <div class="experiment-info">
-        <p><strong>Two-arm experiment.</strong> 26 models &times; 34 benchmarks &times; 2 arms = 1,768 runs.</p>
+        <p><strong>Two-arm experiment.</strong> 26 models &times; 32 benchmarks &times; 2 arms = 1,664 runs.</p>
         <p class="muted">Each model receives one prompt: &ldquo;find the needle.&rdquo; <strong>Bare</strong>: generic system prompt + bash. <strong>OS</strong>: same prompt + bash, but project context (README, file listing, test output) silently injected. The model can&rsquo;t tell which arm it&rsquo;s in. <strong>&Delta;</strong>: percentage point lift from the invisible OS. Click any header to sort.</p>
       </div>
     </div>
@@ -44,12 +63,20 @@ import Base from '../layouts/Base.astro';
           <tr><td colspan="11" class="empty">Loading...</td></tr>
         </tbody>
       </table>
+      <noscript>
+        <div class="noscript-fallback">
+          <h2>needle-bench: AI Coding Agent Leaderboard</h2>
+          <p>26 models × 32 benchmarks × 2 arms = 1,664 runs. Each model receives one prompt: "find the needle."</p>
+          <p><strong>Key finding:</strong> Silent context injection improved resolve rates by +34 percentage points (36% bare → 70% with OS). 23 of 26 models improved.</p>
+          <p>Enable JavaScript to view the interactive leaderboard, or visit the <a href="https://github.com/os-tack/find-the-needle">GitHub repository</a> for raw data.</p>
+        </div>
+      </noscript>
     </div>
     <p class="muted" id="last-updated" style="margin-top:0.5rem;font-size:0.75rem;"></p>
 
     <section class="results-summary">
       <h2>Results</h2>
-      <p>Across 26 models and 34 benchmarks, silent context injection improved resolve rates by an average of <strong>+33 percentage points</strong> (36% bare &rarr; 69% kernel). 22 of 26 models improved. The effect was consistent across all vendors (Anthropic, Google, OpenAI, xAI, DeepSeek, Mistral, Meta, Qwen).</p>
+      <p>Across 26 models and 32 benchmarks, silent context injection improved resolve rates by an average of <strong>+34 percentage points</strong> (36% bare &rarr; 70% kernel). 23 of 26 models improved. The effect was consistent across all vendors (Anthropic, Google, OpenAI, xAI, DeepSeek, Mistral, Meta, Qwen).</p>
 
       <h3>Key findings</h3>
       <ul>
@@ -62,7 +89,7 @@ import Base from '../layouts/Base.astro';
       <h3>Methodology</h3>
       <ul>
         <li>All runs via <a href="https://openrouter.ai">OpenRouter</a> for fair cross-vendor comparison.</li>
-        <li>34 Docker-containerized benchmarks with real bugs across easy, medium, and hard tiers.</li>
+        <li>32 Docker-containerized benchmarks with real bugs across easy, medium, and hard tiers.</li>
         <li>Each benchmark has a deterministic test: <code>test.sh</code> exits 0 = fixed, 1 = still broken.</li>
         <li>Both arms use identical tools (bash only) and identical user prompt (&ldquo;find the needle.&rdquo;).</li>
         <li>Silent arm injects: project README (30 lines), source file listing (30 files), current test output (20 lines).</li>

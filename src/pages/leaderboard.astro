@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="needle-bench — find the needle" description="26 models. 1,768 runs. One prompt: find the needle.">
+<Base title="needle-bench — find the needle" description="26 models. 1,664 runs. One prompt: find the needle.">
   <div class="page-header">
     <div class="page-header-left">
       <h1>needle-bench</h1>
@@ -17,7 +17,7 @@ import Base from '../layouts/Base.astro';
   <main>
     <div class="lb-toolbar">
       <div class="experiment-info">
-        <p><strong>Two-arm experiment.</strong> 26 models &times; 34 benchmarks &times; 2 arms = 1,768 runs.</p>
+        <p><strong>Two-arm experiment.</strong> 26 models &times; 32 benchmarks &times; 2 arms = 1,664 runs.</p>
         <p class="muted">Each model receives one prompt: &ldquo;find the needle.&rdquo; <strong>Bare</strong>: generic system prompt + bash. <strong>OS</strong>: same prompt + bash, but project context (README, file listing, test output) silently injected. The model can&rsquo;t tell which arm it&rsquo;s in. <strong>&Delta;</strong>: percentage point lift from the invisible OS. Click any header to sort.</p>
       </div>
     </div>
@@ -49,7 +49,7 @@ import Base from '../layouts/Base.astro';
 
     <section class="results-summary">
       <h2>Results</h2>
-      <p>Across 26 models and 34 benchmarks, silent context injection improved resolve rates by an average of <strong>+33 percentage points</strong> (36% bare &rarr; 69% kernel). 22 of 26 models improved. The effect was consistent across all vendors (Anthropic, Google, OpenAI, xAI, DeepSeek, Mistral, Meta, Qwen).</p>
+      <p>Across 26 models and 32 benchmarks, silent context injection improved resolve rates by an average of <strong>+34 percentage points</strong> (36% bare &rarr; 70% kernel). 23 of 26 models improved. The effect was consistent across all vendors (Anthropic, Google, OpenAI, xAI, DeepSeek, Mistral, Meta, Qwen).</p>
 
       <h3>Key findings</h3>
       <ul>
