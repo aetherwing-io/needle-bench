@@ -1,62 +1,62 @@
 {
-  "timestamp": "2026-03-29T13:21:49Z",
-  "commit": "5c66f04",
+  "timestamp": "2026-03-30T02:36:06Z",
+  "commit": "f5edb66",
   "benchmarks": [
     {
       "name": "api-version-field-drop",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 22082,
-      "solve_ms": 10341
+      "build_ms": 22785,
+      "solve_ms": 10076
     },
     {
       "name": "auth-bypass-path-traversal",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 10499,
-      "solve_ms": 10239
+      "build_ms": 9744,
+      "solve_ms": 10060
     },
     {
       "name": "cache-stale-invalidation",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 2661,
-      "solve_ms": 1247
+      "build_ms": 2654,
+      "solve_ms": 1259
     },
     {
       "name": "compiler-macro-expansion",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 35543,
-      "solve_ms": 1179
+      "build_ms": 42052,
+      "solve_ms": 1312
     },
     {
       "name": "data-corruption-concurrent-write",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 27145,
-      "solve_ms": 1021
+      "build_ms": 30050,
+      "solve_ms": 918
     },
     {
       "name": "deadlock-transfer",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 5203,
-      "solve_ms": 1430
+      "build_ms": 5424,
+      "solve_ms": 1345
     },
     {
       "name": "encoding-mojibake",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 5904,
-      "solve_ms": 974
+      "build_ms": 5409,
+      "solve_ms": 943
     },
     {
       "name": "goroutine-leak-handler",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 10078,
-      "solve_ms": 18236
+      "build_ms": 9980,
+      "solve_ms": 18045
     },
     {
       "name": "haystack-boot",
@@ -72,169 +72,169 @@
       "name": "import-cycle-startup",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 3354,
-      "solve_ms": 344
+      "build_ms": 3244,
+      "solve_ms": 340
     },
     {
       "name": "k8s-assume-cache-silent-drop",
       "status": "solution_failed",
       "bug_status": "bug_confirmed",
-      "build_ms": 19770,
-      "solve_ms": 195
+      "build_ms": 19404,
+      "solve_ms": 185
     },
     {
       "name": "k8s-scheduler-shutdown-deadlock",
       "status": "solution_failed",
       "bug_status": "bug_confirmed",
-      "build_ms": 1924,
-      "solve_ms": 205
+      "build_ms": 1871,
+      "solve_ms": 191
     },
     {
       "name": "kernel-panic-ioctl",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 3993,
-      "solve_ms": 398
+      "build_ms": 3852,
+      "solve_ms": 386
     },
     {
       "name": "memory-leak-event-listener",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 4229,
-      "solve_ms": 5135
+      "build_ms": 4093,
+      "solve_ms": 5047
     },
     {
       "name": "missing-input-validation",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 5464,
-      "solve_ms": 4645
+      "build_ms": 5231,
+      "solve_ms": 4823
     },
     {
       "name": "nginx-upstream-port-mismatch",
       "status": "solution_failed",
       "bug_status": "bug_confirmed",
-      "build_ms": 12876,
-      "solve_ms": 205
+      "build_ms": 12173,
+      "solve_ms": 197
     },
     {
       "name": "null-pointer-config",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 11328,
-      "solve_ms": 2672
+      "build_ms": 10806,
+      "solve_ms": 2653
     },
     {
       "name": "off-by-one-array-slice",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 1377,
-      "solve_ms": 501
+      "build_ms": 1266,
+      "solve_ms": 503
     },
     {
       "name": "off-by-one-pagination",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 4991,
-      "solve_ms": 2329
+      "build_ms": 4997,
+      "solve_ms": 2323
     },
     {
       "name": "performance-cliff-hash",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 6336,
-      "solve_ms": 1158
+      "build_ms": 6070,
+      "solve_ms": 1113
     },
     {
       "name": "postgres-migration-schema-drift",
       "status": "solution_failed",
       "bug_status": "bug_confirmed",
-      "build_ms": 41021,
-      "solve_ms": 208
+      "build_ms": 40160,
+      "solve_ms": 201
     },
     {
       "name": "race-condition-counter",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 4879,
-      "solve_ms": 4822
+      "build_ms": 5088,
+      "solve_ms": 4797
     },
     {
       "name": "rate-limit-bypass-header",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 3959,
-      "solve_ms": 9406
+      "build_ms": 3890,
+      "solve_ms": 9326
     },
     {
       "name": "retry-storm-duplicate-transfer",
       "status": "solution_failed",
       "bug_status": "bug_confirmed",
-      "build_ms": 13543,
+      "build_ms": 12637,
       "solve_ms": 195
     },
     {
       "name": "silent-data-corruption",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 25319,
-      "solve_ms": 658
+      "build_ms": 29143,
+      "solve_ms": 651
     },
     {
       "name": "split-brain-leader-election",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 14408,
-      "solve_ms": 6739
+      "build_ms": 14136,
+      "solve_ms": 6712
     },
     {
       "name": "sql-injection-search",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 2980,
-      "solve_ms": 1255
+      "build_ms": 2804,
+      "solve_ms": 1243
     },
     {
       "name": "ssrf-allowlist-port-confusion",
       "status": "solution_failed",
       "bug_status": "bug_confirmed",
-      "build_ms": 9490,
-      "solve_ms": 212
+      "build_ms": 9073,
+      "solve_ms": 198
     },
     {
       "name": "timezone-scheduling",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 4300,
-      "solve_ms": 766
+      "build_ms": 4616,
+      "solve_ms": 761
     },
     {
       "name": "timing-attack-comparison",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 13869,
-      "solve_ms": 9490
+      "build_ms": 13910,
+      "solve_ms": 9457
     },
     {
       "name": "type-coercion-comparison",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 1578,
-      "solve_ms": 2337
+      "build_ms": 1480,
+      "solve_ms": 2333
     },
     {
       "name": "wal-fsync-ghost-ack",
       "status": "solution_failed",
       "bug_status": "bug_confirmed",
-      "build_ms": 7620,
-      "solve_ms": 200
+      "build_ms": 7479,
+      "solve_ms": 197
     },
     {
       "name": "wrong-operator-discount",
       "status": "pass",
       "bug_status": "bug_confirmed",
-      "build_ms": 1276,
-      "solve_ms": 485
+      "build_ms": 1442,
+      "solve_ms": 474
     }
   ]
 }
