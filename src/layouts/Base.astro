@@ -9,6 +9,20 @@ const { title, description = 'An open benchmark where developers submit real bug
 const currentPath = Astro.url.pathname;
 const canonicalUrl = `https://needle-bench.cc${currentPath}`;
 const ogImage = 'https://needle-bench.cc/og-default.png';
+
+const navLinks = [
+  { href: '/', label: 'Leaderboard' },
+  { href: '/insights/', label: 'Insights' },
+  { href: '/contribute/', label: 'Contribute' },
+  { href: '/about/', label: 'About' },
+  { href: 'https://github.com/os-tack/find-the-needle', label: 'GitHub', external: true },
+];
+
+function isActive(href: string): boolean {
+  if (href.startsWith('http')) return false;
+  if (href === '/') return currentPath === '/' || currentPath === '/leaderboard' || currentPath === '/leaderboard/';
+  return currentPath.startsWith(href);
+}
 ---
 
 <!DOCTYPE html>
@@ -55,6 +69,19 @@ const ogImage = 'https://needle-bench.cc/og-default.png';
   <script defer data-domain="needle-bench.cc" src="https://plausible.io/js/script.outbound-links.js"></script>
 </head>
 <body>
+  <nav class="topnav">
+    <a href="/" class="brand">needle-bench</a>
+    {navLinks.map(link => (
+      <a
+        href={link.href}
+        class:list={[{ active: isActive(link.href) }]}
+        {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      >
+        {link.label}{link.external ? ' ↗' : ''}
+      </a>
+    ))}
+  </nav>
+
   <slot />
 
   <footer>
