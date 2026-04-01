@@ -1,0 +1,77 @@
+# Pre-rolled base image for native arm benchmarks.
+# Contains all vendor CLI harnesses AND common language runtimes so scenario
+# Dockerfiles can be rebased onto this image at build time.
+#
+# Build:  docker build -t needle-bench-native -f docker/Dockerfile.bench-native .
+#
+# When ostk bench builds for --arm native, it rewrites each scenario's
+# FROM line to FROM needle-bench-native, so all CLIs are pre-installed.
+#
+# Vendor CLIs: claude, gemini, codex, grok, vibe, kimi, opencode
+
+FROM node:22-slim
+
+# ── System deps + language runtimes ───────────────────────────────
+# Scenarios use python, go, node, etc. — include them all so rebased
+# Dockerfiles don't fail on missing runtimes.
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      bash curl wget git jq ca-certificates procps \
+      python3 python3-pip python3-venv python-is-python3 \
+      golang-go \
+      build-essential pkg-config libssl-dev && \
+    rm -rf /var/lib/apt/lists/* && \
+    git config --global user.email "bench@needle-bench.cc" && \
+    git config --global user.name "needle-bench"
+
+# Ensure uv/pipx-installed tools and opencode are on PATH
+ENV PATH="/root/.opencode/bin:/root/.local/bin:${PATH}"
+
+# Allow pip install without --break-system-packages (PEP 668).
+# Bench containers are ephemeral — no risk of breaking the system.
+ENV PIP_BREAK_SYSTEM_PACKAGES=1
+
+# Non-root user for CLIs that refuse to run as root (e.g. Claude Code)
+RUN useradd -m -s /bin/bash bench
+
+# ── Vendor CLIs ───────────────────────────────────────────────────
+
+# Claude Code (npm)
+RUN npm install -g @anthropic-ai/claude-code 2>/dev/null && \
+    echo "claude: $(claude --version 2>/dev/null || echo 'installed')"
+
+# Gemini CLI (npm)
+RUN npm install -g @google/gemini-cli 2>/dev/null && \
+    echo "gemini: $(gemini --version 2>/dev/null || echo 'installed')"
+
+# Codex CLI (npm — OpenAI)
+RUN npm install -g @openai/codex 2>/dev/null && \
+    echo "codex: $(codex --version 2>/dev/null || echo 'installed')"
+
+# Grok CLI (npm)
+RUN npm install -g @vibe-kit/grok-cli 2>/dev/null && \
+    echo "grok: $(grok --version 2>/dev/null || echo 'installed')"
+
+# Mistral Vibe (curl installer → uv → mistral-vibe)
+RUN curl -LsSf https://mistral.ai/vibe/install.sh | bash 2>/dev/null || \
+    echo "vibe: install script failed"
+
+# Kimi CLI (curl installer → uv → kimi-cli)
+RUN curl -LsSf https://code.kimi.com/install.sh | bash 2>/dev/null || \
+    echo "kimi: install script failed"
+
+# Aider (pip — fallback for local/Ollama models)
+RUN pip install --break-system-packages -q aider-chat 2>/dev/null && \
+    echo "aider: $(aider --version 2>/dev/null || echo 'installed')"
+
+# OpenCode (curl installer — universal fallback for models without vendor CLIs)
+RUN curl -fsSL https://opencode.ai/install | bash 2>/dev/null || \
+    echo "opencode: install script failed"
+
+# ── Verify ────────────────────────────────────────────────────────
+RUN echo "=== installed CLIs ===" && \
+    for cmd in claude gemini codex grok vibe kimi opencode; do \
+      which $cmd 2>/dev/null && echo "  $cmd: ok" || echo "  $cmd: missing"; \
+    done && \
+    echo "=== runtimes ===" && \
+    python3 --version && node --version && go version
