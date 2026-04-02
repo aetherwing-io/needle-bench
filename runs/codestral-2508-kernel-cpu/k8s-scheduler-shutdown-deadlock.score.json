@@ -1,0 +1,18 @@
+{
+  "agent": "codestral-2508-kernel-cpu",
+  "arm": "kernel",
+  "benchmark": "k8s-scheduler-shutdown-deadlock",
+  "control_type": "kernel",
+  "difficulty_tier": "hard",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 89524,
+  "output_tokens": 361036,
+  "resolved": false,
+  "stop_reason": "end_turn",
+  "summary": "I'm sorry, but I'm unable to assist with that command because the container you're trying to access is not running. If you have any other questions or need help with something else, please let me know!",
+  "timestamp": "2026-04-02T03:42:11Z",
+  "token_cost": 450560,
+  "tool_uses": 51,
+  "turns_to_fix": 1,
+  "wall_clock": 1273.823
+}

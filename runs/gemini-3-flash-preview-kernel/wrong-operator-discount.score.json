@@ -1,0 +1,18 @@
+{
+  "agent": "gemini-3-flash-preview-kernel",
+  "arm": "kernel",
+  "benchmark": "wrong-operator-discount",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.016843999999999998,
+  "input_tokens": 32308,
+  "output_tokens": 230,
+  "resolved": false,
+  "stop_reason": "end_turn",
+  "summary": "",
+  "timestamp": "2026-04-02T03:45:09Z",
+  "token_cost": 32538,
+  "tool_uses": 21,
+  "turns_to_fix": 1,
+  "wall_clock": 26.079
+}

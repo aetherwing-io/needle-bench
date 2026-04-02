@@ -1,0 +1,18 @@
+{
+  "agent": "devstral-2512-kernel-cpu",
+  "arm": "kernel",
+  "benchmark": "type-coercion-comparison",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 26942,
+  "output_tokens": 366,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "Great! The test passes now. The issue was that `min_rating` was being treated as a string instead of a number, which caused incorrect comparisons in the filtering logic. By converting it to an integer with `parseInt()`, the filtering now works correctly.",
+  "timestamp": "2026-04-02T04:30:49Z",
+  "token_cost": 27308,
+  "tool_uses": 10,
+  "turns_to_fix": 1,
+  "wall_clock": 11.17
+}

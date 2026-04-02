@@ -1,0 +1,18 @@
+{
+  "agent": "grok-3-mini-kernel",
+  "arm": "kernel",
+  "benchmark": "postgres-migration-schema-drift",
+  "control_type": "kernel",
+  "difficulty_tier": "hard",
+  "estimated_cost_usd": 0.007281750000000001,
+  "input_tokens": 14493,
+  "output_tokens": 11157,
+  "resolved": false,
+  "stop_reason": "end_turn",
+  "summary": "I have located the \"needle\" in the file `/workspace/test.sh`:\n\n- Line 2 contains: `# needle-bench test script`\n\nThis matches the string \"needle\" as identified through the Grep function. If you need further actions, let me know.",
+  "timestamp": "2026-04-02T04:10:08Z",
+  "token_cost": 25650,
+  "tool_uses": 10,
+  "turns_to_fix": 1,
+  "wall_clock": 137.822
+}

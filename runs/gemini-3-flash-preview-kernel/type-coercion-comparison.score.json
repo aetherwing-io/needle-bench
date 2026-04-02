@@ -1,0 +1,18 @@
+{
+  "agent": "gemini-3-flash-preview-kernel",
+  "arm": "kernel",
+  "benchmark": "type-coercion-comparison",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.014639000000000001,
+  "input_tokens": 25372,
+  "output_tokens": 651,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The bug was located in `utils.js`, where the `min_rating` query parameter was being kept as a string instead of being converted to a number. \n\nIn `filter.js`, the `buildRatingRange` function creates a range of numbers:\n```javascript\nfunction buildRatingRange(min, max) {\n  const range = [];\n  for (let i = min; i <= max; i++) {\n    range.push(i);\n  }\n  return range;\n}\n```\nWhen `min` (from `query.minRating`) was a string (e.g., `\"4\"`), the loop `for (let i = min; i <= max; i++)` would perform string concatenation or stop prematurely depending on the context, but more importantly, `i++` would turn `i` into a number. However, the initial value of `i` being a string could cause issues, and the logic was generally fragile due to type mismatch when comparing with product ratings (which are numbers) using `acceptable.includes(p.rating)`. Specifically, with `min = \"4\"`, `i` starts as `\"4\"`, `i <= 5` is true, then `i++` makes it `5`. The resulting range was often incorrect or shifted because of how JavaScript handles the loop initialization with a string.\n\nI fixed this by parsing `min_rating` as an integer in `utils.js`:\n\n```javascript\n<<<<\n  if (searchParams.has('min_rating')) {\n    // Read the minimum rating from query string\n    query.minRating = searchParams.get('min_rating');\n  }\n====\n  if (searchParams.has('min_rating')) {\n    // Read the minimum rating from query string\n    query.minRating = parseInt(searchParams.get('min_rating'), 10);\n  }\n>>>>\n```\n\nThis ensures `buildRatingRange` receives a number, producing the correct array of ratings for comparison.",
+  "timestamp": "2026-04-02T03:44:31Z",
+  "token_cost": 26023,
+  "tool_uses": 12,
+  "turns_to_fix": 1,
+  "wall_clock": 29.689
+}

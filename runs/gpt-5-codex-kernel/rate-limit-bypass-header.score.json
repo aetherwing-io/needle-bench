@@ -1,0 +1,18 @@
+{
+  "agent": "gpt-5-codex-kernel",
+  "arm": "kernel",
+  "benchmark": "rate-limit-bypass-header",
+  "control_type": "kernel",
+  "difficulty_tier": "medium",
+  "estimated_cost_usd": 0.07976275,
+  "input_tokens": 79511,
+  "output_tokens": 3567,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The rate limiter now treats X-Forwarded-For headers only when the request originates from a trusted proxy and validates the IP before using it. This prevents attackers from bypassing the limit by rotating spoofed headers. Running `test.sh` confirms both normal rate limiting and spoofing protection.",
+  "timestamp": "2026-04-02T03:46:50Z",
+  "token_cost": 83078,
+  "tool_uses": 14,
+  "turns_to_fix": 1,
+  "wall_clock": 50.527
+}

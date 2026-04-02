@@ -1,0 +1,18 @@
+{
+  "agent": "devstral-2512-kernel",
+  "arm": "kernel",
+  "benchmark": "timezone-scheduling",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.013493679999999997,
+  "input_tokens": 47384,
+  "output_tokens": 1207,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "Perfect! The test now passes. The issue was that the scheduler was only checking events for the current UTC date, but when an event is scheduled for late night in a timezone behind UTC (like US/Eastern or US/Pacific), the UTC time actually falls on the next calendar day.\n\nThe fix checks both the current UTC date and the previous UTC date when the scheduled UTC time would be in the future relative to the window we're checking. This ensures that late-night events that cross the midnight UTC boundary are properly detected.",
+  "timestamp": "2026-04-02T04:06:38Z",
+  "token_cost": 48591,
+  "tool_uses": 14,
+  "turns_to_fix": 1,
+  "wall_clock": 19.082
+}

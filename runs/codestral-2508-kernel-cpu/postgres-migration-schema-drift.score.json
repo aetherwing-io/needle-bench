@@ -1,0 +1,18 @@
+{
+  "agent": "codestral-2508-kernel-cpu",
+  "arm": "kernel",
+  "benchmark": "postgres-migration-schema-drift",
+  "control_type": "kernel",
+  "difficulty_tier": "hard",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 147346,
+  "output_tokens": 2629,
+  "resolved": false,
+  "stop_reason": "error: API call failed: API error 429: Rate limit exceeded",
+  "summary": "The command `initdb` is still not found. This suggests that the `initdb` command is not in the PATH. To resolve this, you need to add the PostgreSQL binaries to the PATH.",
+  "timestamp": "2026-04-02T03:48:04Z",
+  "token_cost": 149975,
+  "tool_uses": 60,
+  "turns_to_fix": 0,
+  "wall_clock": 41.148
+}

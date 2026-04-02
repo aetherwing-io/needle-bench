@@ -1,0 +1,18 @@
+{
+  "agent": "devstral-2512-kernel-cpu",
+  "arm": "kernel",
+  "benchmark": "graphql-dataloader-per-request",
+  "control_type": "kernel",
+  "difficulty_tier": "extreme",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 136186,
+  "output_tokens": 3950,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "Perfect! The fix works. The test now passes with only 2 database queries instead of the N+1 problem that would have occurred before. The key changes were:\n\n1. Moved DataLoader creation from individual resolvers to the context creation (once per request)\n2. Updated resolvers to use the shared DataLoader instances from the context\n3. This allows DataLoader to batch all the requests within a single GraphQL query\n\nThe needle in the haystack was the incorrect placement of DataLoader instantiation - it needed to be at the request level (in context) rather than inside each resolver call.",
+  "timestamp": "2026-04-02T03:54:13Z",
+  "token_cost": 140136,
+  "tool_uses": 19,
+  "turns_to_fix": 1,
+  "wall_clock": 2301.606
+}

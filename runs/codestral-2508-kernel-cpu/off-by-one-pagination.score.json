@@ -1,0 +1,18 @@
+{
+  "agent": "codestral-2508-kernel-cpu",
+  "arm": "kernel",
+  "benchmark": "off-by-one-pagination",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 6402,
+  "output_tokens": 218,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The issue has been fixed. The pagination logic is now correct, and the page boundaries are properly aligned.",
+  "timestamp": "2026-04-02T03:47:11Z",
+  "token_cost": 6620,
+  "tool_uses": 5,
+  "turns_to_fix": 1,
+  "wall_clock": 7.811
+}

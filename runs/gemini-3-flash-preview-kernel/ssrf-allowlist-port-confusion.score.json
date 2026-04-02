@@ -1,0 +1,18 @@
+{
+  "agent": "gemini-3-flash-preview-kernel",
+  "arm": "kernel",
+  "benchmark": "ssrf-allowlist-port-confusion",
+  "control_type": "kernel",
+  "difficulty_tier": "hard",
+  "estimated_cost_usd": 0.013990500000000001,
+  "input_tokens": 20637,
+  "output_tokens": 1224,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The SSRF vulnerability was caused by the webhook proxy validator not properly accounting for IPv6 loopback addresses (like `[::1]`) and other equivalent representations. While it blocked `127.0.0.1` and common IPv4 private ranges, it failed to check if a provided IPv6 address was a loopback or private address.\n\nI fixed this by using Python's `ipaddress` module to parse and validate the hostname if it's an IP address, ensuring that loopback, private, and link-local addresses are correctly identified and blocked regardless of their representation (IPv4 or IPv6).\n\n```python\nimport ipaddress\nfrom urllib.parse import urlparse\n\n# ... (existing constants)\n\ndef is_url_allowed(url: str) -> bool:\n    # ... (existing validation logic)\n\n    host = parsed.hostname\n    if not host:\n        return False\n\n    # Block well-known internal hostnames / IPs\n    if host in BLOCKED_HOSTS:\n        return False\n\n    # Block private network ranges\n    for net in BLOCKED_NETS:\n        if host.startswith(net):\n            return False\n\n    # Check for IPv6 loopback and other reserved addresses\n    try:\n        ip = ipaddress.ip_address(host.strip(\"[]\"))\n        if ip.is_loopback or ip.is_private or ip.is_link_local:\n            return False\n    except ValueError:\n        # Not an IP address, likely a hostname\n        pass\n\n    return True\n```",
+  "timestamp": "2026-04-02T03:43:12Z",
+  "token_cost": 21861,
+  "tool_uses": 8,
+  "turns_to_fix": 1,
+  "wall_clock": 20.277
+}

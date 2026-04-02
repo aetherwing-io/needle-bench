@@ -1,0 +1,18 @@
+{
+  "agent": "gpt-5-codex-kernel",
+  "arm": "kernel",
+  "benchmark": "wrong-operator-discount",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.009173750000000001,
+  "input_tokens": 3259,
+  "output_tokens": 510,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The discount calculation bug has been fixed by correcting the formula in `pricing.py` to multiply the subtotal by the discount percentage. All tests now pass.",
+  "timestamp": "2026-04-02T03:53:13Z",
+  "token_cost": 3769,
+  "tool_uses": 5,
+  "turns_to_fix": 1,
+  "wall_clock": 9.657
+}

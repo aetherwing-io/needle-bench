@@ -1,0 +1,18 @@
+{
+  "agent": "devstral-2512-kernel",
+  "arm": "kernel",
+  "benchmark": "type-coercion-comparison",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.00145296,
+  "input_tokens": 10357,
+  "output_tokens": 121,
+  "resolved": true,
+  "stop_reason": "error: API call failed: streaming error: request failed: error sending request for url (https://openrouter.ai/api/v1/chat/completions)",
+  "summary": "",
+  "timestamp": "2026-04-02T04:08:55Z",
+  "token_cost": 10478,
+  "tool_uses": 7,
+  "turns_to_fix": 0,
+  "wall_clock": 124.792
+}

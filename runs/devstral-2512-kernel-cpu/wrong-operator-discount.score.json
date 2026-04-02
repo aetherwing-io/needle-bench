@@ -1,0 +1,18 @@
+{
+  "agent": "devstral-2512-kernel-cpu",
+  "arm": "kernel",
+  "benchmark": "wrong-operator-discount",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 15966,
+  "output_tokens": 421,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "Perfect! The fix is working correctly. The issue was in the `calculate_discount_amount` function where the discount was being calculated using addition (`+`) instead of multiplication (`*`). This caused incorrect discount amounts to be calculated. After fixing the operator, all tests now pass.",
+  "timestamp": "2026-04-02T04:31:11Z",
+  "token_cost": 16387,
+  "tool_uses": 7,
+  "turns_to_fix": 1,
+  "wall_clock": 11.21
+}

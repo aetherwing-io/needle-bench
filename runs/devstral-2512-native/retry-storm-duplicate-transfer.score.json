@@ -1,0 +1,18 @@
+{
+  "agent": "devstral-2512-native",
+  "arm": "native",
+  "benchmark": "retry-storm-duplicate-transfer",
+  "control_type": "native",
+  "difficulty_tier": "hard",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "resolved": true,
+  "stop_reason": "pass",
+  "summary": "Perfect! The test now passes. The fix was to implement proper atomic idempotency checking by:\n\n1. **Attempting to INSERT the idempotency key first** - This is atomic in SQLite and will fail with `IntegrityError` if another thread already inserted the same key\n2. **Only proceeding with the transfer** if we successfully insert the key (or if we get an IntegrityError, checking if it was already completed)\n3. **Using a \"pending\" state** initially and updating to \"success\" after the transfer completes\n4. **Proper cleanup** on errors to undo both the account changes and the idempotency record\n\nThis ensures that only one thread can successfully start processing a transfer with a given idempotency key, preventing the race condition that was causing duplicate transfers.",
+  "timestamp": "2026-04-02T03:44:59Z",
+  "token_cost": 0,
+  "tool_uses": 13,
+  "turns_to_fix": 14,
+  "wall_clock": 59.608
+}

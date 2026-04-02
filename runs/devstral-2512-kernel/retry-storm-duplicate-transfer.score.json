@@ -1,0 +1,18 @@
+{
+  "agent": "devstral-2512-kernel",
+  "arm": "kernel",
+  "benchmark": "retry-storm-duplicate-transfer",
+  "control_type": "kernel",
+  "difficulty_tier": "hard",
+  "estimated_cost_usd": 0.01696632,
+  "input_tokens": 44780,
+  "output_tokens": 2099,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "Perfect! The test passes now. The fix was to move the idempotency check to BEFORE the debit operation, preventing the race condition where multiple requests could debit the account before any of them had a chance to record the idempotency key.\n\nThe key insight is that idempotency must be checked atomically with the entire operation - you can't debit first and then check if it's a duplicate. The check must happen first to prevent the duplicate debit from occurring in the first place.",
+  "timestamp": "2026-04-02T04:05:44Z",
+  "token_cost": 46879,
+  "tool_uses": 11,
+  "turns_to_fix": 1,
+  "wall_clock": 30.576
+}

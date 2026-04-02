@@ -1,0 +1,18 @@
+{
+  "agent": "devstral-2512-kernel-cpu",
+  "arm": "kernel",
+  "benchmark": "missing-input-validation",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 36219,
+  "output_tokens": 1162,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "Great! The test script passes, which means the fix is working correctly. The API now rejects adjustments that would result in a negative inventory quantity.",
+  "timestamp": "2026-04-02T03:58:23Z",
+  "token_cost": 37381,
+  "tool_uses": 11,
+  "turns_to_fix": 1,
+  "wall_clock": 18.71
+}

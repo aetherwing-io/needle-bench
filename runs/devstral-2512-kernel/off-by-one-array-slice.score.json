@@ -1,0 +1,18 @@
+{
+  "agent": "devstral-2512-kernel",
+  "arm": "kernel",
+  "benchmark": "off-by-one-array-slice",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.00511296,
+  "input_tokens": 20903,
+  "output_tokens": 461,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "Perfect! The fix was successful. The issue was an off-by-one error in the batch slicing logic. By removing the `-1` from the `end` calculation, the slicing now correctly includes all records in each batch.",
+  "timestamp": "2026-04-02T04:02:40Z",
+  "token_cost": 21364,
+  "tool_uses": 10,
+  "turns_to_fix": 1,
+  "wall_clock": 10.123
+}

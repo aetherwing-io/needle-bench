@@ -1,0 +1,18 @@
+{
+  "agent": "codestral-2508-kernel-cpu",
+  "arm": "kernel",
+  "benchmark": "timezone-scheduling",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 5937,
+  "output_tokens": 656,
+  "resolved": false,
+  "stop_reason": "end_turn",
+  "summary": "The issue appears to be in the `_is_due` method of the `Scheduler` class. The method is not correctly handling events that cross midnight in their local time zone. Specifically, the method only checks the scheduled time for today's date, which means it misses events that are scheduled to run after midnight in their local time zone but before the window end time in UTC.\n\nTo fix this issue, you need to modify the `_is_due` method to also check the scheduled time for tomorrow's date. Here is the corrected version of the method:\n\n```python\ndef _is_due(\n    self, event: ScheduledEvent, window_start: datetime, window_end: datetime\n) -> bool:\n    \"\"\"\n    Check if an event's scheduled time falls within the window.\n\n    We build the event's scheduled datetime in UTC for today and tomorrow,\n    then check if it falls within [window_start, window_end).\n    \"\"\"\n    tz = pytz.timezone(event.timezone)\n\n    # Get today's date in UTC\n    today_utc = window_start.date()\n\n    # Get tomorrow's date in UTC\n    tomorrow_utc = today_utc + timedelta(days=1)\n\n    # Build the scheduled time for today in the event's local timezone\n    naive_scheduled_today = datetime(\n        today_utc.year, today_utc.month, today_utc.day,\n        event.hour, event.minute, 0\n    )\n    local_scheduled_today = tz.localize(naive_scheduled_today)\n\n    # Build the scheduled time for tomorrow in the event's local timezone\n    naive_scheduled_tomorrow = datetime(\n        tomorrow_utc.year, tomorrow_utc.month, tomorrow_utc.day,\n        event.hour, event.minute, 0\n    )\n    local_scheduled_tomorrow = tz.localize(naive_scheduled_tomorrow)\n\n    # Convert to UTC for comparison\n    utc_scheduled_today = local_scheduled_today.astimezone(pytz.utc)\n    utc_scheduled_tomorrow = local_scheduled_tomorrow.astimezone(pytz.utc)\n\n    # Check if the scheduled time for today or tomorrow falls within the window\n    return (window_start <= utc_scheduled_today < window_end) or \\\n           (window_start <= utc_scheduled_tomorrow < window_end)\n```\n\nThis modification ensures that the method checks both today's and tomorrow's scheduled times, which should correctly handle events that cross midnight in their local time zone.",
+  "timestamp": "2026-04-02T03:50:47Z",
+  "token_cost": 6593,
+  "tool_uses": 5,
+  "turns_to_fix": 1,
+  "wall_clock": 5.103
+}
