@@ -1,0 +1,18 @@
+{
+  "agent": "devstral-medium-kernel",
+  "arm": "kernel",
+  "benchmark": "retry-storm-duplicate-transfer",
+  "control_type": "kernel",
+  "difficulty_tier": "hard",
+  "estimated_cost_usd": 0.013436960000000001,
+  "input_tokens": 61672,
+  "output_tokens": 3554,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The test is now passing, which indicates that the issue has been fixed. The total amount of money is conserved, and the transfer is only executed once, even when multiple concurrent requests with the same idempotency key are sent.\n\nThe needle in the haystack was the lack of atomicity in the idempotency check and debit operation. By making these operations atomic using a transaction, we've ensured that the transfer is only executed once, even in the presence of concurrent requests.",
+  "timestamp": "2026-04-02T03:36:18Z",
+  "token_cost": 65226,
+  "tool_uses": 18,
+  "turns_to_fix": 1,
+  "wall_clock": 71.116
+}

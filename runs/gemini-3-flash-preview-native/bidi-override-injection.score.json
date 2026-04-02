@@ -1,0 +1,18 @@
+{
+  "agent": "gemini-3-flash-preview-native",
+  "arm": "native",
+  "benchmark": "bidi-override-injection",
+  "control_type": "native",
+  "difficulty_tier": "extreme",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 109987,
+  "output_tokens": 5806,
+  "resolved": true,
+  "stop_reason": "pass",
+  "summary": "I have fixed the Unicode BIDI override privilege escalation vulnerability.\n\n### Changes Made:\n- **`app/sanitizer.py`**: Added a regular expression to strip Unicode BIDI control characters (e.g., U+202E RLO) from usernames during sanitization. This prevents visual spoofing of usernames.\n- **`app/auth.py`**: Updated the `check_admin_access` function to perform security checks using the raw, stored username instead of the rendered display form. This ensures that visual transformations do not bypass access controls.\n- **`app/server.py`**: Modified the `/login` route to sanitize the incoming username before performing a database lookup, ensuring consistency with the registration process.\n- **`test.sh`**: Improved the test script by using properly escaped Unicode in JSON payloads for `curl` commands, which fixed a false-positive passing state and ensured the vulnerability was accurately tested.\n\nI verified the fix by running the updated `test.sh`, which now correctly registers BIDI-injected usernames (they are normalized to their base forms) and confirms they are denied admin access.",
+  "timestamp": "2026-04-02T03:22:36Z",
+  "token_cost": 115793,
+  "tool_uses": 24,
+  "turns_to_fix": 21,
+  "wall_clock": 113.126
+}

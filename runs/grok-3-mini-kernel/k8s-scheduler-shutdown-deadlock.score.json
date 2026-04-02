@@ -1,0 +1,18 @@
+{
+  "agent": "grok-3-mini-kernel",
+  "arm": "kernel",
+  "benchmark": "k8s-scheduler-shutdown-deadlock",
+  "control_type": "kernel",
+  "difficulty_tier": "hard",
+  "estimated_cost_usd": 0.010918775,
+  "input_tokens": 20849,
+  "output_tokens": 17020,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The bug causing the shutdown deadlock has been fixed by editing `main.go` to correctly order the queue closure before waiting for the goroutine. Running `./test.sh` now confirms the fix:\n\n```\nOK: clean shutdown\nPASS\n```\n\nThe needle in the haystack was the deadlock issue in the scheduler code, and it has been resolved. If you have any further questions, let me know!",
+  "timestamp": "2026-04-02T03:37:46Z",
+  "token_cost": 37869,
+  "tool_uses": 15,
+  "turns_to_fix": 1,
+  "wall_clock": 213.126
+}

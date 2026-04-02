@@ -1,0 +1,18 @@
+{
+  "agent": "qwen3-coder-kernel",
+  "arm": "kernel",
+  "benchmark": "bidi-override-injection",
+  "control_type": "kernel",
+  "difficulty_tier": "extreme",
+  "estimated_cost_usd": 0.038690100000000005,
+  "input_tokens": 897671,
+  "output_tokens": 12718,
+  "resolved": false,
+  "stop_reason": "end_turn",
+  "summary": "Let me use Python to make the precise fix needed:\n\n<tool_call>\n<function=Write>\n<parameter=content>\n[['bool, str]:\\n    \"', 'Check if the session holder has admin access.\\n\\n    Returns (allowed, reason). The actual username (as stored in the\\n    session) is compared against the ADMIN_USERS list. This prevents\\n    privilege escalation via visual spoofing of Unicode BIDI chars.\\n    \"', '\\n    session = get_session(token)\\n    if not session:\\n        return False, \"invalid session\"\\n\\n    username = session[\"username\"], {}]\n</parameter>\n<parameter=file_path>\n/tmp/proper_fix.py\n</parameter>\n</function>\n</tool_call>",
+  "timestamp": "2026-04-02T03:22:47Z",
+  "token_cost": 910389,
+  "tool_uses": 80,
+  "turns_to_fix": 1,
+  "wall_clock": 122.025
+}

@@ -1,0 +1,18 @@
+{
+  "agent": "devstral-2512-native",
+  "arm": "native",
+  "benchmark": "off-by-one-array-slice",
+  "control_type": "native",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "resolved": true,
+  "stop_reason": "pass",
+  "summary": "Fixed. The issue was an off-by-one error in `processor.py:17`. Changed `end = start + batch_size - 1` to `end = start + batch_size` to correctly include all elements in each batch.",
+  "timestamp": "2026-04-02T03:22:47Z",
+  "token_cost": 0,
+  "tool_uses": 7,
+  "turns_to_fix": 8,
+  "wall_clock": 11.889
+}

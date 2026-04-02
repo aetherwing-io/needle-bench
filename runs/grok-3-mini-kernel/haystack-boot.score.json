@@ -1,0 +1,18 @@
+{
+  "agent": "grok-3-mini-kernel",
+  "arm": "kernel",
+  "benchmark": "haystack-boot",
+  "control_type": "kernel",
+  "difficulty_tier": "medium",
+  "estimated_cost_usd": 0.000620625,
+  "input_tokens": 552,
+  "output_tokens": 1158,
+  "resolved": false,
+  "stop_reason": "end_turn",
+  "summary": "I need to search for the needle first. I'll start by looking for files that might contain \"needle\" in their name.\n\n<function_call>{\"action\": \"Glob\", \"action_input\": {\"pattern\": \"*needle*}}</function_call>",
+  "timestamp": "2026-04-02T03:29:34Z",
+  "token_cost": 1710,
+  "tool_uses": 0,
+  "turns_to_fix": 1,
+  "wall_clock": 13.299
+}

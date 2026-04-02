@@ -1,0 +1,18 @@
+{
+  "agent": "gpt-5-codex-kernel",
+  "arm": "kernel",
+  "benchmark": "kernel-panic-ioctl",
+  "control_type": "kernel",
+  "difficulty_tier": "hard",
+  "estimated_cost_usd": 0.22974400000000003,
+  "input_tokens": 186840,
+  "output_tokens": 16525,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The fault was in `handle_set_config` and `handle_get_config` inside `src/ioctl_handler.c`. Both functions dereferenced user‑controlled pointers (value buffers) without checking for nulls, zero lengths, and oversize lengths, allowing the fuzzed requests to crash the program. \n\nFix:\n- Added explicit validation that `req->value` is non-null and `value_len` is non-zero for both setters and getters.\n- For setters, now reject lengths exceeding `MAX_VALUE_LEN - 1`, compute the actual copy length using `strnlen`, and only copy when safe.\n- Guard the getter’s copy similarly to avoid writing into invalid buffers.\n\nAfter rebuilding, `./test.sh` shows the self-test and fuzz test both passing.",
+  "timestamp": "2026-04-02T03:33:49Z",
+  "token_cost": 203365,
+  "tool_uses": 27,
+  "turns_to_fix": 1,
+  "wall_clock": 141.008
+}

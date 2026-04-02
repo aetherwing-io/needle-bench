@@ -1,0 +1,18 @@
+{
+  "agent": "qwen3-coder-flash-kernel",
+  "arm": "kernel",
+  "benchmark": "off-by-one-array-slice",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.003413202,
+  "input_tokens": 20045,
+  "output_tokens": 1253,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The needle was the off-by-one error in the array slicing logic in `processor.py`. The bug was on line 11 where the slice endpoint was calculated as `start + batch_size - 1` instead of `start + batch_size`, causing incorrect slicing that dropped records from the batches.\n\nBy fixing this single character (removing the `- 1`), all 25 records are now properly processed instead of only 23, and the test passes completely. The fix ensures that when processing batches of 10 records, exactly 10 records are taken from the input list for each batch, rather than 9.\n\nThe solution involved identifying and correcting the slicing logic in the `process_batch` function where:\n- Before: `end = start + batch_size - 1` \n- After: `end = start + batch_size`\n\nThis one-character change fixed the off-by-one array slice bug and allows all records to be processed correctly across batch boundaries.",
+  "timestamp": "2026-04-02T03:32:26Z",
+  "token_cost": 21298,
+  "tool_uses": 8,
+  "turns_to_fix": 1,
+  "wall_clock": 23.769
+}

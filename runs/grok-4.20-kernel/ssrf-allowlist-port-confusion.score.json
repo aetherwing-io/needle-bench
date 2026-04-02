@@ -1,0 +1,18 @@
+{
+  "agent": "grok-4.20-kernel",
+  "arm": "kernel",
+  "benchmark": "ssrf-allowlist-port-confusion",
+  "control_type": "kernel",
+  "difficulty_tier": "hard",
+  "estimated_cost_usd": 0.020454,
+  "input_tokens": 35040,
+  "output_tokens": 945,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The needle has been found—IPv6 loopback addresses were not being blocked by `app/validator.py` (allowing SSRF to the internal metadata service). The validator has been updated to catch `[::1]`, `[0:0:0:0:0:0:0:1]`, and any other loopback IPs via the `ipaddress` module (in addition to the existing checks).\n\n`./test.sh` now passes (all tests green).",
+  "timestamp": "2026-04-02T03:37:16Z",
+  "token_cost": 35985,
+  "tool_uses": 12,
+  "turns_to_fix": 1,
+  "wall_clock": 11.005
+}

@@ -1,0 +1,18 @@
+{
+  "agent": "grok-4.20-kernel",
+  "arm": "kernel",
+  "benchmark": "wrong-operator-discount",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.013453199999999998,
+  "input_tokens": 25149,
+  "output_tokens": 176,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The needle has been found (a `+` mistakenly used instead of `*` in the discount formula) and the bug has been fixed. Running the test now passes.",
+  "timestamp": "2026-04-02T03:38:17Z",
+  "token_cost": 25325,
+  "tool_uses": 9,
+  "turns_to_fix": 1,
+  "wall_clock": 5.327
+}

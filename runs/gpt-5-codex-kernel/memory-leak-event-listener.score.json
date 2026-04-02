@@ -1,0 +1,18 @@
+{
+  "agent": "gpt-5-codex-kernel",
+  "arm": "kernel",
+  "benchmark": "memory-leak-event-listener",
+  "control_type": "kernel",
+  "difficulty_tier": "medium",
+  "estimated_cost_usd": 0.03284175,
+  "input_tokens": 17339,
+  "output_tokens": 2456,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "Identified and fixed the event-listener leak by registering long-lived listeners once in the `DataProcessor` constructor and removing per-request listener creation. Updated `_handleValidated` to avoid capturing request-specific data.\n\n**Tests run**\n- `./test.sh` (passes)",
+  "timestamp": "2026-04-02T03:34:35Z",
+  "token_cost": 19795,
+  "tool_uses": 7,
+  "turns_to_fix": 1,
+  "wall_clock": 35.158
+}

@@ -1,0 +1,18 @@
+{
+  "agent": "gemini-3-flash-preview-kernel",
+  "arm": "kernel",
+  "benchmark": "graphql-dataloader-per-request",
+  "control_type": "kernel",
+  "difficulty_tier": "extreme",
+  "estimated_cost_usd": 0.03363825,
+  "input_tokens": 54516,
+  "output_tokens": 3257,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The issue was that `DataLoader` instances were being created inside each individual resolver call. Since `DataLoader` only batches loads that occur within the same tick and on the same instance, creating a new instance for every record resulted in an N+1 query problem.\n\nTo fix this, I:\n1.  Modified `src/context.ts` to include the `loaders` (created via `createLoaders(db)`) in the request-scoped GraphQL context.\n2.  Updated `src/resolvers/userResolver.ts` to use `ctx.loaders.userLoader` and `ctx.loaders.postsByAuthorLoader` instead of instantiating new loaders for every request/resolver call.\n3.  Updated `src/resolvers/postResolver.ts` to use `ctx.loaders.userLoader` for resolving post authors.\n\nThis ensures that all resolvers during a single request share the same `DataLoader` instances, allowing batching to work correctly across the entire query tree. The performance test now passes with 2 DB queries instead of 101.",
+  "timestamp": "2026-04-02T03:24:30Z",
+  "token_cost": 57773,
+  "tool_uses": 14,
+  "turns_to_fix": 1,
+  "wall_clock": 34.346
+}

@@ -1,0 +1,18 @@
+{
+  "agent": "grok-code-fast-1-kernel",
+  "arm": "kernel",
+  "benchmark": "bidi-override-injection",
+  "control_type": "kernel",
+  "difficulty_tier": "extreme",
+  "estimated_cost_usd": 0.08540916,
+  "input_tokens": 76662,
+  "output_tokens": 54874,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "**Final Answer**\n\n**the needle I found is the Unicode bidirectional (BIDI) attack vulnerability in the Flask web app.**\n\nThe specific issues were:\n\n1. In `check_admin_access`, the function was comparing the rendered display name (after applying BIDI rendering) against the admin allowlist, instead of the stored username.\n\n2. The sanitizer was not stripping BIDI control characters, allowing usernames like \"\\u202enimda\" (which visually renders as \"admin\" due to right-to-left override) to be registered and potentially gain admin access.\n\nI fixed it by:\n\n1. Removing the `_render_display_name` call from `check_admin_access` so it checks the raw stored username against `ADMIN_USERS`.\n\n2. Adding a step in `sanitize_username` to strip BIDI control characters before storage, preventing such usernames from being registered in the first place.\n\nThe tests now pass fully.",
+  "timestamp": "2026-04-02T03:25:05Z",
+  "token_cost": 131536,
+  "tool_uses": 22,
+  "turns_to_fix": 1,
+  "wall_clock": 450.763
+}

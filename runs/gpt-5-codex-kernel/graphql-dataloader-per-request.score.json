@@ -1,0 +1,18 @@
+{
+  "agent": "gpt-5-codex-kernel",
+  "arm": "kernel",
+  "benchmark": "graphql-dataloader-per-request",
+  "control_type": "kernel",
+  "difficulty_tier": "extreme",
+  "estimated_cost_usd": 0.1078455,
+  "input_tokens": 121406,
+  "output_tokens": 7820,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "✅ All set! I built shared DataLoader instances in the request context and updated the resolvers to use them instead of creating per-resolver loaders. After the change, `./test.sh` passes completely:\n\n```\nPASS: All tests passed\n```\n\nThis knocks the query count down from 101 to just 2, confirming the N+1 issue is fixed.",
+  "timestamp": "2026-04-02T03:24:18Z",
+  "token_cost": 129226,
+  "tool_uses": 21,
+  "turns_to_fix": 1,
+  "wall_clock": 90.18
+}

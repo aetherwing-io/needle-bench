@@ -1,0 +1,18 @@
+{
+  "agent": "grok-4.20-kernel",
+  "arm": "kernel",
+  "benchmark": "type-coercion-comparison",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.0171452,
+  "input_tokens": 23833,
+  "output_tokens": 174,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The needle has been found and fixed (type coercion bug in query parsing for `min_rating`). `test.sh` now passes.",
+  "timestamp": "2026-04-02T03:38:01Z",
+  "token_cost": 24007,
+  "tool_uses": 9,
+  "turns_to_fix": 1,
+  "wall_clock": 8.806
+}

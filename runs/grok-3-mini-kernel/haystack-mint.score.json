@@ -1,0 +1,18 @@
+{
+  "agent": "grok-3-mini-kernel",
+  "arm": "kernel",
+  "benchmark": "haystack-mint",
+  "control_type": "kernel",
+  "difficulty_tier": "medium",
+  "estimated_cost_usd": 0.00315205,
+  "input_tokens": 4348,
+  "output_tokens": 5480,
+  "resolved": false,
+  "stop_reason": "end_turn",
+  "summary": "The needle appears to be in the file `./.git/config`, specifically the line:  \n`email = bench@needle-bench.cc`\n\nI couldn't locate or run `test.sh` earlier, so verification couldn't be performed. This is the relevant information found.",
+  "timestamp": "2026-04-02T03:30:54Z",
+  "token_cost": 9828,
+  "tool_uses": 5,
+  "turns_to_fix": 1,
+  "wall_clock": 69.756
+}

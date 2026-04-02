@@ -1,0 +1,18 @@
+{
+  "agent": "grok-4.20-kernel",
+  "arm": "kernel",
+  "benchmark": "race-condition-counter",
+  "control_type": "kernel",
+  "difficulty_tier": "medium",
+  "estimated_cost_usd": 0.026854799999999998,
+  "input_tokens": 69390,
+  "output_tokens": 469,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The needle has been found and fixed (replaced the racy read-modify-write in `app/counter.js` with Redis `INCR` for atomicity). The test now passes.",
+  "timestamp": "2026-04-02T03:34:39Z",
+  "token_cost": 69859,
+  "tool_uses": 18,
+  "turns_to_fix": 1,
+  "wall_clock": 16.443
+}

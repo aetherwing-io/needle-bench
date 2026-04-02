@@ -1,0 +1,18 @@
+{
+  "agent": "grok-4-fast-kernel",
+  "arm": "kernel",
+  "benchmark": "cache-stale-invalidation",
+  "control_type": "kernel",
+  "difficulty_tier": "medium",
+  "estimated_cost_usd": 0.0083729,
+  "input_tokens": 41335,
+  "output_tokens": 9225,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The bugs in `app/server.py` (failure to invalidate the products list cache after create/update) have been fixed. `./test.sh` now passes fully.",
+  "timestamp": "2026-04-02T03:33:16Z",
+  "token_cost": 50560,
+  "tool_uses": 15,
+  "turns_to_fix": 1,
+  "wall_clock": 84.415
+}

@@ -1,0 +1,18 @@
+{
+  "agent": "gemini-3.1-pro-preview-kernel-cpu",
+  "arm": "kernel",
+  "benchmark": "k8s-scheduler-shutdown-deadlock",
+  "control_type": "kernel",
+  "difficulty_tier": "hard",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 9391,
+  "output_tokens": 601,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The problem was a shutdown deadlock caused by improper ordering in the `Scheduler.Run` method. The code was waiting for the scheduling goroutine to finish before closing the queue. If the goroutine was blocked on `s.queue.Pop()` waiting for work, it could never exit until the queue was closed, resulting in a deadlock.\n\nBy moving `s.queue.Close()` to be executed right after `<-ctx.Done()` and before `<-done`, the blocked `Pop()` operation correctly unblocks and notices the queue is closed, returning an error. This allows the scheduling loop to continue, check `ctx.Done()`, and exit cleanly.\n\nThe tests now pass successfully showing \"OK: clean shutdown\".",
+  "timestamp": "2026-04-02T03:24:37Z",
+  "token_cost": 9992,
+  "tool_uses": 5,
+  "turns_to_fix": 1,
+  "wall_clock": 25.042
+}

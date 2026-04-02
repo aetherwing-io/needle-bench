@@ -1,0 +1,18 @@
+{
+  "agent": "grok-4.20-kernel",
+  "arm": "kernel",
+  "benchmark": "relaxed-ordering-ringbuf",
+  "control_type": "kernel",
+  "difficulty_tier": "extreme",
+  "estimated_cost_usd": 0.12343479999999998,
+  "input_tokens": 350282,
+  "output_tokens": 4055,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The needle (incorrect `memory_order_relaxed` on atomics in a cross-platform SPSC ring buffer) has been found and fixed by using appropriate `memory_order_acquire` on loads of the remote index + `memory_order_release` on stores of the local index (plus minor comment updates). The test now passes.",
+  "timestamp": "2026-04-02T03:35:48Z",
+  "token_cost": 354337,
+  "tool_uses": 37,
+  "turns_to_fix": 1,
+  "wall_clock": 30.544
+}

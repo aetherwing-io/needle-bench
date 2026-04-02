@@ -1,0 +1,18 @@
+{
+  "agent": "grok-4.20-kernel",
+  "arm": "kernel",
+  "benchmark": "off-by-one-array-slice",
+  "control_type": "kernel",
+  "difficulty_tier": "easy",
+  "estimated_cost_usd": 0.011552,
+  "input_tokens": 22693,
+  "output_tokens": 313,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The off-by-one error in `processor.py` (incorrect end index calculation in slicing) has been fixed. `test.sh` now passes.",
+  "timestamp": "2026-04-02T03:32:58Z",
+  "token_cost": 23006,
+  "tool_uses": 11,
+  "turns_to_fix": 1,
+  "wall_clock": 19.088
+}

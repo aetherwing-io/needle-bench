@@ -1,0 +1,18 @@
+{
+  "agent": "gemini-3.1-pro-preview-kernel-cpu",
+  "arm": "kernel",
+  "benchmark": "null-pointer-config",
+  "control_type": "kernel",
+  "difficulty_tier": "medium",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 23139,
+  "output_tokens": 860,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The needle in the haystack was a null-pointer-config bug causing the server to panic when trying to access metrics settings. \n\n**What I found:**\n1. The `config.json` had `enable_metrics` set to `true`, but the `metrics` configuration block was missing.\n2. In `main.go`, the `makeStatusHandler` checks `cfg.Features.EnableMetrics` and then directly accesses properties on the `cfg.Metrics` pointer, which was `nil`, triggering a panic.\n\n**How I fixed it:**\nI updated `config.go`'s `LoadConfig` function so that if `EnableMetrics` is set to `true` but `Metrics` configuration is not provided (`cfg.Metrics == nil`), it initializes a default `MetricsConfig` structure. This ensures the metrics block is populated and safely usable without causing a nil pointer dereference, passing all requirements from `test.sh`.",
+  "timestamp": "2026-04-02T03:28:48Z",
+  "token_cost": 23999,
+  "tool_uses": 14,
+  "turns_to_fix": 1,
+  "wall_clock": 43.107
+}

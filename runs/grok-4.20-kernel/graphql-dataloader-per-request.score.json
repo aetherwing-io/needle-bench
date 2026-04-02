@@ -1,0 +1,18 @@
+{
+  "agent": "grok-4.20-kernel",
+  "arm": "kernel",
+  "benchmark": "graphql-dataloader-per-request",
+  "control_type": "kernel",
+  "difficulty_tier": "extreme",
+  "estimated_cost_usd": 0.11370519999999999,
+  "input_tokens": 231941,
+  "output_tokens": 2770,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "The needle has been found and the bug fixed (DataLoaders are now properly instantiated once per request in context, enabling batching and eliminating the N+1 query problem). The test suite now passes.",
+  "timestamp": "2026-04-02T03:22:52Z",
+  "token_cost": 234711,
+  "tool_uses": 22,
+  "turns_to_fix": 1,
+  "wall_clock": 29.799
+}
