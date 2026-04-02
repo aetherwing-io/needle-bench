@@ -1,6 +1,6 @@
-FROM python:3.12-alpine
+FROM python:3.12-slim
 
-RUN apk add --no-cache bash git gnupg
+RUN apt-get update -qq && apt-get install -y --no-install-recommends bash git gnupg 
 
 WORKDIR /workspace
 

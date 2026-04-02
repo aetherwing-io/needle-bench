@@ -1,15 +1,17 @@
-FROM alpine:3.20 AS builder
+FROM debian:bookworm-slim AS builder
 
-RUN apk add --no-cache openjdk17-jdk
+ENV JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
+
+RUN apt-get update -qq && apt-get install -y --no-install-recommends openjdk-17-jdk
 
 WORKDIR /build
 COPY src/ .
 
 RUN javac -d /build/classes *.java
 
-FROM alpine:3.20
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache bash coreutils git openjdk17-jre openjdk17-jdk && \
+RUN apt-get update -qq && apt-get install -y --no-install-recommends bash git openjdk-17-jre openjdk-17-jdk && \
     git config --global user.email "bench@needle-bench.cc" && \
     git config --global user.name "needle-bench"
 

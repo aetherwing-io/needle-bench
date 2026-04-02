@@ -1,6 +1,8 @@
-FROM alpine:3.19
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache openjdk17-jdk bash git && \
+ENV JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
+
+RUN apt-get update -qq && apt-get install -y --no-install-recommends openjdk-17-jdk bash git && \
     git config --global user.email "bench@needle-bench.cc" && \
     git config --global user.name "needle-bench"
 

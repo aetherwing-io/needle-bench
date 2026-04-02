@@ -1,6 +1,6 @@
-FROM node:20-alpine
+FROM node:20-slim
 
-RUN apk add --no-cache bash coreutils curl jq git && \
+RUN apt-get update -qq && apt-get install -y --no-install-recommends bash curl jq git && \
     git config --global user.email "bench@needle-bench.cc" && \
     git config --global user.name "needle-bench"
 

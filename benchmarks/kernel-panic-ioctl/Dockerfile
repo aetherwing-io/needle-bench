@@ -1,15 +1,15 @@
-FROM alpine:3.20 AS builder
+FROM debian:bookworm-slim AS builder
 
-RUN apk add --no-cache gcc musl-dev make
+RUN apt-get update -qq && apt-get install -y --no-install-recommends gcc make libc6-dev linux-libc-dev
 
 WORKDIR /build
 COPY src/ .
 
 RUN make
 
-FROM alpine:3.20
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache bash coreutils git gcc musl-dev make && \
+RUN apt-get update -qq && apt-get install -y --no-install-recommends bash git gcc make && \
     git config --global user.email "bench@needle-bench.cc" && \
     git config --global user.name "needle-bench"
 

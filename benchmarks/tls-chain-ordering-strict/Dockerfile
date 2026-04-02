@@ -1,21 +1,21 @@
-FROM golang:1.22-alpine AS builder
+FROM golang:1.22-bookworm AS builder
 
 WORKDIR /build
 COPY app/ .
 
 RUN go build -o tlsserver .
 
-FROM alpine:3.20
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache bash coreutils git openssl curl && \
+RUN apt-get update -qq && apt-get install -y --no-install-recommends bash git openssl curl && \
     git config --global user.email "bench@needle-bench.cc" && \
     git config --global user.name "needle-bench"
 
 COPY --from=builder /build/tlsserver /usr/local/bin/tlsserver
 
 # Install Go toolchain in final image so agent can rebuild
-RUN apk add --no-cache go && \
-    rm -rf /var/cache/apk/*
+RUN apt-get update -qq && apt-get install -y --no-install-recommends golang-go && \
+    rm -rf /var/lib/apt/lists/*
 
 # Generate a 3-level certificate chain: Root CA -> Intermediate CA -> Leaf
 # Certificates are written to /certs/

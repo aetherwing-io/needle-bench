@@ -1,6 +1,6 @@
-FROM alpine:3.20
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache bash coreutils curl jq python3 git && \
+RUN apt-get update -qq && apt-get install -y --no-install-recommends bash curl jq python3 git && \
     git config --global user.email "bench@needle-bench.cc" && \
     git config --global user.name "needle-bench"
 

@@ -1,18 +1,18 @@
-FROM golang:1.22-alpine AS builder
+FROM golang:1.22-bookworm AS builder
 
 WORKDIR /build
 COPY app/ .
 
 RUN go build -o kvwal ./...
 
-FROM alpine:3.20
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache bash coreutils git && \
+RUN apt-get update -qq && apt-get install -y --no-install-recommends bash git && \
     git config --global user.email "bench@needle-bench.cc" && \
     git config --global user.name "needle-bench"
 
 # Install Go toolchain so the agent can rebuild after edits
-RUN apk add --no-cache go
+RUN apt-get update -qq && apt-get install -y --no-install-recommends golang-go 
 
 COPY --from=builder /build/kvwal /usr/local/bin/kvwal
 

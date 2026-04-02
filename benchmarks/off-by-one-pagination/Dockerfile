@@ -1,6 +1,6 @@
-FROM python:3.12-alpine
+FROM python:3.12-slim
 
-RUN apk add --no-cache bash curl git && \
+RUN apt-get update -qq && apt-get install -y --no-install-recommends bash curl git && \
     git config --global user.email "bench@needle-bench.cc" && \
     git config --global user.name "needle-bench"
 

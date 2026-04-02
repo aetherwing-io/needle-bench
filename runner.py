@@ -16,18 +16,53 @@ ANTHROPIC_ENDPOINT = "https://api.anthropic.com/v1/messages"
 GOOGLE_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
 
-# OpenRouter model name mapping (needle-bench name → OpenRouter name)
+# OpenRouter model name mapping (needle-bench short name → OpenRouter path)
+# Every model in run_missing.sh must have an entry here.
 OPENROUTER_MODELS = {
+    # Anthropic
     "claude-haiku-3-5-20251001": "anthropic/claude-haiku-4.5",
     "claude-haiku-3-5-20241022": "anthropic/claude-haiku-4.5",
     "claude-haiku-4-5": "anthropic/claude-haiku-4.5",
     "claude-sonnet-4-6": "anthropic/claude-sonnet-4.6",
     "claude-opus-4-6": "anthropic/claude-opus-4.6",
+    # Google
+    "gemini-2.5-flash": "google/gemini-2.5-flash",
     "gemini-2.5-pro": "google/gemini-2.5-pro-preview",
+    "gemini-3-flash-preview": "google/gemini-3-flash-preview",
+    "gemini-3.1-pro-preview": "google/gemini-3.1-pro-preview",
+    # OpenAI
+    "gpt-4.1": "openai/gpt-4.1",
+    "gpt-5-codex": "openai/gpt-5-codex",
+    "o3": "openai/o3",
+    "o4-mini": "openai/o4-mini",
+    # xAI (Grok)
+    "grok-3": "x-ai/grok-3",
+    "grok-3-fast": "x-ai/grok-3-fast",
+    "grok-3-mini": "x-ai/grok-3-mini",
+    "grok-4": "x-ai/grok-4",
+    "grok-4-fast": "x-ai/grok-4-fast",
+    "grok-4.1-fast": "x-ai/grok-4.1-fast",
+    "grok-4.20": "x-ai/grok-4.20",
+    "grok-code-fast-1": "x-ai/grok-code-fast-1",
+    # Mistral
+    "codestral-2508": "mistralai/codestral-2508",
+    "devstral-2512": "mistralai/devstral-2512",
+    "devstral-medium": "mistralai/devstral-medium",
+    "devstral-small-latest": "mistralai/devstral-small-latest",
+    # DeepSeek
+    "deepseek-r1": "deepseek/deepseek-r1",
+    "deepseek-r1-0528": "deepseek/deepseek-r1-0528",
+    "deepseek-v3.2": "deepseek/deepseek-v3.2",
+    # Qwen
+    "qwen3-coder": "qwen/qwen3-coder",
+    "qwen3-coder-flash": "qwen/qwen3-coder-flash",
+    "qwen3-coder-plus": "qwen/qwen3-coder-plus",
     # Moonshot AI (Kimi)
     "kimi-k2.5": "moonshotai/kimi-k2.5",
     "kimi-k2-0905": "moonshotai/kimi-k2-0905",
     "kimi-k2-thinking": "moonshotai/kimi-k2-thinking",
+    # Meta
+    "llama-4-maverick": "meta-llama/llama-4-maverick",
 }
 
 # Reverse mapping: OpenRouter path → canonical short name
@@ -49,26 +84,48 @@ def _canonical_agent_name(model: str) -> str:
 
 
 # Estimated cost per 1M tokens (input, output) — USD.
-# These are approximate; update when pricing changes.
+# Aligned with consolidate_scores.py RATE_CARD.
 MODEL_PRICING = {
     # Anthropic
-    "claude-opus-4": (15.0, 75.0),
-    "claude-sonnet-4": (3.0, 15.0),
-    "claude-sonnet-4-5": (3.0, 15.0),
-    "claude-haiku-3-5": (0.8, 4.0),
-    "claude-haiku-3-5-20241022": (0.8, 4.0),
-    "claude-haiku-4.5": (0.8, 4.0),
-    "claude-haiku-4-5": (0.8, 4.0),
-    "claude-sonnet-3-5": (3.0, 15.0),
-    "claude-sonnet-3-5-20241022": (3.0, 15.0),
+    "claude-opus-4-6": (5.0, 25.0),
+    "claude-sonnet-4-6": (3.0, 15.0),
+    "claude-haiku-4-5": (1.0, 5.0),
     # Google
-    "gemini-2.0-flash": (0.075, 0.30),
-    "gemini-1.5-flash": (0.075, 0.30),
-    "gemini-1.5-pro": (1.25, 5.0),
+    "gemini-2.5-flash": (0.30, 2.50),
+    "gemini-2.5-pro": (1.25, 10.0),
+    "gemini-3-flash-preview": (0.50, 3.00),
+    "gemini-3.1-pro-preview": (2.00, 12.00),
+    # OpenAI
+    "gpt-4.1": (2.00, 8.00),
+    "gpt-5-codex": (1.25, 10.00),
+    "o3": (2.00, 8.00),
+    "o4-mini": (1.10, 4.40),
+    # xAI (Grok)
+    "grok-3": (3.00, 15.00),
+    "grok-3-fast": (0.20, 0.50),
+    "grok-3-mini": (0.30, 0.50),
+    "grok-4": (3.00, 15.00),
+    "grok-4-fast": (0.20, 0.50),
+    "grok-4.1-fast": (0.20, 0.50),
+    "grok-4.20": (2.00, 6.00),
+    "grok-code-fast-1": (0.20, 1.50),
+    # Mistral
+    "codestral-2508": (0.30, 0.90),
+    "devstral-2512": (0.40, 2.00),
+    "devstral-medium": (0.40, 2.00),
+    "devstral-small-latest": (0.10, 0.30),
+    # DeepSeek
+    "deepseek-r1": (0.70, 2.50),
+    "deepseek-r1-0528": (0.45, 2.15),
+    "deepseek-v3.2": (0.26, 0.38),
+    # Qwen
+    "qwen3-coder": (0.22, 1.00),
+    "qwen3-coder-flash": (0.20, 0.97),
+    "qwen3-coder-plus": (0.65, 3.25),
     # Moonshot AI (Kimi)
-    "kimi-k2.5": (0.60, 3.00),
-    "kimi-k2-0905": (0.60, 2.50),
-    "kimi-k2-thinking": (0.60, 2.50),
+    "kimi-k2.5": (0.40, 1.99),
+    # Meta
+    "llama-4-maverick": (0.15, 0.60),
     # defaults
     "_default_input": 3.0,
     "_default_output": 15.0,
@@ -213,12 +270,19 @@ class MetricsRecorder:
     def path(self) -> str:
         return self._path
 
-DEFAULT_SYSTEM_PROMPT = (
-    "You are debugging a broken application. Run ./test.sh to see what's failing. "
-    "Find the root cause and fix the bug. When test.sh passes, you're done."
+# ── Unified bench prompts (SPEC-bench-v2 §1) ────────────────────────────
+# Every arm (native, kernel, kernel-cpu) receives exactly these prompts.
+# No silent context, no BOOT injection, no extra instructions.
+BENCH_SYSTEM_PROMPT = (
+    "This is a needle-bench benchmark. There is a bug hidden in this codebase. "
+    "Find it and fix it. Run test.sh to verify your fix."
 )
-SYSTEM_PROMPT = DEFAULT_SYSTEM_PROMPT
-DEFAULT_INSTANCE = "Run ./test.sh to see the current failure. Read the code, find the bug, fix it."
+BENCH_USER_PROMPT = "find the needle. run test.sh to verify your fix."
+
+# Legacy aliases — kept so existing callers don't break during migration
+DEFAULT_SYSTEM_PROMPT = BENCH_SYSTEM_PROMPT
+SYSTEM_PROMPT = BENCH_SYSTEM_PROMPT
+DEFAULT_INSTANCE = BENCH_USER_PROMPT
 
 # ---------------------------------------------------------------------------
 # Tool definitions — keyed by the API tool name the LLM sees.
@@ -680,17 +744,12 @@ def run_benchmark(model, bench_name, bench_dir, provider):
     emit({"event": "run.start", "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
           "benchmark": bench_name, "model": model, "has_prompt": has_prompt, "solution_files": sol_files})
 
-    instance_prompt = cfg["prompt"] if cfg["prompt"] else DEFAULT_INSTANCE
+    # SPEC-bench-v2 §1: identical prompt for all arms, no Agentfile override
+    instance_prompt = BENCH_USER_PROMPT
+    system_prompt = BENCH_SYSTEM_PROMPT
 
-    # Build system prompt: use Agentfile PROMPT if present, else default
-    system_prompt = cfg["prompt"] if cfg["prompt"] else DEFAULT_SYSTEM_PROMPT
-
-    # If Agentfile has BOOT directive, run it in the container and prepend output
-    if cfg["boot"]:
-        _brc, _bout, _berr = docker_exec(container, cfg["boot"])
-        boot_output = _bout.strip()
-        if boot_output:
-            system_prompt = boot_output + "\n\n" + system_prompt
+    # BOOT context injection removed (SPEC-bench-v2 §1): all arms get identical prompts.
+    # No silent context, no boot output prepended.
 
     # POST start: capture initial test output before agent touches anything
     _irc, _istdout, _istderr = docker_exec(container, "bash test.sh")
@@ -855,6 +914,21 @@ def run_benchmark(model, bench_name, bench_dir, provider):
         metrics.close()
         tok_fmt = f"{total_tok:,}"
         print(f"tokens: {tok_fmt} total (${cost:.4f})", file=sys.stderr)
+
+        # Capture container logs before cleanup (SPEC-bench-v2 §6)
+        try:
+            log_result = subprocess.run(
+                ["docker", "logs", container],
+                capture_output=True, text=True, timeout=30,
+            )
+            container_log_path = os.path.join(runs_dir, f"{bench_name}.log")
+            with open(container_log_path, "w") as clf:
+                clf.write(log_result.stdout)
+                if log_result.stderr:
+                    clf.write("\n--- stderr ---\n")
+                    clf.write(log_result.stderr)
+        except Exception:
+            pass  # best-effort — don't fail the run
 
         # Cleanup container
         subprocess.run(["docker", "rm", "-f", container], capture_output=True)

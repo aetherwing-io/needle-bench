@@ -1,20 +1,20 @@
-FROM golang:1.21-alpine AS builder
+FROM golang:1.21-bookworm AS builder
 
-RUN apk add --no-cache gcc musl-dev
+RUN apt-get update -qq && apt-get install -y --no-install-recommends gcc 
 
 WORKDIR /build
 COPY app/ .
 
 RUN go build -o server .
 
-FROM alpine:3.20
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache bash coreutils curl jq git && \
+RUN apt-get update -qq && apt-get install -y --no-install-recommends bash curl jq git && \
     git config --global user.email "bench@needle-bench.cc" && \
     git config --global user.name "needle-bench"
 
 # Install Go toolchain so agent can rebuild
-RUN apk add --no-cache go gcc musl-dev
+RUN apt-get update -qq && apt-get install -y --no-install-recommends golang-go gcc 
 
 WORKDIR /app
 COPY app/ app/
