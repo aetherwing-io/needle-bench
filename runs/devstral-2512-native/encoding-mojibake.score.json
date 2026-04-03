@@ -9,10 +9,10 @@
   "output_tokens": 0,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "Task completed.",
-  "timestamp": "2026-04-03T01:22:27Z",
+  "summary": "The fix is complete. The issue was that `CsvReader.java` was using ISO-8859-1 charset which couldn't properly handle UTF-8 encoded international characters. I changed it to use UTF-8 charset, and now all non-ASCII names are preserved correctly in the report output. The test passes successfully.",
+  "timestamp": "2026-04-03T16:12:31Z",
   "token_cost": 0,
   "tool_uses": 13,
   "turns_to_fix": 14,
-  "wall_clock": 15.0
+  "wall_clock": 15.613
 }

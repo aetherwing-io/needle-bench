@@ -4,15 +4,15 @@
   "benchmark": "k8s-scheduler-shutdown-deadlock",
   "control_type": "kernel",
   "difficulty_tier": "hard",
-  "estimated_cost_usd": 0.04862,
-  "input_tokens": 25218,
-  "output_tokens": 2269,
+  "estimated_cost_usd": 0.08408399999999998,
+  "input_tokens": 41026,
+  "output_tokens": 3494,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the shutdown dead-lock.\n\nChanges in main.go (Scheduler.Run):\n\n1. After ctx cancellation we now:\n   a. Close the queue first → releases any goroutine blocked in Pop().\n   b. Then wait for the worker goroutine to exit.\n\nThis removes the deadlock window and lets test.sh pass.",
-  "timestamp": "2026-04-03T02:00:31Z",
-  "token_cost": 27487,
-  "tool_uses": 13,
+  "summary": "The “needle” causing the failure was a shutdown-ordering deadlock in Scheduler.Run:\n\n1. It waited for the worker goroutine to finish (`<-done`)\n2. Only afterwards did it close the queue (`s.queue.Close()`)\n\nIf the worker was blocked inside `Pop()`, it could never notice `ctx.Done()` until the queue closed, so both goroutines could wait forever.\n\nFix applied:\n\n• Reverse the order – on cancellation, close the queue first to unblock any `Pop()` calls, then wait for the worker goroutine.\n\n```go\n<-ctx.Done()\n\n// Close queue first to release any Pop() waiters.\ns.queue.Close()\n\n// Now it’s safe to wait for the worker to exit.\n<-done\n```\n\nRunning `test.sh` now prints:\n\nOK: clean shutdown  \nPASS",
+  "timestamp": "2026-04-03T17:15:56Z",
+  "token_cost": 44520,
+  "tool_uses": 18,
   "turns_to_fix": 1,
-  "wall_clock": 55.455
+  "wall_clock": 78.459
 }

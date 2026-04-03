@@ -5,14 +5,14 @@
   "control_type": "native",
   "difficulty_tier": "hard",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 0,
-  "output_tokens": 0,
+  "input_tokens": 81243,
+  "output_tokens": 2183,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "The fix is complete. The test passes with \"OK: conflict notified\" output.\n\nThe changes made:\n1. Added a `ConflictCallback` function variable to notify when assumed state is dropped\n2. Modified `informerUpdate` to call the callback when dropping an assumed entry\n3. Set up the callback in `main()` to set `conflictNotified = true`\n\nNow when an informer delivers a newer version that conflicts with assumed state, the system is notified instead of silently dropping the assumed entry.",
-  "timestamp": "2026-04-03T02:12:39Z",
-  "token_cost": 0,
-  "tool_uses": 7,
-  "turns_to_fix": 8,
-  "wall_clock": 21.921
+  "summary": "The fix is complete. The test passes, showing \"OK: conflict notified\" which confirms that the assumed state conflict is now properly detected and notified.",
+  "timestamp": "2026-04-03T16:27:38Z",
+  "token_cost": 83426,
+  "tool_uses": 8,
+  "turns_to_fix": 9,
+  "wall_clock": 38.848
 }

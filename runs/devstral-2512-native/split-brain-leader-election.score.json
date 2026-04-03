@@ -5,14 +5,14 @@
   "control_type": "native",
   "difficulty_tier": "hard",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 0,
-  "output_tokens": 0,
+  "input_tokens": 261083,
+  "output_tokens": 1069,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "Perfect! Now the output shows \"Node 2: became LEADER for term 1 with 3 votes\" which is correct. The fix is complete.\n\n## Summary\n\nThe issue was in `app/cluster/node.go` line 124. The original code used:\n\n```go\nif finalVotes >= totalNodes/2 {\n```\n\nThis allowed split-brain because:\n- Partition A (2 nodes): needed 1 vote (2/2 = 1)\n- Partition B (3 nodes): needed 1 vote (3/2 = 1)\n\nBoth partitions could elect leaders with minimal votes.\n\n**The fix:** Changed the condition to require a strict majority of the entire cluster:\n\n```go\nif finalVotes > totalNodes/2 {\n```\n\nFor a 5-node cluster, this requires 3 votes (since 3 > 2.5), preventing split-brain.\n\n**Verification:** The test now passes - no split-brain detected across all rounds.",
-  "timestamp": "2026-04-03T03:12:43Z",
-  "token_cost": 0,
-  "tool_uses": 32,
-  "turns_to_fix": 33,
-  "wall_clock": 61.213
+  "summary": "Perfect! The fix is working correctly. The issue was that the original code used `>=` (greater than or equal to) for the quorum check, which allowed a node to become leader with only 2 votes in a 5-node cluster (2/5 = 40%). \n\nThe fix changed it to `>` (strictly greater than), which requires a majority. In a 5-node cluster, this means 3 votes are needed (3/5 = 60%), which is the correct Raft consensus requirement.\n\nNow when the network is partitioned:\n- Node 2 can get 3 votes (from nodes 2, 3, 4) and become leader\n- Node 0 can only get 2 votes (from nodes 0, 1) and cannot become leader\n- This prevents split-brain scenarios\n\nThe test now passes successfully.",
+  "timestamp": "2026-04-03T16:42:13Z",
+  "token_cost": 262152,
+  "tool_uses": 21,
+  "turns_to_fix": 22,
+  "wall_clock": 38.367
 }

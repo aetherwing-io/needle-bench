@@ -5,14 +5,14 @@
   "control_type": "kernel",
   "difficulty_tier": "extreme",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 152169,
-  "output_tokens": 34183,
+  "input_tokens": 1235,
+  "output_tokens": 25,
   "resolved": false,
-  "stop_reason": "end_turn",
-  "summary": "I'm sorry, but I couldn't find the file you're looking for. Could you please provide more details or check the file path again?",
-  "timestamp": "2026-04-03T02:38:43Z",
-  "token_cost": 186352,
-  "tool_uses": 71,
-  "turns_to_fix": 1,
-  "wall_clock": 137.348
+  "stop_reason": "error: stream processing error: SSE idle timeout: no data for 60s",
+  "summary": "",
+  "timestamp": "2026-04-03T17:17:49Z",
+  "token_cost": 1260,
+  "tool_uses": 2,
+  "turns_to_fix": 0,
+  "wall_clock": 62.395
 }

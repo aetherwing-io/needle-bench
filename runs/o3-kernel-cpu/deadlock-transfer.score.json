@@ -4,15 +4,15 @@
   "benchmark": "deadlock-transfer",
   "control_type": "kernel",
   "difficulty_tier": "medium",
-  "estimated_cost_usd": 0.041598,
-  "input_tokens": 24491,
-  "output_tokens": 1741,
+  "estimated_cost_usd": 0.055875999999999995,
+  "input_tokens": 29574,
+  "output_tokens": 2111,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the deadlock.\n\nCause: TransferService locked the two accounts in the order (from → to).  \nTwo simultaneous opposite-direction transfers (A→B and B→A) could therefore lock A then wait for B, while the other locked B then waited for A ⇒ circular wait → deadlock.\n\nFix: Impose a global lock order. Always acquire the lock of the account whose id is lexicographically smaller first, independent of transfer direction.\n\nKey change in app/TransferService.java:\n\n```\nAccount first, second;\nif (from.getId().compareTo(to.getId()) < 0) {\n    first = from; second = to;\n} else {\n    first = to; second = from;\n}\n\nsynchronized (first.getLock()) {\n    ...\n    synchronized (second.getLock()) {\n        ...\n```\n\nRe-ran test.sh: both passes succeed, no deadlock, balances conserved.\n\nAll good.",
-  "timestamp": "2026-04-03T01:37:37Z",
-  "token_cost": 26232,
-  "tool_uses": 9,
+  "summary": "Fixed the dead-lock (“needle”).\n\nProblem  \nTransferService locked the two Account objects in the order they were passed (from → to).  \nTwo simultaneous opposite-direction transfers (A→B and B→A) could therefore obtain the\nfirst lock each and wait forever for the second one – classic circular-wait deadlock.\n\nFix  \nTake both locks in a globally consistent order.  \nI changed TransferService.transfer(…) to:\n\n1. Compare the two account IDs.  \n2. Lock the one with the lower ID first, then the other.  \n3. Perform the same debit/credit logic inside the two-level synchronized block.\n\nResult  \nRunning test.sh now passes twice in a row, proving the deadlock is gone and balances\nremain correct:\n\nPASS: All concurrent transfers completed without deadlock",
+  "timestamp": "2026-04-03T16:39:20Z",
+  "token_cost": 31685,
+  "tool_uses": 10,
   "turns_to_fix": 1,
-  "wall_clock": 29.602
+  "wall_clock": 45.44
 }

@@ -5,14 +5,14 @@
   "control_type": "kernel",
   "difficulty_tier": "hard",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 28117,
-  "output_tokens": 3323,
-  "resolved": false,
+  "input_tokens": 10845,
+  "output_tokens": 429,
+  "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "The test script is still failing due to overlapping segment assignments and data corruption from concurrent writes. This indicates that the workers are still writing to the same segments simultaneously, which is causing the integrity check to fail. We need to ensure that the workers are writing to different segments and that their writes are synchronized.",
-  "timestamp": "2026-04-03T07:29:49Z",
-  "token_cost": 31440,
-  "tool_uses": 10,
+  "summary": "The test script is now passing. The issue was in the `segments_for_worker` method in the `Config` struct, where the method was designed to assign overlapping segments to workers to ensure redundancy, but the current implementation caused overlaps that led to data corruption. The fix was to remove the overlap of 2 segments, which resolved the issue.",
+  "timestamp": "2026-04-03T16:16:06Z",
+  "token_cost": 11274,
+  "tool_uses": 6,
   "turns_to_fix": 1,
-  "wall_clock": 17.026
+  "wall_clock": 6.78
 }

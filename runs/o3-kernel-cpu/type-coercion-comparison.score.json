@@ -4,15 +4,15 @@
   "benchmark": "type-coercion-comparison",
   "control_type": "kernel",
   "difficulty_tier": "easy",
-  "estimated_cost_usd": 0.03628,
-  "input_tokens": 23068,
-  "output_tokens": 1720,
+  "estimated_cost_usd": 0.04352000000000001,
+  "input_tokens": 30280,
+  "output_tokens": 2238,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the bug causing incorrect results for rating filters.\n\nRoot cause:\nThe min_rating query parameter was being kept as a string, leading to string-number comparison problems in filtering.\n\nFix:\nutils.js – convert min_rating to an integer when parsing:\n  const val = parseInt(searchParams.get('min_rating'), 10);\n  if (!Number.isNaN(val)) query.minRating = val;\n\nAll tests in test.sh now pass.",
-  "timestamp": "2026-04-03T04:03:05Z",
-  "token_cost": 24788,
-  "tool_uses": 10,
+  "summary": "Fixed the type-coercion bug that made rating filtering treat the query value as a string.\n\nChanges made\n1. utils.js  \n   • Convert min_rating query string to a Number and store only if it’s a valid number.\n\n2. filter.js  \n   • Simplified rating filter: compare product.rating ≥ numeric minRating (no string inclusion logic).\n\nResult  \nRunning test.sh now passes:\n\nPASS: Rating filter returns correct results",
+  "timestamp": "2026-04-03T19:19:49Z",
+  "token_cost": 32518,
+  "tool_uses": 22,
   "turns_to_fix": 1,
-  "wall_clock": 31.851
+  "wall_clock": 38.601
 }

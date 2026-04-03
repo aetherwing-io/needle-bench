@@ -9,10 +9,10 @@
   "output_tokens": 0,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "Excellent! The fix is working correctly. The changes made were:\n\n1. **In `_update_product`**: Added `cache.delete(f'products:{product_id}')` to invalidate the cache for the updated product\n2. **In `_create_product`**: Added `cache.delete('products:list')` to invalidate the list cache when a new product is created\n\nThe test now passes, confirming that cache invalidation is working properly after writes.",
-  "timestamp": "2026-04-03T01:35:33Z",
+  "summary": "Perfect! The test passes. Both cache invalidation issues are fixed:\n\n1. **Product update cache invalidation**: After PUT `/products/{id}`, the specific product cache key is deleted\n2. **Product list cache invalidation**: After POST `/products`, the products list cache key is deleted\n\nThe server now serves fresh data after writes instead of stale cached values.",
+  "timestamp": "2026-04-03T16:10:19Z",
   "token_cost": 0,
-  "tool_uses": 13,
-  "turns_to_fix": 14,
-  "wall_clock": 25.999
+  "tool_uses": 9,
+  "turns_to_fix": 10,
+  "wall_clock": 27.463
 }

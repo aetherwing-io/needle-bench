@@ -4,15 +4,15 @@
   "benchmark": "relaxed-ordering-ringbuf",
   "control_type": "kernel",
   "difficulty_tier": "extreme",
-  "estimated_cost_usd": 0.16175000000000003,
-  "input_tokens": 110907,
-  "output_tokens": 7324,
+  "estimated_cost_usd": 0.099892,
+  "input_tokens": 79714,
+  "output_tokens": 3646,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the memory-ordering bug in the single-producer / single-consumer ring buffer.\n\nKey changes\n1. ring_buffer.c  \n   • Producer (ringbuf_push)  \n     – loads read_idx with memory_order_acquire  \n     – publishes write_idx with memory_order_release  \n\n   • Consumer (ringbuf_pop)  \n     – loads write_idx with memory_order_acquire  \n     – publishes read_idx with memory_order_release  \n\n   This release/-acquire pair guarantees that the data placed in slots[] is visible to the consumer before it sees the updated write index, and that the producer never overwrites a slot still in use by the consumer—on every architecture, not only x86.\n\n2. Updated comments in ring_buffer.[ch] to describe the new ordering rationale.\n\nResult\nRunning test.sh now reports:\nPASS: All tests passed — no races, correct output\n\nThe ring buffer is free of data races and functions correctly on weak-memory platforms as well as under ThreadSanitizer.",
-  "timestamp": "2026-04-03T03:03:35Z",
-  "token_cost": 118231,
-  "tool_uses": 19,
+  "summary": "The “needle” was a memory-ordering bug in the SPSC ring-buffer implementation.\n\nFix applied (ring_buffer.c):\n\n1. Producer  \n   • load indices with memory_order_acquire  \n   • publish new write_idx with memory_order_release\n\n2. Consumer  \n   • load read_idx with memory_order_acquire  \n   • advance read_idx with memory_order_release\n\nThese release/acquire barriers guarantee the consumer sees the element value written by the producer before it observes the updated index, preventing re-ordering on weak-memory architectures (e.g., ARM).\n\nRunning test.sh now:\n\n=== SPSC Ring Buffer Memory Ordering Test ===  \n…  \nOK: All runs passed — no data corruption detected  \n\nPASS: All tests passed — no races, correct output",
+  "timestamp": "2026-04-03T18:19:43Z",
+  "token_cost": 83360,
+  "tool_uses": 15,
   "turns_to_fix": 1,
-  "wall_clock": 120.75
+  "wall_clock": 65.692
 }

@@ -4,15 +4,15 @@
   "benchmark": "memory-leak-event-listener",
   "control_type": "kernel",
   "difficulty_tier": "medium",
-  "estimated_cost_usd": 0.0036882399999999997,
-  "input_tokens": 10206,
-  "output_tokens": 1001,
+  "estimated_cost_usd": 0.005974880000000001,
+  "input_tokens": 23617,
+  "output_tokens": 1409,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Great! The test now passes. The fix worked because:\n\n1. We replaced `this.eventBus.on()` with `this.eventBus.once()` to automatically remove listeners after they're called\n2. We moved the handler functions outside the event registration to make the code cleaner\n3. The memory leak is resolved because we're no longer accumulating event listeners\n\nThe key insight was that the original code was registering new event listeners for every request but never removing them. By using `once()`, we ensure that each listener is automatically removed after it's called, preventing the memory leak.\n\nThis is a common pattern in Node.js applications - always be careful about event listener registration in frequently called functions, as it can lead to memory leaks if not properly managed.",
-  "timestamp": "2026-04-03T01:42:53Z",
-  "token_cost": 11207,
-  "tool_uses": 6,
+  "summary": "Great! The test script now passes, indicating that the event listener leak has been fixed. The listener count remains stable at 2, which means that the event listeners are no longer being registered per-request.\n\nHere's a summary of the changes made:\n\n1. Moved the event listener registration from the `process()` method to the constructor, ensuring that the event listeners are registered only once.\n2. Added a `currentData` instance variable to store the data for the current request, allowing the event listener to access the data without capturing it in a closure.\n\nThis fix prevents the event listener leak by avoiding the creation of new event listeners for each request, while still maintaining the functionality of the application.",
+  "timestamp": "2026-04-03T18:07:01Z",
+  "token_cost": 25026,
+  "tool_uses": 12,
   "turns_to_fix": 1,
-  "wall_clock": 20.713
+  "wall_clock": 25.906
 }

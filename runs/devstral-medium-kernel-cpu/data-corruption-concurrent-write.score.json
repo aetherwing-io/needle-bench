@@ -1,0 +1,18 @@
+{
+  "agent": "devstral-medium-kernel-cpu",
+  "arm": "kernel",
+  "benchmark": "data-corruption-concurrent-write",
+  "control_type": "kernel",
+  "difficulty_tier": "hard",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 19808,
+  "output_tokens": 833,
+  "resolved": true,
+  "stop_reason": "end_turn",
+  "summary": "Great! The test is now passing. The issue was that the segment assignments were intentionally overlapping, which caused data corruption when multiple workers wrote to the same segments concurrently. By modifying the `segments_for_worker` method to ensure that each segment is only assigned to one worker, we've fixed the issue.",
+  "timestamp": "2026-04-03T16:47:40Z",
+  "token_cost": 20641,
+  "tool_uses": 11,
+  "turns_to_fix": 1,
+  "wall_clock": 12.605
+}

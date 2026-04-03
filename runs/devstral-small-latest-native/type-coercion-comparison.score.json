@@ -5,14 +5,14 @@
   "control_type": "native",
   "difficulty_tier": "easy",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 0,
-  "output_tokens": 0,
+  "input_tokens": 87323,
+  "output_tokens": 344,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "Perfect! The fix works. The issue was that `min_rating` was being read as a string instead of being converted to a number. I changed line 23 in `utils.js` to use `parseInt()` to convert the string to an integer, just like the price parameters are handled.",
-  "timestamp": "2026-04-03T06:01:37Z",
-  "token_cost": 0,
+  "summary": "Perfect! The fix works. The issue was that `min_rating` was being read as a string instead of being converted to a number, causing incorrect comparisons in the filter logic.",
+  "timestamp": "2026-04-03T16:42:02Z",
+  "token_cost": 87667,
   "tool_uses": 9,
   "turns_to_fix": 10,
-  "wall_clock": 16.726
+  "wall_clock": 16.584
 }

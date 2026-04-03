@@ -4,15 +4,15 @@
   "benchmark": "linearizability-stale-read",
   "control_type": "kernel",
   "difficulty_tier": "extreme",
-  "estimated_cost_usd": 0.00020268,
+  "estimated_cost_usd": 0.00022158,
   "input_tokens": 1248,
-  "output_tokens": 78,
+  "output_tokens": 99,
   "resolved": false,
   "stop_reason": "end_turn",
-  "summary": "The test failed because the system is not linearizable. The system claims to be linearizable, but reads are served from stale local state without confirming the applied index is current with the leader's commit index. This means that a committed write is invisible to a reader. This is a violation of the linearizability property.",
-  "timestamp": "2026-04-03T01:58:13Z",
-  "token_cost": 1326,
+  "summary": "The test indicates a linearizability violation where a committed write is not visible to a reader after a partition is healed. This suggests that the system is not maintaining linearizability, as reads are being served from stale local state without confirming the applied index is current with the leader's commit index. This issue needs to be addressed to ensure that reads are linearizable and that committed writes are visible to all nodes in the cluster.",
+  "timestamp": "2026-04-03T16:53:59Z",
+  "token_cost": 1347,
   "tool_uses": 1,
   "turns_to_fix": 1,
-  "wall_clock": 4.295
+  "wall_clock": 4.618
 }

@@ -4,15 +4,15 @@
   "benchmark": "raft-snapshot-commit-gap",
   "control_type": "kernel",
   "difficulty_tier": "extreme",
-  "estimated_cost_usd": 0.29830199999999996,
-  "input_tokens": 341927,
-  "output_tokens": 3526,
+  "estimated_cost_usd": 0.15923400000000001,
+  "input_tokens": 148257,
+  "output_tokens": 3000,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "The “needle” was in the InstallSnapshot handler.  \nIt forgot to:\n\n1. Advance commitIndex to at least the snapshot’s last-included index.\n2. Compact the local log so the covered entries aren’t replayed later.\n\nBecause commitIndex stayed behind (often at 0), a restart caused\nRestart() to believe nothing was committed after the snapshot and it\nre-applied the same entries, yielding duplicates.\n\nFix (snapshot.go):\n\n```\n\t// Ensure commitIndex includes the snapshot\n\tif snap.LastIncludedIndex > n.commitIndex {\n\t\tn.commitIndex = snap.LastIncludedIndex\n\t}\n\n\t// Drop log entries now covered by the snapshot\n\tn.raftLog.CompactUpTo(snap.LastIncludedIndex)\n```\n\n(plus existing state-machine restore & lastApplied update).\n\nAfter patching, running test.sh shows:\n\n```\nPASS: No duplicate state machine transitions across all rounds\n```\n\nProblem solved.",
-  "timestamp": "2026-04-03T02:58:16Z",
-  "token_cost": 345453,
-  "tool_uses": 34,
+  "summary": "Fixed the “duplicate apply after snapshot + restart” bug.\n\nRoot cause  \nInstallSnapshot restored the state machine but only advanced lastApplied, leaving commitIndex behind. After a crash, Restart() resets lastApplied back to commitIndex (0 in the test), causing log entries already represented in the snapshot to be applied a second time.\n\nFix (in app/snapshot.go)  \nAfter restoring the snapshot we now set:\n\n    n.lastApplied = snap.LastIncludedIndex\n    if n.commitIndex < snap.LastIncludedIndex {\n        n.commitIndex = snap.LastIncludedIndex\n    }\n\nKeeping commitIndex ≥ lastIncludedIndex preserves the invariant across crashes and prevents duplicate application of snapshot-covered entries.\n\nRunning test.sh now passes all rounds.",
+  "timestamp": "2026-04-03T18:08:04Z",
+  "token_cost": 151257,
+  "tool_uses": 19,
   "turns_to_fix": 1,
-  "wall_clock": 76.631
+  "wall_clock": 63.799
 }

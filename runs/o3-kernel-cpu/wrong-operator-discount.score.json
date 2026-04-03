@@ -4,15 +4,15 @@
   "benchmark": "wrong-operator-discount",
   "control_type": "kernel",
   "difficulty_tier": "easy",
-  "estimated_cost_usd": 0.03221,
-  "input_tokens": 22445,
-  "output_tokens": 551,
+  "estimated_cost_usd": 0.042408,
+  "input_tokens": 24900,
+  "output_tokens": 1140,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the bug in pricing.py.\n\nIssue  \ncalculate_discount_amount mistakenly added instead of multiplied:  \ndiscount = subtotal + discount_percent / 100\n\nFix  \nCorrect formula to compute a percentage of the subtotal:  \ndiscount = subtotal * discount_percent / 100\n\nAll tests in test.sh now pass.",
-  "timestamp": "2026-04-03T04:07:14Z",
-  "token_cost": 22996,
-  "tool_uses": 9,
+  "summary": "Fixed the “needle” bug:  \nIn pricing.py the discount formula mistakenly used addition instead of multiplication, causing huge errors.  \nChanged  \n    discount = subtotal + discount_percent / 100  \nto  \n    discount = subtotal * discount_percent / 100  \n\nAll tests in test.sh now pass:\n\n$ bash test.sh  \nPASS: Discount calculations are correct",
+  "timestamp": "2026-04-03T19:32:32Z",
+  "token_cost": 26040,
+  "tool_uses": 30,
   "turns_to_fix": 1,
-  "wall_clock": 20.554
+  "wall_clock": 35.901
 }

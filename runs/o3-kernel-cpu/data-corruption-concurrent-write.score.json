@@ -4,15 +4,15 @@
   "benchmark": "data-corruption-concurrent-write",
   "control_type": "kernel",
   "difficulty_tier": "hard",
-  "estimated_cost_usd": 0.057988,
-  "input_tokens": 46954,
-  "output_tokens": 1702,
+  "estimated_cost_usd": 0.05526000000000001,
+  "input_tokens": 43394,
+  "output_tokens": 1675,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the concurrency bug.\n\nRoot cause  \nEach worker was intentionally given an overlapping range of segments (segments_for_worker in config.rs). That caused multiple threads to write to the same file offsets, which the test script rightfully treats as a data-race and fails.\n\nFix implemented (src/config.rs)  \nRe-wrote segments_for_worker so every segment is owned by exactly one worker using round-robin assignment:\n\npub fn segments_for_worker(&self, worker_id: usize) -> Vec<usize> {\n    (0..self.num_segments)\n        .filter(|seg| seg % self.num_workers == worker_id)\n        .collect()\n}\n\nResult  \ntest.sh now passes:\n\n=== Concurrent Write Integrity Test ===\n...\nOK: No overlapping segment assignments\nPASS: All concurrent write runs produced correct output",
-  "timestamp": "2026-04-03T01:36:12Z",
-  "token_cost": 48656,
-  "tool_uses": 14,
+  "summary": "Fixed the data-corruption issue.\n\nProblem  \nsegments_for_worker in src/config.rs gave each worker an overlapping range, so two or more threads could write to the same file offsets at the same time. The integrity test therefore failed when it detected overlapping assignments.\n\nFix  \nRe-implemented segments_for_worker so that:\n\n• Every segment index 0‥num_segments-1 is assigned to exactly one worker (no overlaps).  \n• When num_segments doesn’t divide evenly by num_workers, the remainder segments are distributed one-by-one to the first workers.\n\nAfter the change:\n\n/app/test.sh  \n=== Concurrent Write Integrity Test ===  \n…  \nVERIFY: File integrity check passed  \nOK: No overlapping segment assignments  \nPASS: All concurrent write runs produced correct output\n\nThe “needle” was the overlapping assignment logic, and the patch removes it.",
+  "timestamp": "2026-04-03T16:34:30Z",
+  "token_cost": 45069,
+  "tool_uses": 13,
   "turns_to_fix": 1,
-  "wall_clock": 34.046
+  "wall_clock": 37.194
 }

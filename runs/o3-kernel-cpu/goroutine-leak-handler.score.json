@@ -4,15 +4,15 @@
   "benchmark": "goroutine-leak-handler",
   "control_type": "kernel",
   "difficulty_tier": "medium",
-  "estimated_cost_usd": 0.08534599999999998,
-  "input_tokens": 50225,
-  "output_tokens": 3896,
+  "estimated_cost_usd": 0.11062400000000001,
+  "input_tokens": 66692,
+  "output_tokens": 6827,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the goroutine leak.\n\nWhat was wrong\n• computeHandler spawned a goroutine that ignored client disconnects (no context cancellation), so work continued after the response writer was gone, leaking goroutines.\n\nWhat I changed\n1. Added context import.\n2. Re-implemented computeHandler to run performComputation synchronously using r.Context() so cancellation is propagated automatically.\n3. Re-wrote performComputation(ctx, req) to:\n   • increment / decrement activeGoroutines,\n   • check ctx.Done() on every iteration and return when the client disconnects.\n4. Removed the old leaking goroutine logic.\n\nResult\nRunning test.sh now reports:\n\nBaseline goroutines: 4  \nGoroutines after 20 client disconnects: 4  \nGoroutines after 5s wait: 4  \nPASS: All goroutine lifecycle tests passed\n\nThe server cleans up correctly with no leaked goroutines.",
-  "timestamp": "2026-04-03T01:42:17Z",
-  "token_cost": 54121,
-  "tool_uses": 16,
+  "summary": "Fixed the goroutine leak.\n\nChanges in app/main.go:\n1. Added context-aware computation. The background goroutine and the heavy‐work loop now exit early when r.Context() is cancelled (client disconnects or request timeout).\n2. Removed accidental duplicate import and ensured proper imports.\n3. computeHandler now:\n   • Passes r.Context() to performComputation  \n   • Selects on ctx.Done() while waiting for the result  \n   • Gives the worker 30 s max, returning 504 otherwise.\n4. performComputation respects ctx.Done() each iteration and during sleep delays (using a timer).\n\nRunning test.sh now reports:\n\nBaseline goroutines: 4  \nGoroutines after 20 client disconnects: 4  \nLeaked goroutines above baseline: 0  \nPASS: Goroutines properly cleaned up after client disconnect  \nPASS: All goroutine lifecycle tests passed",
+  "timestamp": "2026-04-03T16:50:05Z",
+  "token_cost": 73519,
+  "tool_uses": 15,
   "turns_to_fix": 1,
-  "wall_clock": 64.832
+  "wall_clock": 111.589
 }

@@ -4,15 +4,15 @@
   "benchmark": "rate-limit-bypass-header",
   "control_type": "kernel",
   "difficulty_tier": "medium",
-  "estimated_cost_usd": 0.061228,
-  "input_tokens": 40218,
-  "output_tokens": 1967,
+  "estimated_cost_usd": 0.164522,
+  "input_tokens": 199761,
+  "output_tokens": 2641,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the vulnerability.\n\nProblem  \nThe rate-limiter trusted the X-Forwarded-For header unconditionally.  \nAn attacker could send a different spoofed address on every request and bypass the per-IP limit.\n\nFix (ratelimiter.ts)  \n1. Stop trusting X-Forwarded-For by default.  \n2. Only use it when the deployment explicitly sets TRUST_PROXY=true, assuming a sanitising reverse proxy.  \n3. Otherwise always use req.socket.remoteAddress.\n\nResult  \nRunning test.sh now passes:\n\nWithout spoofing: 10 passed, 5 blocked – limiter works  \nWith spoofing:    10 passed, 20 blocked – bypass prevented  \nPASS: Rate limiter is not vulnerable to header spoofing",
-  "timestamp": "2026-04-03T03:00:34Z",
-  "token_cost": 42185,
-  "tool_uses": 10,
+  "summary": "Fixed: removed blind trust of X-Forwarded-For.\n\nDetails:\nratelimiter.ts\n– Re-implemented getClientIp to ignore user-supplied X-Forwarded-For unless validated.\n– Uses socket.remoteAddress (strips ::ffff: prefix) so rotating the header no longer resets limits.\n\nAll tests now pass:\n$ ./test.sh\nPASS: Rate limiter is not vulnerable to header spoofing",
+  "timestamp": "2026-04-03T18:13:27Z",
+  "token_cost": 202402,
+  "tool_uses": 19,
   "turns_to_fix": 1,
-  "wall_clock": 56.887
+  "wall_clock": 65.891
 }

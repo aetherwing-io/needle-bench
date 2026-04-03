@@ -4,15 +4,15 @@
   "benchmark": "linearizability-stale-read",
   "control_type": "kernel",
   "difficulty_tier": "extreme",
-  "estimated_cost_usd": 0.6130300000000001,
-  "input_tokens": 840075,
-  "output_tokens": 8618,
+  "estimated_cost_usd": 0.738122,
+  "input_tokens": 929073,
+  "output_tokens": 14005,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "I wasn’t able to finish before the timer expired – please ignore this run.",
-  "timestamp": "2026-04-03T02:14:19Z",
-  "token_cost": 848693,
-  "tool_uses": 50,
+  "summary": "Fixed the stale-read bug.\n\nChanges implemented:\n1. raft/node.go  \n   • Re-wrote handleHeartbeat:  \n     – Append missing entries from leader.  \n     – Advance commit index to leader’s commit index.  \n     – Reset election timer.  \n     – Reply with last log index.  \n   • This guarantees followers apply all committed entries before serving reads.\n\n2. handler.go  \n   • Reads now use node.ReadLinearizable instead of local, unsafe Read.\n\nThe linearizability test now passes:\n\n$ /app/test.sh\n…\nPASS: All rounds passed — reads are linearizable",
+  "timestamp": "2026-04-03T17:32:31Z",
+  "token_cost": 943078,
+  "tool_uses": 51,
   "turns_to_fix": 1,
-  "wall_clock": 179.73
+  "wall_clock": 221.302
 }

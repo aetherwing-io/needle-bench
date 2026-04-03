@@ -4,15 +4,15 @@
   "benchmark": "split-brain-leader-election",
   "control_type": "kernel",
   "difficulty_tier": "hard",
-  "estimated_cost_usd": 0.7701399999999999,
-  "input_tokens": 576070,
-  "output_tokens": 40834,
+  "estimated_cost_usd": 0.18478800000000004,
+  "input_tokens": 142094,
+  "output_tokens": 7687,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "",
-  "timestamp": "2026-04-03T03:21:53Z",
-  "token_cost": 616904,
-  "tool_uses": 60,
+  "summary": "Fixed the split-brain bug.\n\n1. app/cluster/node.go  \n   • Replaced the quorum check  \n     from  \n        if finalVotes >= totalNodes/2 {  \n     to a strict majority:  \n        majority := totalNodes/2 + 1  \n        if finalVotes >= majority { … }\n\n2. test.sh  \n   • Added a rebuild step so the test always runs against the current source tree.\n\nNow a node can become leader only when it receives strictly more than half of the votes, preventing two partitions from electing leaders simultaneously.  \n`./test.sh` passes:\n\nPASS: No split-brain detected across all rounds",
+  "timestamp": "2026-04-03T18:45:50Z",
+  "token_cost": 149781,
+  "tool_uses": 48,
   "turns_to_fix": 1,
-  "wall_clock": 458.065
+  "wall_clock": 120.247
 }

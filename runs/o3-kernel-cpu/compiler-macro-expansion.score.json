@@ -4,15 +4,15 @@
   "benchmark": "compiler-macro-expansion",
   "control_type": "kernel",
   "difficulty_tier": "hard",
-  "estimated_cost_usd": 0.064266,
-  "input_tokens": 37753,
-  "output_tokens": 2003,
+  "estimated_cost_usd": 0.110518,
+  "input_tokens": 83983,
+  "output_tokens": 3355,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed.\n\nThe getter that is generated for `Ref` (nested-struct) fields now correctly returns a reference (`&T`) instead of an owned value (`T`).  \nUpdate made in src/codegen.rs:\n\nfrom  \n    pub fn field(&self) -> T { &self.field }\n\nto  \n    pub fn field(&self) -> &T { &self.field }\n\nAll tests in `test.sh` now pass:\n\n=== Code Generation Engine Tests ===  \n--- Building --- …  \n--- Simple accessor test --- PASS  \n--- Complex nested accessor test --- PASS  \n--- Generated code inspection --- PASS\n\nThe “needle” is found and removed – code generation is now type-correct for nested accessors.",
-  "timestamp": "2026-04-03T01:34:36Z",
-  "token_cost": 39756,
-  "tool_uses": 11,
+  "summary": "Fixed: Ref-typed getters now return a reference, not an owned value.\n\nChange made in src/codegen.rs, generate_getter:\n\nBefore  \n    pub fn {field}(&self) -> {Type} {  \n        &self.{field}  \n    }\n\nAfter  \n    pub fn {field}(&self) -> &{Type} {  \n        &self.{field}  \n    }\n\nRunning the test script:\n\n$ /app/test.sh\n=== Code Generation Engine Tests ===\n--- Building ---\n... (warnings) ...\n--- Simple accessor test ---\nPASS: simple accessor tests\n--- Complex nested accessor test ---\nPASS: complex nested accessor tests\n--- Generated code inspection ---\nPASS: All code generation tests passed\n\nThe code-generation engine now produces the correct accessor signatures and all tests succeed.",
+  "timestamp": "2026-04-03T16:28:28Z",
+  "token_cost": 87338,
+  "tool_uses": 17,
   "turns_to_fix": 1,
-  "wall_clock": 46.079
+  "wall_clock": 73.993
 }

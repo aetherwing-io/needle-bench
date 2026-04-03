@@ -4,15 +4,15 @@
   "benchmark": "goroutine-leak-handler",
   "control_type": "kernel",
   "difficulty_tier": "medium",
-  "estimated_cost_usd": 0.094596,
-  "input_tokens": 45646,
-  "output_tokens": 5045,
+  "estimated_cost_usd": 0.144746,
+  "input_tokens": 90537,
+  "output_tokens": 7483,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the goroutine leak.\n\nChanges in app/main.go:\n\n1. Added context support:\n   - import \"context\"\n   - ctx := r.Context()\n\n2. Spawned the computation goroutine with respect for ctx cancellation and increment/decrement of activeGoroutines.\n\n3. performComputation now receives a context and checks ctx.Done() every loop to exit early.\n\n4. Handler select now listens to ctx.Done() instead of ignoring disconnects.\n\nResult: test.sh now passes – goroutine count returns to baseline after client disconnects.",
-  "timestamp": "2026-04-03T01:41:02Z",
-  "token_cost": 50691,
-  "tool_uses": 12,
+  "summary": "✅ Found the “needle” – the compute handler was leaking goroutines.\n\nWhat was wrong  \n• /app/app/main.go spawned a goroutine that kept running even after the client closed the connection, so every aborted request added a permanent goroutine.  \n• test.sh purposely aborts requests and then counts goroutines – the count never dropped back to baseline, so the script failed.\n\nFix applied  \n1. Re-implemented computeHandler to do the work in-line and to honour r.Context():  \n   • On every loop iteration (and during the artificial sleep) we check ctx.Done() and abort early when the client disconnects.  \n2. Removed the now-unused background-channel logic; no goroutine is spawned, so nothing can leak.  \n3. Left the rest of the server unchanged – stats, health, etc., still work.\n\nResult  \nRunning ./test.sh now:\n\nBaseline goroutines: 4  \nGoroutines after 20 client disconnects: 4  \nGoroutines after 5s wait: 4  \nPASS: All goroutine lifecycle tests passed\n\nThe handler is cancellation-aware and no goroutines are leaked.",
+  "timestamp": "2026-04-03T16:48:04Z",
+  "token_cost": 98020,
+  "tool_uses": 18,
   "turns_to_fix": 1,
-  "wall_clock": 84.357
+  "wall_clock": 118.133
 }

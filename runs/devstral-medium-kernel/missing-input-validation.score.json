@@ -4,15 +4,15 @@
   "benchmark": "missing-input-validation",
   "control_type": "kernel",
   "difficulty_tier": "easy",
-  "estimated_cost_usd": 0.00564632,
-  "input_tokens": 27969,
-  "output_tokens": 1342,
+  "estimated_cost_usd": 0.00793704,
+  "input_tokens": 34248,
+  "output_tokens": 2061,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Great! The test script is now passing, which means the issue has been resolved. The API now correctly prevents the inventory from going negative and returns a 400 Bad Request when such an adjustment is attempted.",
-  "timestamp": "2026-04-03T01:44:04Z",
-  "token_cost": 29311,
-  "tool_uses": 13,
+  "summary": "Great! The test has passed. Let's summarize what we did to fix the issue:\n\n1. We identified that the problem was in the inventory system where negative adjustments could make the quantity negative.\n2. We modified the `adjustQuantity` method in `inventory.ts` to validate that the adjustment won't make the quantity negative.\n3. We updated the error handling in `routes.ts` to properly handle the error case and return a 400 status code with an appropriate error message.\n4. We fixed a TypeScript error by properly typing the error object.\n\nThe fix ensures that:\n- The API rejects negative adjustments that would make the inventory negative\n- It returns a proper error message when such an adjustment is attempted\n- The inventory quantity never goes below zero\n\nThis prevents the \"impossible inventory states\" mentioned in the test script.",
+  "timestamp": "2026-04-03T18:14:49Z",
+  "token_cost": 36309,
+  "tool_uses": 11,
   "turns_to_fix": 1,
-  "wall_clock": 25.563
+  "wall_clock": 25.3
 }

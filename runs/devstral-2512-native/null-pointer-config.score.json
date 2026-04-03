@@ -5,14 +5,14 @@
   "control_type": "native",
   "difficulty_tier": "medium",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 0,
-  "output_tokens": 0,
+  "input_tokens": 201613,
+  "output_tokens": 1456,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "The fix is complete. The server now starts and responds correctly with metrics enabled. The issue was a nil pointer dereference when accessing `cfg.Metrics` without checking if it was nil first.",
-  "timestamp": "2026-04-03T02:41:38Z",
-  "token_cost": 0,
-  "tool_uses": 10,
-  "turns_to_fix": 11,
-  "wall_clock": 19.564
+  "summary": "## Summary\n\nThe issue was a **null-pointer-config bug**: the configuration had `\"enable_metrics\": true` but no `metrics` object defined, causing `cfg.Metrics` to be `nil`. When the status handler tried to access `cfg.Metrics.Endpoint`, it caused a nil pointer dereference panic.\n\n**Fix applied in `config.go`:**\n- Added logic in `LoadConfig()` to provide default metrics configuration when `EnableMetrics` is true but `Metrics` is nil\n- Default values: `Endpoint: \"/metrics\"`, `IntervalSec: 60`\n\n**Result:** The server now starts successfully and passes all tests, returning metrics information when metrics are enabled, even if the metrics object wasn't explicitly configured.",
+  "timestamp": "2026-04-03T16:33:30Z",
+  "token_cost": 203069,
+  "tool_uses": 19,
+  "turns_to_fix": 20,
+  "wall_clock": 64.849
 }

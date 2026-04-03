@@ -4,15 +4,15 @@
   "benchmark": "timing-attack-comparison",
   "control_type": "kernel",
   "difficulty_tier": "hard",
-  "estimated_cost_usd": 0.09476,
-  "input_tokens": 75240,
-  "output_tokens": 1699,
+  "estimated_cost_usd": 0.06337800000000002,
+  "input_tokens": 56225,
+  "output_tokens": 1810,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the timing-leak bug.\n\nChange made\napp/app/auth/compare.go\n• Re-implemented compareHashes using crypto/subtle.ConstantTimeCompare.\n• Pads operands to equal length before comparing so execution time is independent of secret length.\n\nAll tests now pass:\n\n$ ./test.sh\nPASS: Authentication is constant-time and secure",
-  "timestamp": "2026-04-03T03:56:42Z",
-  "token_cost": 76939,
-  "tool_uses": 16,
+  "summary": "The “needle” was a timing-leak bug in auth/compare.go: it used the normal == operator, letting an attacker measure how many leading characters matched the stored hash.\n\nI replaced the comparison with a constant-time check:\n\napp/app/auth/compare.go\n------------------------------------------------\npackage auth\n\nimport \"crypto/subtle\"\n\n// compareHashes now operates in constant time.\nfunc compareHashes(stored, input string) bool {\n    if len(stored) != len(input) {        // keep quick length mismatch check\n        return false\n    }\n    return subtle.ConstantTimeCompare(\n        []byte(stored), []byte(input),\n    ) == 1\n}\n------------------------------------------------\n\nRunning test.sh now:\n\n=== Timing Attack Resistance Test ===\n--- Building ---\n--- Basic auth test ---\nOK: correct password accepted\nOK: wrong password rejected\n--- Timing side-channel analysis ---\nOK: compareHashes uses constant-time comparison\nPASS: Authentication is constant-time and secure\n\nAll tests pass; the vulnerability is fixed.",
+  "timestamp": "2026-04-03T19:08:23Z",
+  "token_cost": 58035,
+  "tool_uses": 32,
   "turns_to_fix": 1,
-  "wall_clock": 35.279
+  "wall_clock": 35.043
 }

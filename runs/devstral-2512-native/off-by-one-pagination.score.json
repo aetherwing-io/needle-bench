@@ -5,14 +5,14 @@
   "control_type": "native",
   "difficulty_tier": "easy",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 0,
-  "output_tokens": 0,
+  "input_tokens": 65155,
+  "output_tokens": 374,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "The test passes. The pagination bug is fixed. The issue was the incorrect offset calculation that subtracted 1 for pages > 1, causing a gap between pages.",
-  "timestamp": "2026-04-03T02:44:11Z",
-  "token_cost": 0,
+  "summary": "Perfect! The test passes. The fix was to remove the incorrect `- (1 if page > 1 else 0)` from the offset calculation. Now pagination works correctly with no gaps or overlaps between pages.",
+  "timestamp": "2026-04-03T16:34:16Z",
+  "token_cost": 65529,
   "tool_uses": 7,
   "turns_to_fix": 8,
-  "wall_clock": 13.642
+  "wall_clock": 14.663
 }

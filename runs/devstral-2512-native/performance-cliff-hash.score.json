@@ -5,14 +5,14 @@
   "control_type": "native",
   "difficulty_tier": "hard",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 0,
-  "output_tokens": 0,
+  "input_tokens": 94501,
+  "output_tokens": 497,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "Fix verified. Changed `Product.java:36` to use `sku.hashCode()` instead of `category.hashCode()`. Test now passes with max chain length of 4 (was 1000).",
-  "timestamp": "2026-04-03T02:45:22Z",
-  "token_cost": 0,
-  "tool_uses": 13,
-  "turns_to_fix": 14,
-  "wall_clock": 14.486
+  "summary": "Perfect! The fix works:\n\n- **Before**: Max chain length = 1000 (severe collisions from using category)\n- **After**: Max chain length = 4 (proper distribution from using SKU)\n\nThe test now passes. The hash map correctly distributes items across buckets using the SKU as the hash key.",
+  "timestamp": "2026-04-03T16:34:52Z",
+  "token_cost": 94998,
+  "tool_uses": 10,
+  "turns_to_fix": 11,
+  "wall_clock": 25.923
 }

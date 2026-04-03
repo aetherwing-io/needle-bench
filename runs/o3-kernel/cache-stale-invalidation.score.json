@@ -4,15 +4,15 @@
   "benchmark": "cache-stale-invalidation",
   "control_type": "kernel",
   "difficulty_tier": "medium",
-  "estimated_cost_usd": 0.039076,
-  "input_tokens": 23178,
-  "output_tokens": 938,
+  "estimated_cost_usd": 0.036778,
+  "input_tokens": 21925,
+  "output_tokens": 868,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed cache invalidation bugs.\n\nChanges made in app/server.py:\n\n1. After updating a product (PUT /products/{id}):\n   • Delete cache entry for that product and the product list.\n   • Optionally repopulate cache with the updated product.\n\n2. After creating a product (POST /products):\n   • Delete the product list cache so subsequent list requests include the new product.\n\nRunning test.sh now passes:\n\nPASS: Cache correctly invalidated after writes",
-  "timestamp": "2026-04-03T01:32:03Z",
-  "token_cost": 24116,
-  "tool_uses": 9,
+  "summary": "Fixed caching bugs.\n\nChanges in app/server.py:\n\n1. After updating a product:\n   - Deleted cache entry for that product.\n   - Deleted cached product list.\n\n2. After creating a product:\n   - Deleted cached product list.\n\nRunning test.sh now passes:\nPASS: Cache correctly invalidated after writes",
+  "timestamp": "2026-04-03T16:22:07Z",
+  "token_cost": 22793,
+  "tool_uses": 8,
   "turns_to_fix": 1,
-  "wall_clock": 25.113
+  "wall_clock": 21.716
 }

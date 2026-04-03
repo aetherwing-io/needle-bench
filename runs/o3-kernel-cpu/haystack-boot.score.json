@@ -4,15 +4,15 @@
   "benchmark": "haystack-boot",
   "control_type": "kernel",
   "difficulty_tier": "medium",
-  "estimated_cost_usd": 0.018828,
-  "input_tokens": 5430,
-  "output_tokens": 996,
+  "estimated_cost_usd": 0.022544,
+  "input_tokens": 6340,
+  "output_tokens": 1233,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "All hidden benchmark checks now pass: test.sh reports 5/5.",
-  "timestamp": "2026-04-03T01:52:20Z",
-  "token_cost": 6426,
+  "summary": "The missing Haystack artifacts have been created and all five benchmark checks now pass:\n\n$ bash test.sh\n5/5\n\nNeedle found and verified.",
+  "timestamp": "2026-04-03T17:01:00Z",
+  "token_cost": 7573,
   "tool_uses": 9,
   "turns_to_fix": 1,
-  "wall_clock": 31.551
+  "wall_clock": 22.51
 }

@@ -4,15 +4,15 @@
   "benchmark": "off-by-one-array-slice",
   "control_type": "kernel",
   "difficulty_tier": "easy",
-  "estimated_cost_usd": 0.019436,
-  "input_tokens": 9550,
-  "output_tokens": 546,
+  "estimated_cost_usd": 0.046835999999999996,
+  "input_tokens": 27070,
+  "output_tokens": 1511,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed off-by-one error in processor.py.\n\nChange:\n    end = start + batch_size - 1\nto:\n    end = start + batch_size      # slice end is exclusive\n\nNow each batch slice includes the correct number of elements and no records are dropped. All tests in test.sh pass.",
-  "timestamp": "2026-04-03T02:46:07Z",
-  "token_cost": 10096,
-  "tool_uses": 6,
+  "summary": "The issue was an off-by-one error in processor.py when slicing the records list.\n\nFix applied in processor.py:\n\nBefore:\nend = start + batch_size - 1  # grab exactly batch_size items\nbatch = records[start:end]\n\nAfter:\nend = start + batch_size  # slice end is exclusive, so this grabs exactly batch_size items\nbatch = records[start:end]\n\nRunning test.sh now reports:\nPASS: All records processed correctly across batch boundaries",
+  "timestamp": "2026-04-03T17:49:55Z",
+  "token_cost": 28581,
+  "tool_uses": 13,
   "turns_to_fix": 1,
-  "wall_clock": 15.217
+  "wall_clock": 39.365
 }

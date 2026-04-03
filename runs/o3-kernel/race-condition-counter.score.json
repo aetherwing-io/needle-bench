@@ -4,15 +4,15 @@
   "benchmark": "race-condition-counter",
   "control_type": "kernel",
   "difficulty_tier": "medium",
-  "estimated_cost_usd": 0.037678,
-  "input_tokens": 21035,
-  "output_tokens": 1131,
+  "estimated_cost_usd": 0.12671,
+  "input_tokens": 111575,
+  "output_tokens": 1241,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the race-condition bug in the counter.\n\nProblem  \nincrementCounter did a read-modify-write:\n1. GET current value\n2. value + 1\n3. SET new value\n\nWhen many requests ran concurrently, multiple workers could read the same value before any wrote it back, so some increments were lost and the test failed.\n\nFix  \nUse Redis’ atomic INCR command, which increments the key and returns the new value in a single atomic operation.\n\nChanged app/counter.js:\n\n```diff\n-// Read-modify-write implementation\n-const current = await client.get(COUNTER_KEY);\n-const value   = parseInt(current || \"0\", 10);\n-const newValue = value + 1;\n-await client.set(COUNTER_KEY, newValue.toString());\n-\n-logger.debug(`Counter incremented: ${value} -> ${newValue}`);\n-return newValue;\n+// Atomic increment\n+const newValue = await client.incr(COUNTER_KEY);\n+logger.debug(`Counter incremented -> ${newValue}`);\n+return newValue;\n```\n\nRunning ./test.sh now prints:\n\nExpected: 100  \nGot:      100  \nPASS: Counter is correct",
-  "timestamp": "2026-04-03T02:55:59Z",
-  "token_cost": 22166,
-  "tool_uses": 9,
+  "summary": "Fixed the race condition in counter increments.\n\nRoot cause:\nincrementCounter was performing a non-atomic read-modify-write sequence:\n1. GET current value\n2. +1 in JS\n3. SET new value\nUnder high concurrency this lost updates.\n\nFix:\nReplaced the sequence with Redis’ atomic INCR command.\n\nChanged file: app/counter.js\nOld logic (read-modify-write) → new logic:\nasync function incrementCounter() {\n  const client = createClient();\n  const newValue = await client.incr(COUNTER_KEY); // atomic\n  logger.debug(`Counter incremented -> ${newValue}`);\n  return newValue;\n}\n\nRunning test.sh now passes:\nExpected: 100\nGot:      100\nPASS: Counter is correct",
+  "timestamp": "2026-04-03T18:04:27Z",
+  "token_cost": 112816,
+  "tool_uses": 10,
   "turns_to_fix": 1,
-  "wall_clock": 22.837
+  "wall_clock": 38.757
 }

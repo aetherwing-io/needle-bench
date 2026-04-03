@@ -4,15 +4,15 @@
   "benchmark": "ssrf-allowlist-port-confusion",
   "control_type": "kernel",
   "difficulty_tier": "hard",
-  "estimated_cost_usd": 0.00401344,
-  "input_tokens": 16990,
-  "output_tokens": 786,
+  "estimated_cost_usd": 0.00388296,
+  "input_tokens": 17953,
+  "output_tokens": 724,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "The test script now shows that all tests have passed, indicating that the SSRF vulnerabilities via IPv6 loopback addresses have been successfully mitigated. The server is now correctly blocking requests to both IPv4 and IPv6 loopback addresses, as well as other internal and private-network destinations.",
-  "timestamp": "2026-04-03T02:03:25Z",
-  "token_cost": 17776,
-  "tool_uses": 8,
+  "summary": "Great! The test is now passing. All the SSRF vulnerabilities have been fixed by adding the IPv6 loopback addresses to the blocked hosts list. The test shows that both the standard IPv6 loopback ([::1]) and the expanded IPv6 loopback (0:0:0:0:0:0:0:1) are now correctly blocked.\n\nTo summarize what we did:\n1. We identified that the validator was not blocking IPv6 loopback addresses.\n2. We modified the `BLOCKED_HOSTS` list in `validator.py` to include both the standard and expanded IPv6 loopback addresses.\n3. We ran the test again to verify that the fix resolved the issue.\n\nThe fix is now complete, and the webhook proxy is secure against SSRF attacks via IPv6 loopback addresses.",
+  "timestamp": "2026-04-03T20:21:24Z",
+  "token_cost": 18677,
+  "tool_uses": 18,
   "turns_to_fix": 1,
-  "wall_clock": 14.833
+  "wall_clock": 16.621
 }

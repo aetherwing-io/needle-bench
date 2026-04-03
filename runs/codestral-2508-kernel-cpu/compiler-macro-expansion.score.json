@@ -5,14 +5,14 @@
   "control_type": "kernel",
   "difficulty_tier": "hard",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 49885,
-  "output_tokens": 2608,
-  "resolved": false,
+  "input_tokens": 1720,
+  "output_tokens": 112,
+  "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "I'm sorry, but I couldn't find the specified text in the file. Could you please provide more details or check the file content again?",
-  "timestamp": "2026-04-03T07:27:17Z",
-  "token_cost": 52493,
-  "tool_uses": 14,
+  "summary": "The test results indicate that the code generation engine is producing incorrect accessor signatures for the `Company` and `Address` types. Specifically, the getters are returning owned values instead of references. This is causing the complex nested accessor tests to fail. The warnings about unused fields and variants suggest that there might be some dead code or unused functionality in the codebase. Additionally, the grep command is failing, which might be due to an issue with the pattern or the file being searched.",
+  "timestamp": "2026-04-03T16:15:13Z",
+  "token_cost": 1832,
+  "tool_uses": 1,
   "turns_to_fix": 1,
-  "wall_clock": 20.636
+  "wall_clock": 3.039
 }

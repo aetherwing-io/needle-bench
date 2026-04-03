@@ -4,15 +4,15 @@
   "benchmark": "tls-chain-ordering-strict",
   "control_type": "kernel",
   "difficulty_tier": "extreme",
-  "estimated_cost_usd": 0.3700780000000001,
-  "input_tokens": 382335,
-  "output_tokens": 10364,
+  "estimated_cost_usd": 0.101726,
+  "input_tokens": 82979,
+  "output_tokens": 4403,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the issue: the server was sending the three-certificate chain in the wrong order (intermediate, root, then leaf).  \nI rewrote app/tlssetup/loader.go so that it now:\n\n1. Loads all certificates from the PEM bundle, in any order.\n2. Detects the leaf (the one that matches the private key).\n3. Builds a properly ordered chain by repeatedly finding the issuer of the current certificate.\n4. Replaces tls.Certificate.Certificate with this ordered slice, so Go transmits leaf ➜ intermediate ➜ root as required by RFC 5246.\n\nRunning ./test.sh now prints:\n\nPASS: TLS chain is correctly ordered per RFC 5246",
-  "timestamp": "2026-04-03T04:00:15Z",
-  "token_cost": 392699,
-  "tool_uses": 45,
+  "summary": "Fixed the “needle”: the server was sending its certificate chain exactly as it appeared in chain.pem, which happened to be in reverse (root → intermediate → leaf).  \nStrict TLS validators therefore rejected the connection.\n\nWhat I changed\n\n1. app/tlssetup/loader.go  \n   • Added a reorderChain function that parses the certificates, then rearranges them so the on-wire order is:\n     leaf ➜ issuer ➜ … ➜ root (RFC 5246 §7.4.2).  \n   • After calling tls.X509KeyPair, we now set  \n     tlsCert.Certificate = reorderChain(tlsCert.Certificate)\n\n2. Re-built and ran tests – all now pass.\n\nYou can verify by running:\n\n    ./test.sh\n\nwhich outputs:\n\n    PASS: TLS chain is correctly ordered per RFC 5246\n\nThe “needle” (incorrect chain order) is gone.",
+  "timestamp": "2026-04-03T19:14:19Z",
+  "token_cost": 87382,
+  "tool_uses": 32,
   "turns_to_fix": 1,
-  "wall_clock": 164.052
+  "wall_clock": 76.029
 }

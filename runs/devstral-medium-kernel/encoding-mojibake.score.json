@@ -4,15 +4,15 @@
   "benchmark": "encoding-mojibake",
   "control_type": "kernel",
   "difficulty_tier": "easy",
-  "estimated_cost_usd": 0.0056267999999999995,
-  "input_tokens": 39328,
-  "output_tokens": 823,
+  "estimated_cost_usd": 0.00351896,
+  "input_tokens": 18610,
+  "output_tokens": 641,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Great! The test is now passing. The issue was that the CsvReader was using ISO-8859-1 encoding to read the file, but the file was actually UTF-8 encoded. By changing the encoding to UTF-8, we've fixed the issue and all the non-ASCII characters are now being read and displayed correctly.\n\nThe fix was to:\n1. Change the charset in CsvReader from ISO-8859-1 to UTF-8\n2. Import the StandardCharsets class to use the UTF_8 constant\n\nThis ensures that the international characters in names and cities are properly preserved throughout the processing pipeline.",
-  "timestamp": "2026-04-03T01:18:02Z",
-  "token_cost": 40151,
-  "tool_uses": 14,
+  "summary": "Great! The test is now passing. The issue was that the CSV reader was using ISO-8859-1 encoding instead of UTF-8, which caused the special characters in names and city names to be corrupted. By changing the charset to UTF-8, we've fixed the issue and all the special characters are now being displayed correctly.\n\nThe needle in the haystack was the incorrect character encoding setting in the `CsvReader.java` file. This is a common issue when dealing with international text, as different systems and libraries may use different default encodings.",
+  "timestamp": "2026-04-03T16:49:56Z",
+  "token_cost": 19251,
+  "tool_uses": 10,
   "turns_to_fix": 1,
-  "wall_clock": 17.516
+  "wall_clock": 12.058
 }

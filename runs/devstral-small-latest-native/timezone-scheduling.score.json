@@ -5,14 +5,14 @@
   "control_type": "native",
   "difficulty_tier": "easy",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 0,
-  "output_tokens": 0,
+  "input_tokens": 171189,
+  "output_tokens": 1079,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "Perfect! The fix is complete. The issue was that the scheduler was using the UTC date instead of the local date in the event's timezone when building the scheduled datetime. By changing `today_utc = window_start.date()` to `local_now = window_start.astimezone(tz)` and `today_local = local_now.date()`, the scheduler now correctly calculates the scheduled time in the event's local timezone before converting to UTC for comparison.\n\nAll tests pass, including the late night events that cross midnight boundaries.",
-  "timestamp": "2026-04-03T04:57:06Z",
-  "token_cost": 0,
-  "tool_uses": 15,
-  "turns_to_fix": 16,
-  "wall_clock": 19.65
+  "summary": "Perfect! All tests pass. The fix was to use the local date (in the event's timezone) instead of the UTC date when calculating the scheduled time. This ensures that late-night events that cross midnight in their local timezone are scheduled correctly.",
+  "timestamp": "2026-04-03T16:40:19Z",
+  "token_cost": 172268,
+  "tool_uses": 16,
+  "turns_to_fix": 17,
+  "wall_clock": 23.158
 }

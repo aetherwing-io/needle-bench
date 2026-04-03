@@ -4,15 +4,15 @@
   "benchmark": "raft-snapshot-commit-gap",
   "control_type": "kernel",
   "difficulty_tier": "extreme",
-  "estimated_cost_usd": 0.142702,
-  "input_tokens": 128571,
-  "output_tokens": 3047,
+  "estimated_cost_usd": 0.11085399999999998,
+  "input_tokens": 86771,
+  "output_tokens": 2124,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the “duplicate apply after snapshot” bug.\n\nCause  \nInstallSnapshot restored the state machine and lastApplied, but it never moved commitIndex forward. After a crash–restart, commitIndex = 0 dragged lastApplied back to 0, so entries 1-10 were replayed and applied a second time.\n\nFix (app/snapshot.go)  \n1. After accepting a snapshot, advance commitIndex to at least LastIncludedIndex.  \n2. Then restore the state machine and set lastApplied to LastIncludedIndex.\n\nOutcome  \nRunning test.sh now passes in all rounds:\n\n=== Raft Snapshot Commit-Gap Test ===  \nPASS: No duplicate state machine transitions across all rounds\n\nThe needle has been found and removed.",
-  "timestamp": "2026-04-03T02:59:27Z",
-  "token_cost": 131618,
-  "tool_uses": 20,
+  "summary": "Fixed the “duplicate apply after snapshot-install + restart” bug.\n\nRoot cause  \nInstallSnapshot restored the state machine and advanced lastApplied, but left commitIndex untouched.  \nIf the follower had never received the corresponding commit messages, commitIndex could be behind (often 0).  \nAfter a crash/restart, recovery derives lastApplied from commitIndex, undoing the snapshot progress and causing\nthe same log entries to be applied again when a new leader replicates.\n\nFix (snapshot.go)  \nAfter restoring from the snapshot:\n\n    // ensure commitIndex ≥ snapshot boundary\n    n.lastApplied = snap.LastIncludedIndex\n    if n.commitIndex < snap.LastIncludedIndex {\n        n.commitIndex = snap.LastIncludedIndex\n    }\n\nThis preserves the Raft invariant lastApplied ≤ commitIndex and guarantees the\nsnapshot’s state is treated as committed across crashes.\n\ntest.sh now passes:\n\n=== Raft Snapshot Commit-Gap Test ===\nBuilding...\n--- Round 1 --- … OK  \n--- Round 2 --- … OK  \n--- Round 3 --- … OK  \nPASS: No duplicate state machine transitions across all rounds",
+  "timestamp": "2026-04-03T18:09:10Z",
+  "token_cost": 88895,
+  "tool_uses": 13,
   "turns_to_fix": 1,
-  "wall_clock": 60.933
+  "wall_clock": 55.736
 }

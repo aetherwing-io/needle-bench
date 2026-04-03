@@ -5,14 +5,14 @@
   "control_type": "native",
   "difficulty_tier": "hard",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 0,
-  "output_tokens": 0,
+  "input_tokens": 92518,
+  "output_tokens": 584,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "Perfect! The fix is complete. The validator now blocks IPv6 loopback addresses `[::1]` and `[0:0:0:0:0:0:0:1]`, preventing the SSRF vulnerability. All tests pass successfully.",
-  "timestamp": "2026-04-03T03:27:12Z",
-  "token_cost": 0,
-  "tool_uses": 10,
-  "turns_to_fix": 11,
-  "wall_clock": 28.476
+  "summary": "Perfect! The fix is complete and verified. The validator now blocks both IPv6 loopback formats (`::1` and `0:0:0:0:0:0:0:1`), preventing the SSRF vulnerability.",
+  "timestamp": "2026-04-03T16:43:11Z",
+  "token_cost": 93102,
+  "tool_uses": 9,
+  "turns_to_fix": 10,
+  "wall_clock": 19.651
 }

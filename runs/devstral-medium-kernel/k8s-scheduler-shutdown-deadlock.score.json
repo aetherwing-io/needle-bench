@@ -4,15 +4,15 @@
   "benchmark": "k8s-scheduler-shutdown-deadlock",
   "control_type": "kernel",
   "difficulty_tier": "hard",
-  "estimated_cost_usd": 0.009421599999999999,
-  "input_tokens": 31974,
-  "output_tokens": 2636,
+  "estimated_cost_usd": 0.00371728,
+  "input_tokens": 12928,
+  "output_tokens": 978,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Great! The test has passed. The fix worked. The issue was indeed a deadlock caused by the incorrect order of operations in the `Run` method. By moving the `s.queue.Close()` call before waiting for the goroutine to exit, we ensure that any blocked `Pop()` calls will be unblocked before we wait for the goroutine to finish.\n\nThe key changes we made:\n1. Moved `s.queue.Close()` to happen immediately after `<-ctx.Done()` and before waiting for the goroutine to finish.\n2. This ensures that if the scheduling goroutine is blocked in `Pop()`, it will be unblocked by the `Close()` call before we wait for it to exit.\n\nThis fix prevents the deadlock that could occur when the scheduling goroutine was blocked in `Pop()` while waiting for the queue to be closed.",
-  "timestamp": "2026-04-03T01:29:38Z",
-  "token_cost": 34610,
-  "tool_uses": 12,
+  "summary": "Great! The fix worked. The test now passes, showing that the shutdown deadlock has been resolved.\n\nThe key change was to call `s.queue.Close()` before waiting for the scheduler goroutine to finish. This ensures that any blocked `Pop()` calls will be unblocked by the queue closure, allowing the scheduler goroutine to properly shut down.\n\nThe fix addresses the deadlock by:\n1. Closing the queue immediately when the context is canceled\n2. This wakes up any blocked `Pop()` calls\n3. Then we wait for the scheduler goroutine to finish its work\n4. The goroutine can now properly exit because its `Pop()` call will return immediately\n\nThis is a common pattern in concurrent programming - when shutting down, you often need to signal all components to stop first, then wait for them to finish, rather than waiting first and then trying to signal.",
+  "timestamp": "2026-04-03T17:03:39Z",
+  "token_cost": 13906,
+  "tool_uses": 10,
   "turns_to_fix": 1,
-  "wall_clock": 26.272
+  "wall_clock": 18.781
 }

@@ -5,14 +5,14 @@
   "control_type": "native",
   "difficulty_tier": "extreme",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 0,
-  "output_tokens": 0,
+  "input_tokens": 238559,
+  "output_tokens": 1807,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "Excellent! The fix is working consistently across multiple test runs. All three rounds pass, showing that reads are now properly linearizable after partition healing.\n\n## Summary\n\nThe issue was a linearizability violation where a follower node that was partitioned during a write operation would return stale data after the partition healed. \n\n**Root causes:**\n1. The `handleHeartbeat` function wasn't advancing the follower's commit index based on the leader's commit index\n2. The HTTP handler was using simple `Read()` instead of the linearizable `ReadLinearizable()` function\n\n**Fixes applied:**\n1. **`app/raft/node.go`**: Modified `handleHeartbeat()` to advance the follower's commit index when receiving heartbeats from the leader, ensuring followers learn about committed entries they missed during partitions\n2. **`app/handler.go`**: Changed `handleRead()` to use `ReadLinearizable()` instead of `Read()`, which implements the proper linearizable read protocol by waiting for local state to catch up with the leader's commit index\n\nThe solution ensures that after a partition heals, followers properly receive and apply committed entries before serving reads, maintaining linearizability guarantees.",
-  "timestamp": "2026-04-03T03:34:20Z",
-  "token_cost": 0,
-  "tool_uses": 43,
-  "turns_to_fix": 44,
-  "wall_clock": 140.169
+  "summary": "Perfect! The fix works. The issue was that the `handleHeartbeat` function was not advancing the commit index based on the leader's commit index, which meant that followers wouldn't apply committed entries after receiving heartbeats with those entries.\n\nThe fix was to add the commit index advancement logic to `handleHeartbeat`, similar to what was already in `handleAppendEntries`. Now when a follower receives a heartbeat with entries and the leader's commit index, it properly advances its own commit index and applies the entries.\n\nThe test now passes all 3 rounds, confirming that reads are linearizable after partition healing.",
+  "timestamp": "2026-04-03T16:20:03Z",
+  "token_cost": 240366,
+  "tool_uses": 17,
+  "turns_to_fix": 18,
+  "wall_clock": 48.854
 }

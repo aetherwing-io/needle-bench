@@ -5,14 +5,14 @@
   "control_type": "native",
   "difficulty_tier": "medium",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 0,
-  "output_tokens": 0,
+  "input_tokens": 122659,
+  "output_tokens": 899,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "Perfect! The vulnerability has been fixed. The rate limiter now ignores the `X-Forwarded-For` header and uses only the actual remote socket address, making it immune to header spoofing attacks.",
-  "timestamp": "2026-04-03T03:04:30Z",
-  "token_cost": 0,
-  "tool_uses": 11,
-  "turns_to_fix": 12,
-  "wall_clock": 38.215
+  "summary": "The rate limiter vulnerability has been fixed. The test now passes, showing that rotating X-Forwarded-For headers no longer bypasses the rate limit. The fix ignores the X-Forwarded-For header and uses only the socket remote address, preventing header spoofing attacks.",
+  "timestamp": "2026-04-03T16:39:24Z",
+  "token_cost": 123558,
+  "tool_uses": 12,
+  "turns_to_fix": 13,
+  "wall_clock": 41.278
 }

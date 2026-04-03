@@ -9,10 +9,10 @@
   "output_tokens": 0,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "Perfect! The fix is working. The v2 API now includes all the fields from v1 (`avatar_url`, `bio`, and `location`) plus the new v2 fields (`department`, `phone_number`, and `is_active`). The test passes, confirming backward compatibility.",
-  "timestamp": "2026-04-03T01:12:16Z",
+  "summary": "Excellent! The test now passes. The fix is complete:\n\n**Summary:**\n- Added missing fields `AvatarURL`, `Bio`, and `Location` to the `UserV2` struct\n- Updated the `ToV2()` method to include these fields when converting from `InternalUser`\n- Verified that v2 API now includes all v1 fields plus the new v2-specific fields (department, phone_number, is_active)\n- Test confirms backward compatibility: all v1 fields are present in v2 with their values preserved",
+  "timestamp": "2026-04-03T16:08:47Z",
   "token_cost": 0,
-  "tool_uses": 9,
-  "turns_to_fix": 10,
-  "wall_clock": 26.022
+  "tool_uses": 11,
+  "turns_to_fix": 12,
+  "wall_clock": 30.296
 }

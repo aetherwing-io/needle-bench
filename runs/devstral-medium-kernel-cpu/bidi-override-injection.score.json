@@ -5,14 +5,14 @@
   "control_type": "kernel",
   "difficulty_tier": "extreme",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 0,
-  "output_tokens": 0,
-  "resolved": false,
-  "stop_reason": "error: API call failed: API error 400: Invalid model: devstral-medium",
-  "summary": "",
-  "timestamp": "2026-04-03T01:14:48Z",
-  "token_cost": 0,
-  "tool_uses": 0,
+  "input_tokens": 839838,
+  "output_tokens": 2719,
+  "resolved": true,
+  "stop_reason": "error: API call failed: API error 429: Rate limit exceeded",
+  "summary": "I see that the file is quite large, and the output is being truncated. Let's try to get the rest of the file by specifying a smaller range:",
+  "timestamp": "2026-04-03T16:43:32Z",
+  "token_cost": 842557,
+  "tool_uses": 44,
   "turns_to_fix": 0,
-  "wall_clock": 2.271
+  "wall_clock": 481.076
 }

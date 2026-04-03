@@ -4,15 +4,15 @@
   "benchmark": "k8s-assume-cache-silent-drop",
   "control_type": "kernel",
   "difficulty_tier": "hard",
-  "estimated_cost_usd": 0.338552,
-  "input_tokens": 369128,
-  "output_tokens": 4877,
+  "estimated_cost_usd": 0.070702,
+  "input_tokens": 46043,
+  "output_tokens": 2247,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed: the cache now notifies when an assumed object is invalidated.\n\nChange made in main.go (in informerUpdate):\n1. Detects newer informer version for an assumed object.\n2. Sets conflictNotified = true before dropping the assumption.\n\n`test.sh` now prints “OK: conflict notified” and passes.",
-  "timestamp": "2026-04-03T01:58:40Z",
-  "token_cost": 374005,
-  "tool_uses": 34,
+  "summary": "The hidden issue was that the scheduler’s assumed entry was dropped silently when a newer informer update arrived.  \nFix: when we detect the newer version, we now set conflictNotified = true before deleting the assumed object, allowing callers to recognise the conflict.\n\n`test.sh` now passes:\n\nafter assume: version=5 data=\"assumed-by-scheduler\"  \nafter informer: version=6 data=\"informer-update\"  \nstill assumed: false  \nOK: conflict notified  \nPASS",
+  "timestamp": "2026-04-03T17:12:42Z",
+  "token_cost": 48290,
+  "tool_uses": 15,
   "turns_to_fix": 1,
-  "wall_clock": 130.942
+  "wall_clock": 53.779
 }

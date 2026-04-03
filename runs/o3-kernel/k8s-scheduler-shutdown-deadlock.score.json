@@ -4,15 +4,15 @@
   "benchmark": "k8s-scheduler-shutdown-deadlock",
   "control_type": "kernel",
   "difficulty_tier": "hard",
-  "estimated_cost_usd": 0.02741,
-  "input_tokens": 7873,
-  "output_tokens": 1458,
+  "estimated_cost_usd": 0.042844,
+  "input_tokens": 16574,
+  "output_tokens": 2580,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the shutdown dead-lock.\n\nRoot cause  \nScheduler waited for the worker goroutine to finish before it closed the queue.  \nIf the worker was blocked inside Pop(), it never observed ctx.Done(), so the\nmain goroutine waited forever.\n\nFix  \nSwap the two operations in Scheduler.Run:\n\n1. Close the queue first – this wakes anything blocked in Pop().  \n2. Then wait for the worker goroutine to exit.\n\nmain.go (diff)\n\n-     <-done // wait for goroutine — but it might be stuck in Pop()\n-     s.queue.Close()\n+     // Close the queue first so that any goroutine blocked in Pop() is woken\n+     s.queue.Close()\n+\n+     // Now wait for the scheduling loop to observe ctx.Done() and exit\n+     <-done\n\n`test.sh` now prints:\n\nOK: clean shutdown  \nPASS",
-  "timestamp": "2026-04-03T01:59:25Z",
-  "token_cost": 9331,
-  "tool_uses": 9,
+  "summary": "Fixed the shutdown dead-lock.\n\nWhat was wrong  \nScheduler.Run closed the queue ​after​ waiting for the scheduling goroutine.  \nIf that goroutine was blocked inside queue.Pop, it could never see the\nctx cancellation, so both goroutines were waiting for each other forever.\n\nWhat I changed  \nIn Scheduler.Run I reversed the order:\n\n1. Wait for ctx cancellation.  \n2. Close the queue immediately to wake any Pop-blocked goroutines.  \n3. Then wait for the scheduling goroutine to finish.\n\nThis guarantees every blocked Pop returns and the program terminates cleanly.\ntest.sh now prints:\n\nOK: clean shutdown  \nPASS",
+  "timestamp": "2026-04-03T17:14:27Z",
+  "token_cost": 19154,
+  "tool_uses": 11,
   "turns_to_fix": 1,
-  "wall_clock": 35.04
+  "wall_clock": 55.291
 }

@@ -1,0 +1,18 @@
+{
+  "agent": "devstral-2512-native",
+  "arm": "native",
+  "benchmark": "compiler-macro-expansion",
+  "control_type": "native",
+  "difficulty_tier": "hard",
+  "estimated_cost_usd": 0.0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "resolved": true,
+  "stop_reason": "pass",
+  "summary": "Task completed.",
+  "timestamp": "2026-04-03T16:10:38Z",
+  "token_cost": 0,
+  "tool_uses": 14,
+  "turns_to_fix": 15,
+  "wall_clock": 19.477
+}

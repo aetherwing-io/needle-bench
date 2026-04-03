@@ -9,10 +9,10 @@
   "output_tokens": 0,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "Perfect! The test passes. The cache invalidation is now working correctly:\n\n1. After updating a product, the specific product cache entry is deleted\n2. After creating a product, the list cache is deleted\n\nThis ensures that subsequent reads will fetch fresh data from the store instead of serving stale cached data.",
-  "timestamp": "2026-04-03T01:19:26Z",
+  "summary": "Perfect! The test passes. The cache invalidation is now working correctly:\n\n1. After updating a product, the specific product cache entry is deleted\n2. After creating a product, the product list cache is deleted\n\nBoth changes ensure fresh data is served on subsequent reads instead of stale cached values.",
+  "timestamp": "2026-04-03T16:10:08Z",
   "token_cost": 0,
-  "tool_uses": 10,
-  "turns_to_fix": 11,
-  "wall_clock": 16.195
+  "tool_uses": 9,
+  "turns_to_fix": 10,
+  "wall_clock": 24.104
 }

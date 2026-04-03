@@ -4,15 +4,15 @@
   "benchmark": "raft-snapshot-commit-gap",
   "control_type": "kernel",
   "difficulty_tier": "extreme",
-  "estimated_cost_usd": 0.007600719999999999,
-  "input_tokens": 38415,
-  "output_tokens": 1094,
+  "estimated_cost_usd": 0.00546416,
+  "input_tokens": 26220,
+  "output_tokens": 898,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "The test script now passes, indicating that the issue with duplicate state machine transitions has been resolved. The fix involved updating the `commitIndex` to the snapshot's last included index when a snapshot is installed, ensuring that `lastApplied` and `commitIndex` are consistent.",
-  "timestamp": "2026-04-03T01:55:16Z",
-  "token_cost": 39509,
-  "tool_uses": 13,
+  "summary": "The test has passed, indicating that the issue has been resolved. The modification to the `Restore` function in `statemachine.go` has fixed the problem of duplicate applies. The counts are now correctly initialized to 0 during the restoration process, and they are incremented as expected when the state machine applies the commands.",
+  "timestamp": "2026-04-03T19:22:03Z",
+  "token_cost": 27118,
+  "tool_uses": 18,
   "turns_to_fix": 1,
-  "wall_clock": 17.853
+  "wall_clock": 13.03
 }

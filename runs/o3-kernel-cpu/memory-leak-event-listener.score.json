@@ -4,15 +4,15 @@
   "benchmark": "memory-leak-event-listener",
   "control_type": "kernel",
   "difficulty_tier": "medium",
-  "estimated_cost_usd": 0.08533400000000001,
-  "input_tokens": 49227,
-  "output_tokens": 2656,
+  "estimated_cost_usd": 0.08448199999999999,
+  "input_tokens": 60429,
+  "output_tokens": 2965,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the event-listener memory leak.\n\nWhat I changed\n1. app/processor.js\n   • Moved the two `eventBus.on(...)` registrations into the constructor so they are added only once, not each time `process()` is called.  \n   • Updated `_handleValidated` signature accordingly and removed the captured `originalData` reference.\n\nRunning the supplied test verifies the fix:\n\n$ ./test.sh  \nBaseline: listeners=2, heap=4.43 MB  \nAfter 500 requests: listeners=2, heap=5.10 MB  \nPASS: Listener count stable at 2  \nPASS: No event listener leak detected",
-  "timestamp": "2026-04-03T02:17:47Z",
-  "token_cost": 51883,
+  "summary": "The “needle” was an event-listener leak in app/processor.js: every call to process() added new listeners that closed over the request data, so memory grew indefinitely.  \n\nFix implemented:\n\n1. Registered the listeners once in the constructor:\n      this.eventBus.on('data:validated', this._handleValidated.bind(this));\n      this.eventBus.on('data:error',     this._handleError.bind(this));\n\n2. Removed the per-call listener additions and simplified handlers so they no longer capture request-scoped objects.\n\nRunning ./test.sh now reports:\n    PASS: Listener count stable at 2  \n    PASS: No event listener leak detected\n\nAll tests pass; the leak is fixed.",
+  "timestamp": "2026-04-03T17:35:29Z",
+  "token_cost": 63394,
   "tool_uses": 13,
   "turns_to_fix": 1,
-  "wall_clock": 45.883
+  "wall_clock": 61.727
 }

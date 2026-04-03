@@ -5,14 +5,14 @@
   "control_type": "kernel",
   "difficulty_tier": "medium",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 17671,
-  "output_tokens": 2932,
-  "resolved": true,
+  "input_tokens": 1097,
+  "output_tokens": 76,
+  "resolved": false,
   "stop_reason": "end_turn",
-  "summary": "The goroutine leaks have been fixed. The test script now shows that goroutines are properly cleaned up after client disconnects.",
-  "timestamp": "2026-04-03T01:28:49Z",
-  "token_cost": 20603,
-  "tool_uses": 8,
+  "summary": "It seems like there is a goroutine leak in the server. The number of goroutines increases after clients disconnect, indicating that some goroutines are not being properly cleaned up. This could be due to unclosed channels, uncancelled contexts, or other issues that prevent goroutines from terminating when they should.",
+  "timestamp": "2026-04-03T16:23:51Z",
+  "token_cost": 1173,
+  "tool_uses": 1,
   "turns_to_fix": 1,
-  "wall_clock": 31.485
+  "wall_clock": 11.35
 }

@@ -4,15 +4,15 @@
   "benchmark": "off-by-one-pagination",
   "control_type": "kernel",
   "difficulty_tier": "easy",
-  "estimated_cost_usd": 0.021584000000000002,
-  "input_tokens": 12360,
-  "output_tokens": 568,
+  "estimated_cost_usd": 0.022948,
+  "input_tokens": 12906,
+  "output_tokens": 506,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed the off-by-one error in pagination.\n\nChange made in app/app.py:\n\nold:\n    offset = (page - 1) * per_page - (1 if page > 1 else 0)\n\nnew:\n    offset = (page - 1) * per_page\n\nRunning test.sh now reports:\nPASS: Pagination is correct across page boundaries",
-  "timestamp": "2026-04-03T02:46:35Z",
-  "token_cost": 12928,
+  "summary": "Fixed the off-by-one error in pagination.\n\nChange made in app/app.py:\n- Replaced\n  offset = (page - 1) * per_page - (1 if page > 1 else 0)\n- With\n  offset = (page - 1) * per_page\n\nRun `./test.sh` now passes:\nPASS: Pagination is correct across page boundaries",
+  "timestamp": "2026-04-03T17:51:29Z",
+  "token_cost": 13412,
   "tool_uses": 6,
   "turns_to_fix": 1,
-  "wall_clock": 17.694
+  "wall_clock": 20.251
 }

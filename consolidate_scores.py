@@ -196,12 +196,43 @@ def consolidate_all(dry_run: bool = False) -> None:
                 agg["turns"] += arm_data["turns"]
                 agg["wall"] += arm_data["wall_clock"]
 
-    # Add rate card info
+    # Models with working native CPU drivers in haystack create_driver()
+    # Others route through OpenRouter on kernel arm — CPU arm not yet built
+    CPU_DRIVER_MODELS = {
+        # Anthropic — native Messages API
+        "claude-haiku-4-5", "claude-sonnet-4-6", "claude-opus-4-6",
+        # Google — native Gemini API
+        "gemini-2-5-flash", "gemini-2-5-pro", "gemini-3-flash-preview", "gemini-3-1-pro-preview",
+        # OpenAI — native API
+        "gpt-4-1", "gpt-5-codex", "o3", "o4-mini",
+        # Mistral — native API
+        "codestral-2508", "devstral-2512", "devstral-medium", "devstral-small-latest",
+    }
+
+    # Add rate card info + CPU driver status
     for norm, agg in model_agg.items():
         rate = RATE_CARD.get(agg["model"])
         if rate:
             agg["price_per_m_input"] = rate[0]
             agg["price_per_m_output"] = rate[1]
+
+        # CPU driver status: "tested" if driver exists and has real results,
+        # "no_driver" if no native driver exists for this provider
+        if norm in CPU_DRIVER_MODELS:
+            agg["cpu_driver_status"] = "tested"
+        else:
+            agg["cpu_driver_status"] = "no_driver"
+
+        # Native CLI label — what actually runs for --arm native
+        NATIVE_CLI_MAP = {
+            "claude-haiku-4-5": "claude-code", "claude-sonnet-4-6": "claude-code", "claude-opus-4-6": "claude-code",
+            "gemini-2-5-flash": "gemini-cli", "gemini-2-5-pro": "gemini-cli",
+            "gemini-3-flash-preview": "gemini-cli", "gemini-3-1-pro-preview": "gemini-cli",
+            "gpt-4-1": "codex", "gpt-5-codex": "codex", "o4-mini": "codex",
+            "devstral-2512": "vibe", "devstral-medium": "vibe", "devstral-small-latest": "vibe",
+            "kimi-k2-5": "kimi-cli",
+        }
+        agg["native_cli"] = NATIVE_CLI_MAP.get(norm, "opencode")
 
     agg_list = sorted(model_agg.values(), key=lambda a: (
         -max(a["native"]["solved"]/max(a["native"]["total"],1),

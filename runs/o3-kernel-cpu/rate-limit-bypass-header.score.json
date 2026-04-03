@@ -4,15 +4,15 @@
   "benchmark": "rate-limit-bypass-header",
   "control_type": "kernel",
   "difficulty_tier": "medium",
-  "estimated_cost_usd": 0.04191,
-  "input_tokens": 31319,
-  "output_tokens": 1489,
+  "estimated_cost_usd": 0.06654600000000001,
+  "input_tokens": 68297,
+  "output_tokens": 1900,
   "resolved": true,
   "stop_reason": "end_turn",
-  "summary": "Fixed security bug: the rate-limiter trusted the user-supplied X-Forwarded-For header, letting an attacker rotate it to bypass limits.  \nChanges in app/ratelimiter.ts:\n\n• Removed trust in X-Forwarded-For; now always uses req.socket.remoteAddress.  \n• Updated JSDoc to explain reasoning.\n\nAll tests now pass:\n\n$ bash test.sh  \nPASS: Rate limiter is not vulnerable to header spoofing",
-  "timestamp": "2026-04-03T03:01:24Z",
-  "token_cost": 32808,
-  "tool_uses": 7,
+  "summary": "Fixed vulnerability: rate limiter blindly trusted the X-Forwarded-For header, letting an attacker reset the limit by rotating the header value.  \n Change made in app/ratelimiter.ts:\n\n• Removed header parsing and now derive the client key solely from req.socket.remoteAddress.\n\nRunning ./test.sh now shows the limiter blocks excess requests even when headers are spoofed:\n\nWithout spoofing: 10 passed, 5 blocked  \nWith spoofing: 10 passed, 20 blocked  \nPASS: Rate limiter is not vulnerable to header spoofing",
+  "timestamp": "2026-04-03T18:14:38Z",
+  "token_cost": 70197,
+  "tool_uses": 11,
   "turns_to_fix": 1,
-  "wall_clock": 39.789
+  "wall_clock": 61.067
 }

@@ -5,14 +5,14 @@
   "control_type": "native",
   "difficulty_tier": "hard",
   "estimated_cost_usd": 0.0,
-  "input_tokens": 0,
-  "output_tokens": 0,
+  "input_tokens": 115417,
+  "output_tokens": 591,
   "resolved": true,
   "stop_reason": "pass",
-  "summary": "Perfect! The fix works. All tests pass, including the IPv6 loopback blocking tests. The validator now correctly blocks both `[::1]` and `[0:0:0:0:0:0:0:1]` IPv6 loopback addresses.",
-  "timestamp": "2026-04-03T04:55:45Z",
-  "token_cost": 0,
-  "tool_uses": 9,
-  "turns_to_fix": 10,
-  "wall_clock": 14.999
+  "summary": "Perfect! The fix is complete. I've added the IPv6 loopback addresses `::1` and `0:0:0:0:0:0:0:1` to the `BLOCKED_HOSTS` list in the validator, which now correctly blocks SSRF attempts via IPv6 loopback addresses. All tests are passing.",
+  "timestamp": "2026-04-03T16:39:46Z",
+  "token_cost": 116008,
+  "tool_uses": 11,
+  "turns_to_fix": 12,
+  "wall_clock": 23.104
 }
