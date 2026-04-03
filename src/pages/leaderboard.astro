@@ -300,15 +300,19 @@ import Base from '../layouts/Base.astro';
 
     // Arm comparison cards
     const armCard = (key: 'native' | 'kernel' | 'cpu', label: string, colorClass: string) => {
-      const s = sum(r => r[key].solved), t = sum(r => r[key].total);
-      const c = sum(r => r[key].cost), tok = sum(r => r[key].tokens);
-      const tools = sum(r => r[key].tools), turns = sum(r => r[key].turns);
+      // For CPU card, only count models with a working driver
+      const filtered = key === 'cpu' ? rows.filter(r => r.cpu_driver_status === 'tested') : rows;
+      const sumF = (fn: (r: any) => number) => filtered.reduce((s, r) => s + fn(r), 0);
+      const s = sumF(r => r[key].solved), t = sumF(r => r[key].total);
+      const c = sumF(r => r[key].cost), tok = sumF(r => r[key].tokens);
+      const tools = sumF(r => r[key].tools), turns = sumF(r => r[key].turns);
       const pct = t > 0 ? (s / t * 100).toFixed(0) : '0';
+      const count = key === 'cpu' ? ` · ${filtered.length} models` : '';
       return `<div class="arm-card">
         <h4>${label}</h4>
         <div class="big ${pctClass(Number(pct))}">${pct}% <span style="font-size:0.6em;font-weight:400">(${s}/${t})</span></div>
         <div class="detail">
-          $${c.toFixed(2)} · ${fmtN(tok)} tokens<br>
+          $${c.toFixed(2)} · ${fmtN(tok)} tokens${count}<br>
           ${tools.toLocaleString()} tools · ${turns.toLocaleString()} turns
         </div>
       </div>`;
